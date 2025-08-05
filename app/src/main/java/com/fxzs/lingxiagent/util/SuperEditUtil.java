@@ -145,6 +145,7 @@ public class SuperEditUtil {
     private int viewTop;
     private int viewBottom;
     private LinearLayout ll_expand;
+    private String lingXiModel = "10086";
     public SuperEditUtil(Context context,LinearLayout root_view) {
         this.context = context;
         this.root_view = root_view;
@@ -154,26 +155,26 @@ public class SuperEditUtil {
         if(listModel == null || listModel.size() == 0){
             getModel(); // 获取模型列表
         }
-        AsrOneUtils.getInstance().init((Activity) context);
-
-        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
-            @Override
-            public void callback(String result) {
-
-                ZUtils.print("isInArea = "+isInArea);
-                ZUtils.print("result = "+result);
-                ZUtils.print("selectOptionModel = "+selectOptionModel.toString());
-                if(isInArea){
-//                    String text = AsrOneUtils.getResult();
-//                    callback.send(result,selectOptionModel);
-                    if(!TextUtils.isEmpty(result)){
-//                        sendText(result);
-                        sendCommon(result);
-                    }
-                }
-
-            }
-        });
+//        AsrOneUtils.getInstance().init((Activity) context);
+//
+//        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
+//            @Override
+//            public void callback(String result) {
+//
+//                ZUtils.print("isInArea = "+isInArea);
+//                ZUtils.print("result = "+result);
+//                ZUtils.print("selectOptionModel = "+selectOptionModel.toString());
+//                if(isInArea){
+////                    String text = AsrOneUtils.getResult();
+////                    callback.send(result,selectOptionModel);
+//                    if(!TextUtils.isEmpty(result)){
+////                        sendText(result);
+//                        sendCommon(result);
+//                    }
+//                }
+//
+//            }
+//        });
     }
 
     private void setUI() {
@@ -335,8 +336,8 @@ public class SuperEditUtil {
                         Log.d("TouchEvent", "手指按下 TextView");
 //                        tv_press.setBackgroundColor(Color.LTGRAY); // 示例：改变背景色
                         isInArea = true;
+//                        AsrOneUtils.getInstance().recognizer();
 
-                        AsrOneUtils.getInstance().recognizer();
 //                        ll_bottom_voice.setVisibility(View.VISIBLE);
 //                        ll_bottom_edit.setVisibility(View.GONE);
                         callback.pressDown();
@@ -353,7 +354,7 @@ public class SuperEditUtil {
 //                        if (is_running) {
 //                            controller.stop();
 
-                        AsrOneUtils.getInstance().stop();
+//                        AsrOneUtils.getInstance().stop();
                         ll_bottom_voice.setVisibility(View.GONE);
                         ll_bottom_edit.setVisibility(View.VISIBLE);
 //                            Utils.print("setEnabled == stop");
@@ -425,7 +426,7 @@ public class SuperEditUtil {
                         Log.d("TouchEvent", "触摸取消");
 //                        rl_voice.setBackground(context.getResources().getDrawable(R.drawable.bg_voice_blue_r20)); // 示例：恢复背景色
                         isInArea = false;
-                        AsrOneUtils.getInstance().stop();
+//                        AsrOneUtils.getInstance().stop();
                         ll_bottom_voice.setVisibility(View.GONE);
                         ll_bottom_edit.setVisibility(View.VISIBLE);
                         break;
@@ -519,7 +520,12 @@ public class SuperEditUtil {
                     iv_send.setVisibility(View.VISIBLE);
 //                    setEditVisible();
                 }else {
-                    iv_voice.setVisibility(View.VISIBLE);
+                    if (isVoice){
+                        iv_voice.setVisibility(View.GONE);
+                    }else {
+                        iv_voice.setVisibility(View.VISIBLE);
+                    }
+
                     iv_add.setVisibility(View.VISIBLE);
                     iv_send.setVisibility(View.GONE);
 //                    iv_edit_open_expand.setVisibility(View.GONE);
@@ -1020,7 +1026,7 @@ public class SuperEditUtil {
     }
 
 
-    private void sendCommon(String prompt) {
+    public void sendCommon(String prompt) {
         if(list_file.size() > 0){
             if(isUpload || isAnalyse){
                 GlobalToast.show((Activity) context,"请等待上传完毕",GlobalToast.Type.NORMAL);

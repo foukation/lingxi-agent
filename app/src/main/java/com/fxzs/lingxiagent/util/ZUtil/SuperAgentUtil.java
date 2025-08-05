@@ -204,7 +204,7 @@ public class SuperAgentUtil {
 //                        tv_press.setBackgroundColor(Color.LTGRAY); // 示例：改变背景色
                         isInArea = true;
 
-                        AsrOneUtils.getInstance().recognizer();
+//                        AsrOneUtils.getInstance().recognizer();
 //                        ll_bottom_voice.setVisibility(View.VISIBLE);
 //                        ll_bottom_edit.setVisibility(View.GONE);
                         callback.pressDown();
@@ -221,7 +221,7 @@ public class SuperAgentUtil {
 //                        if (is_running) {
 //                            controller.stop();
 
-                        AsrOneUtils.getInstance().stop();
+//                        AsrOneUtils.getInstance().stop();
                         ll_bottom_voice.setVisibility(View.GONE);
                         ll_bottom_edit.setVisibility(View.VISIBLE);
 //                            Utils.print("setEnabled == stop");
@@ -294,7 +294,7 @@ public class SuperAgentUtil {
                         Log.d("TouchEvent", "触摸取消");
                         rl_voice.setBackground(context.getResources().getDrawable(R.drawable.bg_voice_blue_r20)); // 示例：恢复背景色
                         isInArea = false;
-                        AsrOneUtils.getInstance().stop();
+//                        AsrOneUtils.getInstance().stop();
                         ll_bottom_voice.setVisibility(View.GONE);
                         ll_bottom_edit.setVisibility(View.VISIBLE);
                         break;
@@ -391,6 +391,13 @@ public class SuperAgentUtil {
             ed.setText("");
             callback.send(content,selectOptionModel);
         }
+    }
+
+    public void voiceSendText(String content){
+        if (callback == null){
+            return;
+        }
+        callback.send(content,selectOptionModel);
     }
 
     public  void setOnListenSoft(View root_view, SoftCallback callback){

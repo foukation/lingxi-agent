@@ -252,7 +252,7 @@ public class SuperEditAIWritingUtil {
 //                        tv_press.setBackgroundColor(Color.LTGRAY); // 示例：改变背景色
                         isInArea = true;
 
-                        AsrOneUtils.getInstance().recognizer();
+//                        AsrOneUtils.getInstance().recognizer();
 //                        ll_bottom_voice.setVisibility(View.VISIBLE);
 //                        ll_bottom_edit.setVisibility(View.GONE);
                         callback.pressDown();
@@ -269,7 +269,7 @@ public class SuperEditAIWritingUtil {
 //                        if (is_running) {
 //                            controller.stop();
 
-                        AsrOneUtils.getInstance().stop();
+//                        AsrOneUtils.getInstance().stop();
                         ll_voice_edit.setVisibility(View.VISIBLE);
 //                            Utils.print("setEnabled == stop");
 //                            is_running = false;
@@ -340,7 +340,7 @@ public class SuperEditAIWritingUtil {
                         Log.d("TouchEvent", "触摸取消");
 //                        rl_voice.setBackground(context.getResources().getDrawable(R.drawable.bg_voice_blue_r20)); // 示例：恢复背景色
                         isInArea = false;
-                        AsrOneUtils.getInstance().stop();
+//                        AsrOneUtils.getInstance().stop();
                         ll_voice_edit.setVisibility(View.VISIBLE);
                         break;
                 }
@@ -381,7 +381,7 @@ public class SuperEditAIWritingUtil {
         }
     }
 
-    private void sendMsg(String content) {
+    public void sendMsg(String content) {
         if(TextUtils.isEmpty(content.trim())){
             ZUtils.showToast("请输入内容");
             return;

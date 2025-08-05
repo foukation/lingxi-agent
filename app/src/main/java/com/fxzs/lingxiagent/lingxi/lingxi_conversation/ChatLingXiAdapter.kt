@@ -9,7 +9,7 @@ import com.cmdc.ai.assist.constraint.DialogueResult
 import com.cmdc.ai.assist.constraint.InsideRcChatRequest
 import java.util.UUID
 
-class ChatAdapter(
+class ChatLingXiAdapter(
     private val aiConversationManager: AIConversationManager,
     private val requestId: String
 ) {

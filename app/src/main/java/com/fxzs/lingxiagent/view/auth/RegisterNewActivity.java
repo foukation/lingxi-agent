@@ -142,19 +142,19 @@ public class RegisterNewActivity extends BaseActivity<VMRegister> {
         findViewById(R.id.tv_yidong).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WebViewActivity.start(RegisterNewActivity.this, "https://mobile-web.jmkjsh.com/user_contract.html", "服务协议");
+                WebViewActivity.start(RegisterNewActivity.this, Constants.USER_AGREEMENT_URL, "服务协议");
             }
         });
         findViewById(R.id.tv_user_agreement).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WebViewActivity.start(RegisterNewActivity.this, "https://mobile-web.jmkjsh.com/user_contract.html", "使用协议");
+                WebViewActivity.start(RegisterNewActivity.this, Constants.USER_AGREEMENT_URL, "用户协议");
             }
         });
         findViewById(R.id.tv_privacy_policy).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                WebViewActivity.start(RegisterNewActivity.this, "https://mobile-web.jmkjsh.com/privacy.html", "隐私政策");
+                WebViewActivity.start(RegisterNewActivity.this, Constants.PRIVACY_POLICY_URL, "隐私政策");
             }
         });
     }

@@ -340,73 +340,73 @@ public class OneClickLoginActivity extends BaseActivity<VMRegister> {
             GlobalToast.show(this, "预取号码失败，请授予获取本机号码权限", GlobalToast.Type.ERROR);
         }
 
-        try {
-            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            if (tm == null) return null;
-
-            // 方法1：标准方法
-            String number = tm.getLine1Number();
-            if (number != null && !number.isEmpty()) {
-                Log.d("OneClickLogin", "方法1 getLine1Number: " + number);
-                return formatPhoneNumber(number);
-            }
-
-            // 方法2：通过SubscriptionManager（双卡手机）
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
-                try {
-                    android.telephony.SubscriptionManager sm = android.telephony.SubscriptionManager.from(this);
-                    List<android.telephony.SubscriptionInfo> subList = sm.getActiveSubscriptionInfoList();
-                    if (subList != null) {
-                        for (android.telephony.SubscriptionInfo info : subList) {
-                            String phoneNumber = info.getNumber();
-                            if (phoneNumber != null && !phoneNumber.isEmpty()) {
-                                Log.d("OneClickLogin", "方法2 SubscriptionInfo: " + phoneNumber);
-                                return formatPhoneNumber(phoneNumber);
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    Log.e("OneClickLogin", "SubscriptionManager方法失败", e);
-                }
-            }
-
-            // 方法3：反射尝试获取
-            try {
-                Class<?> telephonyClass = Class.forName(tm.getClass().getName());
-                Method[] methods = telephonyClass.getMethods();
-                for (Method method : methods) {
-                    String methodName = method.getName();
-                    if (methodName.contains("getLine1Number") ||
-                        methodName.contains("getMsisdn") ||
-                        methodName.contains("getPhoneNumber")) {
-                        if (method.getParameterTypes().length == 0) {
-                            Object result = method.invoke(tm);
-                            if (result instanceof String && !((String)result).isEmpty()) {
-                                Log.d("OneClickLogin", "方法3 反射 " + methodName + ": " + result);
-                                return formatPhoneNumber((String)result);
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                Log.e("OneClickLogin", "反射方法失败", e);
-            }
-
-            // 方法4：尝试从系统设置获取
-            try {
-                String phoneNumber = android.provider.Settings.System.getString(
-                    getContentResolver(), "phone_number");
-                if (phoneNumber != null && !phoneNumber.isEmpty()) {
-                    Log.d("OneClickLogin", "方法4 系统设置: " + phoneNumber);
-                    return formatPhoneNumber(phoneNumber);
-                }
-            } catch (Exception e) {
-                Log.e("OneClickLogin", "系统设置方法失败", e);
-            }
-
-        } catch (Exception e) {
-            Log.e("OneClickLogin", "获取手机号失败", e);
-        }
+//        try {
+//            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+//            if (tm == null) return null;
+//
+//            // 方法1：标准方法
+//            String number = tm.getLine1Number();
+//            if (number != null && !number.isEmpty()) {
+//                Log.d("OneClickLogin", "方法1 getLine1Number: " + number);
+//                return formatPhoneNumber(number);
+//            }
+//
+//            // 方法2：通过SubscriptionManager（双卡手机）
+//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP_MR1) {
+//                try {
+//                    android.telephony.SubscriptionManager sm = android.telephony.SubscriptionManager.from(this);
+//                    List<android.telephony.SubscriptionInfo> subList = sm.getActiveSubscriptionInfoList();
+//                    if (subList != null) {
+//                        for (android.telephony.SubscriptionInfo info : subList) {
+//                            String phoneNumber = info.getNumber();
+//                            if (phoneNumber != null && !phoneNumber.isEmpty()) {
+//                                Log.d("OneClickLogin", "方法2 SubscriptionInfo: " + phoneNumber);
+//                                return formatPhoneNumber(phoneNumber);
+//                            }
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    Log.e("OneClickLogin", "SubscriptionManager方法失败", e);
+//                }
+//            }
+//
+//            // 方法3：反射尝试获取
+//            try {
+//                Class<?> telephonyClass = Class.forName(tm.getClass().getName());
+//                Method[] methods = telephonyClass.getMethods();
+//                for (Method method : methods) {
+//                    String methodName = method.getName();
+//                    if (methodName.contains("getLine1Number") ||
+//                        methodName.contains("getMsisdn") ||
+//                        methodName.contains("getPhoneNumber")) {
+//                        if (method.getParameterTypes().length == 0) {
+//                            Object result = method.invoke(tm);
+//                            if (result instanceof String && !((String)result).isEmpty()) {
+//                                Log.d("OneClickLogin", "方法3 反射 " + methodName + ": " + result);
+//                                return formatPhoneNumber((String)result);
+//                            }
+//                        }
+//                    }
+//                }
+//            } catch (Exception e) {
+//                Log.e("OneClickLogin", "反射方法失败", e);
+//            }
+//
+//            // 方法4：尝试从系统设置获取
+//            try {
+//                String phoneNumber = android.provider.Settings.System.getString(
+//                    getContentResolver(), "phone_number");
+//                if (phoneNumber != null && !phoneNumber.isEmpty()) {
+//                    Log.d("OneClickLogin", "方法4 系统设置: " + phoneNumber);
+//                    return formatPhoneNumber(phoneNumber);
+//                }
+//            } catch (Exception e) {
+//                Log.e("OneClickLogin", "系统设置方法失败", e);
+//            }
+//
+//        } catch (Exception e) {
+//            Log.e("OneClickLogin", "获取手机号失败", e);
+//        }
 
         return null;
     }

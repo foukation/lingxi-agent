@@ -211,13 +211,6 @@ public class RegisterActivity extends BaseActivity<VMRegister> {
                 finish();
             }
         });
-
-        // 监听全局成功消息
-        viewModel.getSuccess().observe(this, msg -> {
-            if (msg != null && msg.equals("验证码已发送")) {
-                GlobalToast.show(this, msg, GlobalToast.Type.SUCCESS);
-            }
-        });
     }
     
     @Override

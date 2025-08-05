@@ -53,7 +53,18 @@ public class TabEntity {
         /**
          * 荣耀定制版行程规划工具（增强功能）
          */
-        TRIP_PLANNER_HONOR(6);
+        TRIP_PLANNER_HONOR(6),
+
+        /**
+         * 写作
+         */
+        TRIP_AI_WRITING(7),
+
+        /**
+         * 智能体
+         */
+        TRIP_AI_AGENT(8);
+
 
         private final int value;
         TabType(int value) { this.value = value; }

@@ -30,4 +30,6 @@
     <string name="stop_task" translatable="false">暂停执行</string>
     <string name="close_task" translatable="false">终止任务</string>
     <string name="close_model" translatable="false">知道了</string>
+    <string name="text_waiting_reply">正在为您加载...</string>
+
 </resources>

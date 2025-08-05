@@ -55,6 +55,15 @@ public class MainActivity extends BaseActivity<VMMain> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // 检查登录状态
+        if (!AuthHelper.getInstance().isLogin()) {
+            // 未登录，跳转到一键登录页面
+            Intent intent = new Intent(this, OneClickLoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+            return;
+        }
         // 打印签名信息（用于极光后台配置）
         SignatureUtil.logSignatureInfo(this);
     }

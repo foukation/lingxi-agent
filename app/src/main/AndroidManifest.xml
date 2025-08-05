@@ -329,18 +329,18 @@
             
         <!-- 极光推送核心功能 -->
         <!-- PushService -->
-        <service
-            android:name="cn.jpush.android.service.PushService"
-            android:exported="false"
-            android:process=":pushcore">
-            <intent-filter>
-                <action android:name="cn.jpush.android.intent.REGISTER" />
-                <action android:name="cn.jpush.android.intent.REPORT" />
-                <action android:name="cn.jpush.android.intent.PushService" />
-                <action android:name="cn.jpush.android.intent.PUSH_TIME" />
-            </intent-filter>
-        </service>
-        
+<!--        <service-->
+<!--            android:name="cn.jpush.android.service.PushService"-->
+<!--            android:exported="false"-->
+<!--            android:process=":pushcore">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="cn.jpush.android.intent.REGISTER" />-->
+<!--                <action android:name="cn.jpush.android.intent.REPORT" />-->
+<!--                <action android:name="cn.jpush.android.intent.PushService" />-->
+<!--                <action android:name="cn.jpush.android.intent.PUSH_TIME" />-->
+<!--            </intent-filter>-->
+<!--        </service>-->
+
         <!-- 极光SDK核心组件 -->
         <receiver
             android:name="cn.jpush.android.service.PushReceiver"
@@ -383,10 +383,10 @@
         </receiver>
         
         <!-- Required JCommonService -->
-        <service
-            android:name="cn.jpush.android.service.JCommonService"
-            android:exported="false"
-            android:process=":pushcore" />
+<!--        <service-->
+<!--            android:name="cn.jpush.android.service.JCommonService"-->
+<!--            android:exported="false"-->
+<!--            android:process=":pushcore" />-->
         
         <!-- User defined. 用户自定义Push接收器 -->
         <receiver

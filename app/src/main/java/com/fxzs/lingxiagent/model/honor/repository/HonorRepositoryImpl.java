@@ -97,6 +97,7 @@ public class HonorRepositoryImpl implements HonorRepository {
             headers.put("accessKey", Constants.HONOR_ACCESS_KEY);
             headers.put("ts", timestamp);
             headers.put("sign", signature);
+            headers.put("X-Request-Source", "lingxiapp_main");
 
             // 发送请求
             Observable<ResponseBody> responseBodyObservable;

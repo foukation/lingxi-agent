@@ -233,7 +233,7 @@ public class AuthRepositoryImpl implements AuthRepository {
     @Override
     public LiveData<LoginResponse> refreshToken(String refreshToken) {
         MutableLiveData<LoginResponse> result = new MutableLiveData<>();
-        
+
         authApiService.refreshToken(refreshToken).enqueue(new Callback<BaseResponse<LoginResponse>>() {
             @Override
             public void onResponse(Call<BaseResponse<LoginResponse>> call, 
@@ -243,8 +243,9 @@ public class AuthRepositoryImpl implements AuthRepository {
                     if (baseResponse.isSuccess()) {
                         LoginResponse loginResponse = baseResponse.getData();
                         // 更新Token
-                        SharedPreferencesUtil.updateToken(loginResponse.getAccessToken());
+                        SharedPreferencesUtil.saveLoginInfo(loginResponse);
                         result.postValue(loginResponse);
+                        return;
                     } else {
                         result.postValue(null);
                         Log.e(TAG, "Refresh token failed: " + baseResponse.getMsg());
@@ -253,6 +254,7 @@ public class AuthRepositoryImpl implements AuthRepository {
                     result.postValue(null);
                     Log.e(TAG, "Refresh token request failed: " + response.code());
                 }
+                SharedPreferencesUtil.clearLoginInfo();
             }
             
             @Override

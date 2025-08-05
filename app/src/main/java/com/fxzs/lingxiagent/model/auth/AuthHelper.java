@@ -2,11 +2,8 @@ package com.fxzs.lingxiagent.model.auth;
 
 import android.content.Context;
 
-import androidx.lifecycle.Observer;
-
 import com.cmic.sso.sdk.auth.AuthnHelper;
 import com.cmic.sso.sdk.auth.TokenListener;
-import com.fxzs.lingxiagent.model.auth.dto.LoginResponse;
 import com.fxzs.lingxiagent.model.auth.repository.AuthRepository;
 import com.fxzs.lingxiagent.model.auth.repository.AuthRepositoryImpl;
 import com.fxzs.lingxiagent.model.common.Constants;
@@ -131,16 +128,7 @@ public class AuthHelper {
     private void refreshToken() {
         String refreshToken = SharedPreferencesUtil.getRefreshToken();
         if (!refreshToken.isEmpty()) {
-            authRepository.refreshToken(refreshToken).observeForever(new Observer<LoginResponse>() {
-                @Override
-                public void onChanged(LoginResponse loginResponse) {
-                    if (null != loginResponse) {
-                        SharedPreferencesUtil.saveLoginInfo(loginResponse);
-                    } else {
-                        SharedPreferencesUtil.clearLoginInfo();
-                    }
-                }
-            });
+            authRepository.refreshToken(refreshToken);
         }
     }
 }
