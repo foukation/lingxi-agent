@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 顶部栏 -->
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:padding="14dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?android:attr/selectableItemBackgroundBorderless" />
+
+        <TextView
+            android:id="@+id/tv_meeting_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="AI实时会议"
+            android:textColor="#1E1E1E"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            android:fontWeight="500" />
+
+        <LinearLayout
+            android:id="@+id/layout_new_meeting"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:background="?attr/selectableItemBackgroundBorderless">
+
+            <ImageView
+                android:id="@+id/iv_more"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="4dp"
+                android:src="@drawable/ic_add_24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="新建会议"
+                android:textColor="#1E1E1E"
+                android:textSize="13sp"
+                android:fontWeight="400" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!-- Recording Indicator Group - Auto layout column -->
+    <LinearLayout
+        android:id="@+id/layout_recording_content"
+        android:layout_width="120dp"
+        android:layout_height="180dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="170dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <!-- Frame 47271 - Microphone Circle -->
+        <!-- Auto layout: flex-direction: row; align-items: center; padding: 36px 40px; width: 104px; height: 104px; background: #1E1E1E; border-radius: 52px; -->
+        <FrameLayout
+            android:id="@+id/layout_mic_circle"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:background="@drawable/bg_recording_circle"
+            android:layout_marginBottom="20dp">
+
+            <!-- Microphone Icon - using Figma design -->
+            <ImageView
+                android:id="@+id/iv_microphone"
+                android:layout_width="23dp"
+                android:layout_height="33dp"
+                android:layout_gravity="center"
+                android:background="@drawable/voice_animation"
+                android:contentDescription="录音麦克风" />
+
+        </FrameLayout>
+
+        <!-- Frame 1068 - Wave Animation Container -->
+        <!-- Auto layout: flex-direction: row; align-items: center; gap: 4px; width: 38px; height: 16px; -->
+        <LinearLayout
+            android:id="@+id/layout_wave_animation"
+            android:layout_width="38dp"
+            android:layout_height="16dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+
+            <!-- Wave Bars with 4px gaps and animation -->
+            <View
+                android:id="@+id/wave_bar_1"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_wave_bar" />
+
+            <View
+                android:id="@+id/wave_bar_2"
+                android:layout_width="10dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_wave_bar" />
+
+            <View
+                android:id="@+id/wave_bar_3"
+                android:layout_width="10dp"
+                android:layout_height="12dp"
+                android:background="@drawable/bg_wave_bar" />
+
+        </LinearLayout>
+
+        <!-- Recording Text -->
+        <!-- width: 120px; height: 24px; font-family: 'PingFang SC'; font-weight: 400; font-size: 16px; line-height: 24px; text-align: center; -->
+        <TextView
+            android:id="@+id/tv_status_text"
+            android:layout_width="120dp"
+            android:layout_height="24dp"
+            android:text="正在录音..."
+            android:textColor="#1E1E1E"
+            android:textSize="16sp"
+            android:fontWeight="400"
+            android:lineHeight="24sp"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal" />
+
+    </LinearLayout>
+
+    <!-- Bottom Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="44dp"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:baselineAligned="false">
+
+        <!-- Pause Button - Figma Design: Frame 858 -->
+        <!-- width: 163px; height: 48px; border: 1px #E0E0E0; border-radius: 12px; gap: 8px -->
+        <FrameLayout
+            android:id="@+id/btn_pause_meeting"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/bg_button_outline">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp">
+
+                <!-- Pause Icon 16x16px -->
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:src="@drawable/ic_pause_16"
+                    android:contentDescription="暂停图标" />
+
+                <!-- Text: PingFang SC 14sp 400weight #1E1E1E -->
+                <TextView
+                    android:id="@+id/tv_pause_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="暂停会议"
+                    android:textColor="#1E1E1E"
+                    android:textSize="14sp"
+                    android:fontWeight="400"
+                    android:lineHeight="19.6sp" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+        <!-- End Meeting Button - Figma Design: Frame 857 -->
+        <!-- width: 164px; height: 48px; background: #1C77FF; border-radius: 12px -->
+        <FrameLayout
+            android:id="@+id/btn_stop_recording"
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_button_primary">
+
+            <!-- Text: PingFang SC 14sp 500weight #FFFFFF -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="结束会议"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:fontWeight="500"
+                android:lineHeight="19.6sp"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- Recording Time Display (Hidden by default) -->
+    <TextView
+        android:id="@+id/tv_recording_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="420dp"
+        android:text="00:01"
+        android:textColor="#1E1E1E"
+        android:textSize="48sp"
+        android:typeface="monospace"
+        android:gravity="center"
+        android:visibility="gone" />
+
+</FrameLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="303dp"
+    android:layout_height="wrap_content"
+    android:minHeight="144dp">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/gradient_user_input_bg" />
+
+    <TextView
+        android:id="@+id/tv_user_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        android:text="帮我生成图片：请画一张极其平凡无奇的照片，就像是随手一拍的快照。照片略带运动模糊，主角是橘猫自拍，背景是夜晚下的上海和东方明珠。比例 9:16。"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:lineHeight="24sp"
+        android:gravity="start|center_vertical" />
+
+</FrameLayout>

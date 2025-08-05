@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="#FFFFFF">
+
+    <!-- 标题栏 -->
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="#FFFFFF">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:padding="12dp"
+            android:src="@drawable/ic_arrow_back"
+            android:background="?attr/selectableItemBackgroundBorderless" />
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="注销账号"
+            android:textColor="#333333"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <!-- 注销账号图标和文字 -->
+    <LinearLayout
+        android:id="@+id/layout_icon"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/ic_account_delete" />
+
+        <TextView
+            android:id="@+id/tv_mobile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="注销账号"
+            android:textColor="#1E1E1E"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="-0.015"
+            android:lineSpacingMultiplier="1.0" />
+
+    </LinearLayout>
+
+    <!-- 协议内容 -->
+    <LinearLayout
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
+        android:paddingHorizontal="24dp"
+        android:paddingVertical="10dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="在注销灵犀账号前，请认真阅读理解《灵犀账号注销协议》:"
+            android:textColor="#1E1E1E"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:lineSpacingMultiplier="1.0" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="一、注销账号后,你将无法再使用本账号,也将无法找回当前账号中与账号相关的任何信息,包括但不限于以下:"
+            android:textColor="#1E1E1E"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:lineSpacingMultiplier="1.0" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="1. 当前账号的个人信息\n2. 包括但不限于当前账号的全部知识库、笔记、上传的文件等内容"
+            android:textColor="#1E1E1E"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:lineSpacingMultiplier="1.0" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="二、注销前请确认:"
+            android:textColor="#1E1E1E"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:lineSpacingMultiplier="1.0" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="1. 你的帐号没有被盗、被封风险\n2. 该账号无任何纠纷，包括但不限于投诉举报、被投诉举报、国家机关调查、仲裁、诉讼等纠纷"
+            android:textColor="#1E1E1E"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:lineSpacingMultiplier="1.0" />
+
+    </LinearLayout>
+
+    <!-- 验证码输入框 -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="20dp">
+
+        <EditText
+            android:id="@+id/et_verification"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:hint="请输入验证码"
+            android:inputType="number"
+            android:textSize="14sp"
+            android:paddingStart="16dp"
+            android:paddingEnd="110dp"
+            android:background="@drawable/bg_edittext_round_white"
+            android:textColor="#1E1E1E"
+            android:textColorHint="#B2B2B2" />
+
+        <TextView
+            android:id="@+id/tv_get_code"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="10dp"
+            android:text="获取验证码"
+            android:textColor="#1E1E1E"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:background="#F7F7F7" />
+    </FrameLayout>
+
+    <!-- 注销账号按钮 -->
+    <LinearLayout
+        android:id="@+id/btn_cancel_account_container"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:background="@drawable/bg_rounded_12dp_red">
+
+        <TextView
+            android:id="@+id/btn_cancel_account"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="注销账号"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <!-- 协议同意 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/cb_agreement"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:src="@drawable/ic_checkbox_unchecked" />
+
+        <TextView
+            android:id="@+id/tv_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="阅读并同意【 灵犀 账号注销协议】"
+            android:textColor="#1E1E1E"
+            android:textSize="13sp"
+            android:textStyle="normal"
+            android:fontFamily="sans-serif"
+            android:letterSpacing="-0.017"
+            android:lineSpacingMultiplier="1.0" />
+
+    </LinearLayout>
+
+</LinearLayout>

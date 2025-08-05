@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000">
+
+    <!-- Dialog Container -->
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AIMeetingSub2Fragment" />
+
+    <LinearLayout
+        android:layout_width="328dp"
+        android:layout_height="156dp"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/bg_dialog_white_rounded_16dp"
+        android:padding="24dp">
+
+        <!-- Content Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginBottom="32dp">
+
+            <!-- Title -->
+            <TextView
+                android:id="@+id/tv_dialog_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="当前会议还未结束，是否新建会议？"
+                android:textColor="#1E1E1E"
+                android:textSize="18sp"
+                android:fontFamily="sans-serif-medium"
+                android:lineSpacingMultiplier="1.4"
+                android:gravity="center"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Subtitle -->
+            <TextView
+                android:id="@+id/tv_dialog_subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="新建后，当前会议自动生成会议记录"
+                android:textColor="#1E1E1E"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingMultiplier="1.4"
+                android:gravity="center" />
+
+        </LinearLayout>
+
+        <!-- Separator Line -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#E5E5E5"
+            android:layout_marginBottom="32dp" />
+
+        <!-- Button Section -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Buttons Container -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <!-- New Meeting Button -->
+                <LinearLayout
+                    android:id="@+id/btn_new_meeting"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_button_gray_rounded_8dp"
+                    android:padding="8dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="新建会议"
+                        android:textColor="#1E1E1E"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingMultiplier="1.4" />
+
+                </LinearLayout>
+
+                <!-- Continue Meeting Button -->
+                <LinearLayout
+                    android:id="@+id/btn_continue_meeting"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/bg_button_red_rounded_8dp"
+                    android:padding="8dp"
+                    android:layout_marginStart="6dp"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="继续会议"
+                        android:textColor="#1C77FF"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif"
+                        android:lineSpacingMultiplier="1.4" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Vertical Separator -->
+            <View
+                android:layout_width="0.5dp"
+                android:layout_height="36dp"
+                android:background="#E5E5E5"
+                android:layout_centerInParent="true" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

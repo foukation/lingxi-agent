@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">灵犀</string>
+    
+    <!-- Content Descriptions -->
+    <string name="back">返回</string>
+    <string name="edit">编辑</string>
+    <string name="history">历史记录</string>
+    <string name="expand">展开</string>
+    <string name="scroll_to_bottom">滚动到底部</string>
+    
+    <!-- Meeting QA -->
+    <string name="ai_intro_text">我是移动语音助手，我可以基于AI会议内容回答问题，如：总结会议内容，生成待办等。\n我的回答由AI生成，可能存在不准确或不完整的情况。\n我们的对话内容仅您自己可见，欢迎向我提问。</string>
+    <string name="hint_send_message">发消息…</string>
+    <string name="text_input_hint">发消息或按住说话…</string>
+
+    <string-array name="fy_select">
+        <item>中文</item>
+        <item>英语</item>
+        <item>日语</item>
+        <item>韩语</item>
+        <item>西班牙语</item>
+        <item>法语</item>
+        <item>德语</item>
+        <item>俄语</item>
+        <item>意大利语</item>
+    </string-array>
+    <string name="tag_spinner_fy" translatable="false">AI 翻译</string>
+    <string name="text_voice_hint" >点击开始语音聊天</string>
+    <string name="run_task" translatable="false">继续执行</string>
+    <string name="stop_task" translatable="false">暂停执行</string>
+    <string name="close_task" translatable="false">终止任务</string>
+    <string name="close_model" translatable="false">知道了</string>
+</resources>

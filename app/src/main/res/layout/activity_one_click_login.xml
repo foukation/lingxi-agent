@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    tools:context="com.fxzs.lingxiagent.view.auth.OneClickLoginActivity">
+
+    <!-- 顶部关闭按钮 -->
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/ic_close_long"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 注册按钮 -->
+    <TextView
+        android:id="@+id/tvRegister"
+        android:layout_width="32dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginEnd="16dp"
+        android:text="注册"
+        android:textColor="@color/login_text_primary"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Logo -->
+    <ImageView
+        android:id="@+id/ivLogo"
+        android:layout_width="106dp"
+        android:layout_height="106dp"
+        android:layout_marginTop="79dp"
+        android:src="@drawable/icon_app"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 手机号文本 -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:text="灵犀"
+        android:textColor="@color/login_text_primary"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:background="@android:color/transparent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- 按钮组容器 -->
+    <LinearLayout
+        android:id="@+id/buttonContainer"
+        android:layout_width="313dp"
+        android:layout_height="111dp"
+        android:layout_marginTop="309dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- 一键登录按钮 -->
+        <Button
+            android:id="@+id/btnOneClickLogin"
+            android:layout_width="313dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_btn_one_click_login"
+            android:text="一键登录"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:layout_marginBottom="15dp" />
+
+        <!-- 切换登录方式按钮 -->
+        <Button
+            android:id="@+id/btnSwitchLoginMethod"
+            android:layout_width="313dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_btn_switch_login"
+            android:text="切换登录方式"
+            android:textColor="@color/login_text_primary"
+            android:textSize="16sp"
+            android:gravity="center"
+            android:elevation="0dp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+    <!-- 协议区 -->
+    <LinearLayout
+        android:layout_width="252dp"
+        android:layout_height="40dp"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:layout_marginTop="444dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <CheckBox
+                android:id="@+id/cbAgreement"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="8dp"
+                android:button="@drawable/selector_checkbox_white"
+                android:checked="false" />
+
+            <TextView
+                android:id="@+id/tv_login_agree"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="登录即同意"
+                android:textColor="#B2B2B2"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:lineHeight="20sp" />
+            <TextView
+                android:id="@+id/tv_cmcc_clause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="中国移动认证服务条款"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:lineHeight="20sp" />
+            <TextView
+                android:id="@+id/tv_lingxi"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="，灵犀的"
+                android:textColor="#B2B2B2"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:lineHeight="20sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="24dp">
+
+            <TextView
+                android:id="@+id/tvUserAgreement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="使用协议"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="2dp"
+                android:lineHeight="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="和"
+                android:textColor="#B2B2B2"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:lineHeight="20sp" />
+
+            <TextView
+                android:id="@+id/tvPrivacyPolicy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="隐私政策"
+                android:textColor="#999999"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="2dp"
+                android:lineHeight="20sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="并使用本机号码登录"
+                android:textColor="#B2B2B2"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                android:lineHeight="20sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Home Indicator -->
+<!--    <View-->
+<!--        android:layout_width="134dp"-->
+<!--        android:layout_height="5dp"-->
+<!--        android:layout_marginBottom="11dp"-->
+<!--        android:background="@drawable/bg_home_indicator"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>

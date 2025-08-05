@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.fxzs.lingxiagent.view.drawing.DrawingChatActivity">
+
+    <!-- 背景渐变层 -->
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="250dp"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:background="@drawable/bg_gradient_drawing" />-->
+
+    <!-- 顶部状态栏占位 -->
+<!--    <View-->
+<!--        android:id="@+id/status_bar_placeholder"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="44dp"-->
+<!--        android:layout_alignParentTop="true" />-->
+
+    <!-- 顶部导航栏 -->
+    <RelativeLayout
+        android:id="@+id/rl_top_bar"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_below="@id/status_bar_placeholder">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:src="@drawable/ic_back_drawing" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="AI绘画"
+            android:textColor="#1E1E1E"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+    </RelativeLayout>
+
+    <!-- 对话内容滚动区域 -->
+    <ScrollView
+        android:id="@+id/sv_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_top_bar"
+        android:layout_above="@id/ll_bottom_fixed"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
+
+            <!-- 对话内容将动态添加到这里 -->
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!-- 底部输入区域 -->
+    <LinearLayout
+        android:id="@+id/ll_bottom_fixed"
+        android:layout_width="343dp"
+        android:layout_height="52dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_input_container"
+        android:elevation="8dp"
+        android:gravity="center">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:background="@drawable/bg_input_box">
+
+            <EditText
+                android:id="@+id/et_message_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:hint="发消息..."
+                android:textColorHint="#B2B2B2"
+                android:textColor="#1E1E1E"
+                android:textSize="16sp"
+                android:lineSpacingExtra="8sp"
+                android:textStyle="normal"
+                android:paddingStart="16dp"
+                android:paddingEnd="48dp"
+
+                android:gravity="center_vertical"
+                android:inputType="textMultiLine|textCapSentences"
+                android:maxLines="5"
+                android:singleLine="true" />
+
+            <ImageView
+                android:id="@+id/iv_voice_input_or_send"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/selector_voice_send" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

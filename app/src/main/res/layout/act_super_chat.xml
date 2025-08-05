@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 32dp 状态栏 + 56dp 导航栏，实际可用 statusBarHeight+56dp 动态设置 -->
+<!--    <LinearLayout-->
+<!--        android:id="@+id/top_bar_bg"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="88dp"-->
+<!--        android:background="#FFFFFF"-->
+<!--        android:orientation="vertical"/>-->
+
+    <!-- 渐变背景下移到内容区 -->
+<!--    <ImageView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_below="@id/top_bar_bg"-->
+<!--        android:background="@drawable/login_bg"/>-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/root_view"
+        android:orientation="vertical"
+        >
+
+<!--        <include layout="@layout/header_back"/>-->
+        <LinearLayout
+            android:layout_marginTop="@dimen/dp_16"
+            android:id="@+id/ll_header"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:gravity="center_vertical"
+            android:paddingRight="@dimen/dp_16"
+            android:orientation="horizontal"
+            android:background="@android:color/transparent"
+            >
+
+            <ImageView
+                android:id="@+id/iv_head"
+                android:layout_width="@dimen/dp_24"
+                android:layout_height="@dimen/dp_24"
+                android:src="@drawable/ic_app_logo"
+                android:scaleType="centerCrop"
+                android:orientation="horizontal"
+                android:visibility="invisible"
+                android:layout_marginStart="@dimen/dp_16"
+                />
+            <LinearLayout
+                android:id="@+id/ll_select_agent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_weight="1"
+                android:visibility="invisible">
+                <TextView
+                    android:id="@+id/tv_header_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="灵犀"
+                    android:textSize="16sp"
+                    android:textColor="@color/color_1E1E1E"
+                    android:textStyle="bold"
+                    android:gravity="bottom"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_header_select_agent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="8dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/color_738FB4"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <ImageView
+                    android:layout_width="@dimen/dp_8"
+                    android:layout_height="@dimen/dp_8"
+                    android:scaleType="centerCrop"
+                    android:gravity="center"
+                    android:layout_marginStart="@dimen/dp_6"
+                    android:src="@drawable/lingxi_arrow_down"/>
+
+            </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/iv_top_play"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/chat_top_play" />
+
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/iv_create_chat"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_new_chat" />
+
+            <ImageView
+                android:id="@+id/iv_history"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:background="@drawable/ic_history"
+                android:visibility="gone"
+                />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/aiResponse"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:text=""
+            android:textColor="@color/black"
+            android:visibility="gone"
+
+            />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:visibility="visible"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/ll_resend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                   android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="24dp"
+                    android:visibility="gone"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="回答已停止"
+                        android:textSize="14sp"
+                        android:textColor="#1E1E1E"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="修改问题重发"
+                        android:textSize="14sp"
+                        android:textColor="#1C77FF"
+                        android:layout_marginLeft="16dp"
+                        />
+                </LinearLayout>
+
+            </LinearLayout>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/ll_stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp"
+                android:visibility="gone"
+                >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    >
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:background="@mipmap/chat_stop"
+                        />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="停止回答"
+                        android:textSize="14sp"
+                        android:textColor="@color/text_black"
+                        android:textStyle="bold"
+                        android:layout_marginLeft="10dp"
+                        />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <ImageView
+                android:id="@+id/iv_scroll_down"
+                android:layout_width="37dp"
+                android:layout_height="37dp"
+                android:background="@mipmap/chat_scroll_down"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="24dp"
+                android:visibility="gone"
+                />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_function"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"/>
+
+
+            <include
+                android:id="@+id/ll_edit_main"
+                layout="@layout/layout_super_edit"
+                android:layout_marginBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                />
+
+            <include
+                android:id="@+id/ll_edit_agent"
+                layout="@layout/layout_super_agent_edit"
+
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+
+                />
+
+        </LinearLayout>
+
+
+
+        <include
+            android:id="@+id/ll_edit_writing"
+            layout="@layout/layout_edit_writing"
+
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+
+            />
+
+
+        <include
+            android:id="@+id/ll_edit_translate"
+            layout="@layout/layout_edit_tranlate"
+
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+
+            />
+
+    </LinearLayout>
+    
+    <com.fxzs.lingxiagent.view.common.VoiceRecordView
+        android:id="@+id/voiceRecordView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        />
+	
+    <!-- 底部分享栏 -->
+    <LinearLayout
+        android:id="@+id/ll_share_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/share_list"
+            android:layout_width="wrap_content"
+            android:layout_height="130dp"
+            android:orientation="horizontal"
+            android:padding="16dp" />
+
+    </LinearLayout>
+
+    <!-- 分享长图 -->
+    <include
+        android:id="@+id/ll_longpic_layout"
+        layout="@layout/longpic_bottom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+
+
+</RelativeLayout>

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:orientation="vertical"
+     android:paddingLeft="32dp"
+    android:paddingRight="32dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp"
+    android:gravity="center"
+    android:elevation="20dp">
+
+    <LinearLayout
+        android:layout_width="159dp"
+        android:layout_height="wrap_content"
+        android:minHeight="160dp"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:background="@drawable/bg_dialog_white_rounded_16dp"
+
+        android:gravity="center"
+        android:elevation="2dp">
+
+        <!-- Loading animation container -->
+        <FrameLayout
+            android:id="@+id/loading_container"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginBottom="13dp">
+
+            <!-- Multiple dots for loading animation -->
+            <View
+                android:id="@+id/dot1"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginLeft="39dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="0.3" />
+
+            <View
+                android:id="@+id/dot2"
+                android:layout_width="7dp"
+                android:layout_height="7dp"
+                android:layout_marginLeft="44dp"
+                android:layout_marginTop="23dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="0.4" />
+
+            <View
+                android:id="@+id/dot3"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_marginLeft="38dp"
+                android:layout_marginTop="37dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="0.5" />
+
+            <View
+                android:id="@+id/dot4"
+                android:layout_width="9dp"
+                android:layout_height="9dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="42dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="0.6" />
+
+            <View
+                android:id="@+id/dot5"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginLeft="7dp"
+                android:layout_marginTop="36dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="0.7" />
+
+            <View
+                android:id="@+id/dot6"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="0dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="0.8" />
+
+            <View
+                android:id="@+id/dot7"
+                android:layout_width="11dp"
+                android:layout_height="11dp"
+                android:layout_marginLeft="7dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="0.9" />
+
+            <View
+                android:id="@+id/dot8"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginLeft="1dp"
+                android:layout_marginTop="21dp"
+                android:background="@drawable/bg_loading_dot"
+                android:alpha="1.0" />
+
+        </FrameLayout>
+
+        <!-- Progress text -->
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="93dp"
+            android:layout_height="22dp"
+            android:text="会议生成中..."
+            android:textColor="#999999"
+            android:textSize="16dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:lineHeight="22dp" />
+
+
+        <LinearLayout
+            android:id="@+id/ll_cancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/bg_light_grey_70_r16"
+                />
+            <TextView
+                android:id="@+id/tv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="取消"
+                android:textColor="#999999"
+                android:textSize="16dp"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:layout_gravity="center_horizontal"
+                android:lineHeight="22dp" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+</RelativeLayout>

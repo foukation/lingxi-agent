@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <item
+        android:id="@+id/style_recommended"
+        android:title="推荐"
+        android:checkable="true"
+        android:checked="true" />
+    
+    <item
+        android:id="@+id/style_simple_business"
+        android:title="简约商务"
+        android:checkable="true" />
+    
+    <item
+        android:id="@+id/style_cartoon"
+        android:title="卡通插画"
+        android:checkable="true" />
+    
+    <item
+        android:id="@+id/style_tech"
+        android:title="炫酷科技"
+        android:checkable="true" />
+    
+    <item
+        android:id="@+id/style_chinese"
+        android:title="中国风"
+        android:checkable="true" />
+    
+    <item
+        android:id="@+id/style_watercolor"
+        android:title="水彩清新"
+        android:checkable="true" />
+    
+    <item
+        android:id="@+id/style_government"
+        android:title="党务政务"
+        android:checkable="true" />
+    
+    <item
+        android:id="@+id/style_other"
+        android:title="其他"
+        android:checkable="true" />
+    
+</menu>

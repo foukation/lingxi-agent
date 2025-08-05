@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="319dp"
+    android:layout_height="217dp"
+    android:background="#00000000">
+
+    <!-- 渐变背景 -->
+    <View
+        android:id="@+id/gradient_background"
+        android:layout_width="match_parent"
+        android:layout_height="188dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/bg_dialog_gradient_figma"
+        android:elevation="0dp" />
+
+    <!-- 主内容容器 -->
+    <LinearLayout
+        android:id="@+id/content_container"
+        android:layout_width="match_parent"
+        android:layout_height="188dp"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <!-- 标题行 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center_vertical">
+
+            <!-- 注意图标 -->
+            <ImageView
+                android:id="@+id/iv_warning"
+                android:layout_width="17dp"
+                android:layout_height="16dp"
+                android:layout_marginEnd="6dp"
+                android:src="@drawable/ic_warning_figma" />
+
+            <!-- 版本升级标题 -->
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="版本升级"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"/>
+        </LinearLayout>
+
+        <!-- 版本信息文本 -->
+        <TextView
+            android:id="@+id/tv_version_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginTop="16dp"
+            android:text="发现新版本1.0.123，新版本大小18.2MB，是否确定升级？"
+            android:textColor="#1E1E1E"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:lineHeight="20dp" />
+
+        <!-- 按钮容器 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <!-- 下次再说按钮 -->
+            <TextView
+                android:id="@+id/btn_cancel"
+                android:layout_width="128dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="11dp"
+                android:background="@drawable/bg_button_cancel_figma"
+                android:gravity="center"
+                android:text="下次再说"
+                android:textColor="#000000"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:lineHeight="24dp" />
+
+            <!-- 立即更新按钮 -->
+            <TextView
+                android:id="@+id/btn_update"
+                android:layout_width="128dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_button_update_figma"
+                android:gravity="center"
+                android:text="立即更新"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif"
+                android:lineHeight="24dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- 右侧装饰箭头 -->
+    <ImageView
+        android:id="@+id/iv_arrow_decoration"
+        android:layout_width="73dp"
+        android:layout_height="82dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="33dp"
+        android:src="@drawable/ic_arrow_decoration_figma" />
+
+</RelativeLayout>

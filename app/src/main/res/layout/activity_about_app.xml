@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!-- 标题栏和内容区（原有内容） -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#FFFFFF">
+            <ImageView
+                android:id="@+id/iv_back"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:padding="14dp"
+                android:src="@drawable/ic_arrow_back"
+                android:background="?android:attr/selectableItemBackgroundBorderless" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="关于"
+                android:textColor="#1E1E1E"
+                android:textSize="16sp"
+                android:fontFamily="sans-serif-medium"
+                android:textStyle="normal"
+                android:fontWeight="500" />
+        </RelativeLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <!-- 整体包裹头像和栏目信息，marginTop=30px -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_marginTop="30dp">
+                <!-- Logo部分 -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal">
+                    <FrameLayout
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
+                        android:layout_marginBottom="16dp">
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/icon_app" />
+                    </FrameLayout>
+                    <!-- 新增助手名称 -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="灵犀"
+                        android:textColor="#1E1E1E"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginBottom="32dp"/>
+                </LinearLayout>
+                <!-- 功能选项块紧随Logo部分，无需额外marginTop -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="#FFFFFF">
+                    <LinearLayout
+                        android:id="@+id/about_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:orientation="vertical"
+                        android:background="@drawable/bg_block_rounded_16_gray"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp">
+                        <!-- 版本块 -->
+                        <LinearLayout
+                            android:id="@+id/rl_version"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:orientation="horizontal"
+                            android:background="@android:color/transparent"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="版本"
+                                android:textColor="#1E1E1E"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:fontFamily="sans-serif"
+                                android:fontWeight="400" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" />
+                            <TextView
+                                android:id="@+id/tv_version"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1.2.5"
+                                android:textColor="#999999"
+                                android:textSize="15sp" />
+
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginRight="0dp"
+                            android:background="#EDEDED" />
+                        <!-- 了解更多块 -->
+                        <LinearLayout
+                            android:id="@+id/rl_learn_more"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:orientation="horizontal"
+                            android:background="@android:color/transparent"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="了解更多"
+                                android:textColor="#1E1E1E"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:fontFamily="sans-serif"
+                                android:fontWeight="400" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_arrow_right"
+                                android:tint="#CCCCCC" />
+                        </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginRight="0dp"
+                            android:background="#EDEDED" />
+                        <!-- 版本更新块 -->
+                        <LinearLayout
+                            android:id="@+id/rl_version_update"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:orientation="horizontal"
+                            android:background="@android:color/transparent"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="版本更新"
+                                android:textColor="#1E1E1E"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:fontFamily="sans-serif"
+                                android:fontWeight="400" />
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="1dp"
+                                android:layout_weight="1" />
+                            <!-- 新版本提示红点 -->
+                            <View
+                                android:id="@+id/view_update_dot"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:background="@drawable/shape_red_dot"
+                                android:layout_marginRight="4dp"
+                                android:visibility="gone" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_arrow_right"
+                                android:tint="#CCCCCC" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+    <!-- 绝对定位底部版权信息 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="50dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="《软件许可及服务协议》《隐私保护指引》"
+            android:textColor="#1C77FF"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:fontWeight="400"
+            android:lineHeight="18sp"
+            android:letterSpacing="0"
+            android:gravity="center"
+            android:layout_marginBottom="4dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ICP备案信息：粤B2-20090059-3375A"
+            android:textColor="#B2B2B2"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:fontWeight="400"
+            android:lineHeight="18sp"
+            android:letterSpacing="0"
+            android:gravity="center"
+            android:layout_marginBottom="2dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copyright © 2025 China Mobile. All Rights Reserved."
+            android:textColor="#B2B2B2"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:fontWeight="400"
+            android:lineHeight="18sp"
+            android:letterSpacing="0"
+            android:gravity="center"
+            android:layout_marginBottom="2dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="移动公司 版权所有"
+            android:textColor="#B2B2B2"
+            android:textSize="10sp"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:fontWeight="400"
+            android:lineHeight="18sp"
+            android:letterSpacing="0"
+            android:gravity="center"/>
+    </LinearLayout>
+</FrameLayout>

@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+    android:id="@+id/root_view"
+    >
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_chat"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="visible"
+                />
+
+            <LinearLayout
+                android:id="@+id/ll_resend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="回答已停止"
+                    android:textSize="14sp"
+                    android:textColor="#1E1E1E"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="修改问题重发"
+                    android:textSize="14sp"
+                    android:textColor="#1C77FF"
+                    android:layout_marginLeft="16dp"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ll_stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:visibility="gone"
+            >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                >
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:background="@mipmap/chat_stop"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="停止回答"
+                    android:textSize="14sp"
+                    android:textColor="@color/text_black"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/iv_scroll_down"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:background="@mipmap/chat_scroll_down"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="24dp"
+            android:visibility="gone"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+
+
+        <include
+            android:id="@+id/ll_edit_agent"
+            layout="@layout/layout_super_agent_edit"
+
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent">-->
+
+<!--    &lt;!&ndash; Scroll container &ndash;&gt;-->
+<!--    <ScrollView-->
+<!--        android:id="@+id/scroll_content"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:layout_above="@+id/ll_input_container"-->
+<!--        android:fillViewport="true"-->
+<!--        android:scrollbars="none">-->
+
+<!--        <LinearLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:orientation="vertical">-->
+
+<!--            &lt;!&ndash; AI assistant intro area &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/ll_ai_intro"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:gravity="center_horizontal"-->
+<!--                android:layout_marginTop="0dp"-->
+<!--                android:layout_marginBottom="0dp">-->
+
+<!--                &lt;!&ndash; AI assistant avatar &ndash;&gt;-->
+<!--                <FrameLayout-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginTop="16dp"-->
+<!--                    android:layout_marginBottom="24dp">-->
+
+<!--                    <ImageView-->
+<!--                        android:layout_width="58.51dp"-->
+<!--                        android:layout_height="58.51dp"-->
+<!--                        android:layout_gravity="center"-->
+<!--                        android:src="@drawable/bg_avatar_gradient" />-->
+<!--                </FrameLayout>-->
+
+<!--                &lt;!&ndash; Intro text &ndash;&gt;-->
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_ai_intro"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginLeft="16dp"-->
+<!--                    android:layout_marginRight="16dp"-->
+<!--                    android:text="@string/ai_intro_text"-->
+<!--                    android:textColor="#1E1E1E"-->
+<!--                    android:textSize="14sp"-->
+<!--                    android:lineSpacingMultiplier="1.4"-->
+<!--                    android:gravity="left" />-->
+<!--            </LinearLayout>-->
+
+<!--            &lt;!&ndash; Chat list container &ndash;&gt;-->
+<!--            <LinearLayout-->
+<!--                android:id="@+id/ll_chat_container"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:orientation="vertical"-->
+<!--                android:layout_marginTop="20dp"-->
+<!--                android:paddingLeft="16dp"-->
+<!--                android:paddingRight="16dp">-->
+
+<!--                &lt;!&ndash; AIResponseView components will be dynamically added here &ndash;&gt;-->
+
+<!--            </LinearLayout>-->
+
+<!--        </LinearLayout>-->
+<!--    </ScrollView>-->
+
+<!--    &lt;!&ndash; Input box area &ndash;&gt;-->
+<!--    <LinearLayout-->
+<!--        android:id="@+id/ll_input_container"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:background="@android:color/white"-->
+<!--        android:padding="16dp">-->
+
+<!--        <RelativeLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="52dp"-->
+<!--            android:background="@drawable/bg_input_box"-->
+<!--            android:elevation="4dp">-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/et_question"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:layout_toLeftOf="@+id/btn_send"-->
+<!--                android:layout_marginLeft="16dp"-->
+<!--                android:layout_marginRight="8dp"-->
+<!--                android:background="@null"-->
+<!--                android:hint="@string/hint_send_message"-->
+<!--                android:textColorHint="#B2B2B2"-->
+<!--                android:textColor="#1E1E1E"-->
+<!--                android:textSize="16sp"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:maxLines="3"-->
+<!--                android:inputType="textMultiLine|textCapSentences" />-->
+
+<!--            <ImageView-->
+<!--                android:id="@+id/btn_send"-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:layout_alignParentRight="true"-->
+<!--                android:layout_centerVertical="true"-->
+<!--                android:layout_marginRight="6dp"-->
+<!--                android:src="@drawable/ic_voice_button"-->
+<!--                android:scaleType="centerInside"-->
+<!--                android:padding="8dp"-->
+<!--                android:clickable="true"-->
+<!--                android:focusable="true"-->
+<!--                android:background="?attr/selectableItemBackgroundBorderless" />-->
+<!--        </RelativeLayout>-->
+<!--    </LinearLayout>-->
+
+<!--</RelativeLayout>-->

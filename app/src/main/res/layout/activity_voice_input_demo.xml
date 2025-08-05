@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="语音输入框组件演示"
+        android:textSize="18sp"
+        android:textColor="#1E1E1E"
+        android:layout_marginBottom="24dp"
+        android:layout_gravity="center_horizontal" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginBottom="16dp">
+
+        <!-- Chat Messages Container -->
+        <LinearLayout
+            android:id="@+id/ll_chat_messages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp">
+
+        <Button
+            android:id="@+id/btn_play_audio"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:text="播放最近录音"
+            android:textSize="14sp"
+            android:background="@drawable/bg_button_outline"
+            android:textColor="#4690FF"
+            android:paddingHorizontal="16dp"
+            android:layout_marginEnd="8dp"
+            android:enabled="false" />
+
+        <TextView
+            android:id="@+id/tv_audio_status"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="暂无录音文件"
+            android:textSize="12sp"
+            android:textColor="#999999"
+            android:gravity="center_vertical" />
+
+    </LinearLayout>
+
+    <com.fxzs.lingxiagent.view.common.VoiceInputBox
+        android:id="@+id/voice_input_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
+
+</LinearLayout>

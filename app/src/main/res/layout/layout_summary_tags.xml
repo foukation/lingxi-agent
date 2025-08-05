@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center"
+    android:layout_marginBottom="10dp">
+
+    <!-- 按章节标签 (选中状态) -->
+    <TextView
+        android:id="@+id/tag_by_section"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="按章节"
+        android:textSize="12sp"
+        android:textColor="#1C77FF"
+        android:background="@drawable/bg_tag_selected"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:layout_marginEnd="10dp"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- 按主题标签 (默认状态) -->
+    <TextView
+        android:id="@+id/tag_by_topic"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="按主题"
+        android:textSize="12sp"
+        android:textColor="#999999"
+        android:fontFamily="sans-serif"
+        android:background="@drawable/bg_tag_default"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:layout_marginEnd="10dp"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- 详细标签 (默认状态) -->
+    <TextView
+        android:id="@+id/tag_detailed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="详细"
+        android:textSize="12sp"
+        android:textColor="#999999"
+        android:fontFamily="sans-serif"
+        android:background="@drawable/bg_tag_default"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>
