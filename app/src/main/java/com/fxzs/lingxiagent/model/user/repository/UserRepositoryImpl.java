@@ -1,5 +1,6 @@
 package com.fxzs.lingxiagent.model.user.repository;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.fxzs.lingxiagent.model.auth.api.AuthApiService;
@@ -135,23 +136,28 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public void submitFeedback(FeedbackReqDto feedbackReq, Callback<Boolean> callback) {
         Map<String, Object> params = new HashMap<>();
-        if (feedbackReq.getType() != null) {
-            params.put("type", feedbackReq.getType());
-        } else {
-            params.put("type", "other"); // 默认类型
-        }
+        params.put("type", feedbackReq.getType());
         // 添加标题字段
         params.put("title", feedbackReq.getTitle() != null ? feedbackReq.getTitle() : "用户反馈");
         params.put("content", feedbackReq.getContent());
-        if (feedbackReq.getContact() != null && !feedbackReq.getContact().isEmpty()) {
-            params.put("contact", feedbackReq.getContact());
+        String contact = feedbackReq.getContact();
+        if (!TextUtils.isEmpty(contact)) {
+            params.put("contact", contact);
         }
-        if (feedbackReq.getImageUrls() != null && !feedbackReq.getImageUrls().isEmpty()) {
-            params.put("images", feedbackReq.getImageUrls());
+        String imageUrls = feedbackReq.getImageUrls();
+        if (!TextUtils.isEmpty(imageUrls)) {
+            params.put("images", imageUrls);
         }
-        
-        Log.d(TAG, "submitFeedback params: " + params.toString());
-        
+        String logUrl = feedbackReq.getLogUrl();;
+        if (!TextUtils.isEmpty(logUrl)) {
+            params.put("logUrl", logUrl);
+        }
+        params.put("appVersion", feedbackReq.getAppVersion());
+        params.put("os", feedbackReq.getOs());
+        params.put("osVersion", feedbackReq.getOsVersion());
+        params.put("brand", feedbackReq.getBrand());
+        params.put("model", feedbackReq.getModel());
+
         userApiService.submitFeedback(params).enqueue(new retrofit2.Callback<BaseResponse<Long>>() {
             @Override
             public void onResponse(Call<BaseResponse<Long>> call, Response<BaseResponse<Long>> response) {

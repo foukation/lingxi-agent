@@ -1,12 +1,14 @@
 package com.fxzs.lingxiagent.viewmodel.user;
 
 import android.app.Application;
+import android.text.TextUtils;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 
 import com.fxzs.lingxiagent.model.common.BaseViewModel;
 import com.fxzs.lingxiagent.model.common.ObservableField;
+import com.fxzs.lingxiagent.model.user.UserUtil;
 import com.fxzs.lingxiagent.model.user.dto.FeedbackReqDto;
 import com.fxzs.lingxiagent.model.user.repository.UserRepository;
 import com.fxzs.lingxiagent.model.user.repository.UserRepositoryImpl;
@@ -72,8 +74,8 @@ public class VMFeedback extends BaseViewModel {
         return imageList;
     }
     
-    // 业务方法
-    public void submitFeedback() {
+    // 业务方法-预提交
+    public void preSubmitFeedback(String versionName) {
         Log.d(TAG, "submitFeedback called, submitEnabled: " + submitEnabled.get());
         
         String contact = contactInfo.get();
@@ -106,25 +108,23 @@ public class VMFeedback extends BaseViewModel {
         
         // 如果有图片，先上传图片
         if (images != null && !images.isEmpty()) {
-            uploadImagesAndSubmit(images, content, contact);
+            uploadImagesAndSubmit(versionName, images, content, contact);
         } else {
             // 没有图片，直接提交
-            submitFeedbackWithUrls(content, contact, null);
+            submitFeedback(versionName, content, contact, null);
         }
     }
     
-    private void uploadImagesAndSubmit(List<String> localImages, String content, String contact) {
+    private void uploadImagesAndSubmit(String versionName, List<String> images, String content, String contact) {
         List<String> uploadedUrls = new ArrayList<>();
-        final int totalImages = localImages.size();
+        final int totalImages = images.size();
         
-        for (int i = 0; i < localImages.size(); i++) {
-            String imagePath = localImages.get(i);
-            
+        for (String imagePath : images) {
             // 跳过已经是URL的图片（避免重复上传）
             if (imagePath.startsWith("http://") || imagePath.startsWith("https://")) {
                 uploadedUrls.add(imagePath);
                 if (uploadedUrls.size() == totalImages) {
-                    submitFeedbackWithUrls(content, contact, uploadedUrls);
+                    submitFeedback(versionName, content, contact, uploadedUrls);
                 }
                 continue;
             }
@@ -142,7 +142,7 @@ public class VMFeedback extends BaseViewModel {
                     
                     // 所有图片都上传完成，提交反馈
                     if (uploadedUrls.size() == totalImages) {
-                        submitFeedbackWithUrls(content, contact, uploadedUrls);
+                        submitFeedback(versionName, content, contact, uploadedUrls);
                     }
                 }
                 
@@ -157,16 +157,17 @@ public class VMFeedback extends BaseViewModel {
         }
     }
     
-    private void submitFeedbackWithUrls(String content, String contact, List<String> imageUrls) {
+    private void submitFeedback(String versionName, String content, String contact, List<String> imageUrls) {
         FeedbackReqDto feedbackReq = new FeedbackReqDto();
+        feedbackReq.setType(0); // 默认类型
         feedbackReq.setTitle("用户反馈"); // 设置默认标题
         feedbackReq.setContent(content);
         feedbackReq.setContact(contact);
         if (imageUrls != null && !imageUrls.isEmpty()) {
             feedbackReq.setImageUrls(String.join(",", imageUrls));
         }
-        feedbackReq.setType("other"); // 默认类型
-        
+        feedbackReq.setAppVersion(versionName);
+
         Log.d(TAG, "Submitting feedback to server...");
         
         userRepository.submitFeedback(feedbackReq, new UserRepository.Callback<Boolean>() {

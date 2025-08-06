@@ -21,9 +21,8 @@
             android:layout_height="64dp"
             android:layout_gravity="start|center_vertical"
             android:layout_marginStart="12dp"
-            android:src="@drawable/ic_default_avatar"
+            android:src="@drawable/icon_user_head"
             android:scaleType="centerCrop"
-            android:background="@drawable/bg_avatar_square_rounded"
             android:outlineProvider="background" />
 
         <LinearLayout
@@ -71,17 +70,57 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/bg_block_rounded_16"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp">
+            <LinearLayout
+                android:id="@+id/layout_history"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_block_rounded_16_gray"
+                android:gravity="center_vertical">
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:src="@drawable/icon_history"
+                    android:layout_marginEnd="8dp" />
 
-        <!-- 设置+关于整体块 -->
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="历史记录"
+                    android:textColor="#1E1E1E"
+                    android:textSize="16sp"
+                    android:textStyle="normal"
+                    android:fontFamily="sans-serif"
+                    android:fontWeight="400" />
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:tint="#CCCCCC" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 历史记录 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:background="@drawable/bg_block_rounded_16_gray"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp">
             <LinearLayout
@@ -92,11 +131,10 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/ic_settings"
-                    android:tint="#666666"
                     android:layout_marginEnd="8dp" />
 
                 <TextView
@@ -170,16 +208,13 @@
                 android:layout_height="50dp"
                 android:orientation="horizontal"
                 android:background="@drawable/bg_block_rounded_16_gray"
-                android:gravity="center_vertical"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp">
+                android:gravity="center_vertical">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:src="@drawable/ic_help"
-                    android:tint="#666666"
                     android:layout_marginEnd="8dp" />
 
                 <TextView

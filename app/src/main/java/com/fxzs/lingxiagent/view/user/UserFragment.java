@@ -122,8 +122,8 @@ public class UserFragment extends BaseFragment<VMUserProfile> {
             if (getContext() != null) {
                 Glide.with(getContext())
                         .load(loadUrl)
-                        .placeholder(R.drawable.ic_default_avatar)
-                        .error(R.drawable.ic_default_avatar)
+                        .placeholder(R.drawable.icon_user_head)
+                        .error(R.drawable.icon_user_head)
                         .transform(new CenterCrop(), new RoundedCorners(UserUtil.dp2px(getContext(), 12.8f)))
                         .into(ivAvatar);
             }

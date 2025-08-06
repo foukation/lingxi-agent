@@ -178,8 +178,8 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
     private final int PRESS_UP = 2;
     private final int PRESS_MOVE = 3;
     private LinearLayout llSelectAgent;
-    private TextView tvHeaderSelectAgent;
-    private ImageView ivHead,ivCreateChat;
+    private TextView tvHeaderSelectAgent,tvHeaderTitle;
+    private ImageView ivHead,ivCreateChat,ivHeaderSelectAgent;
     private final String LINGXI_MODEL = "10086";
 
     private String requestId;
@@ -259,6 +259,8 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
         mShareItemList = findViewById(R.id.share_list);
         llSelectAgent = findViewById(R.id.ll_select_agent);
         tvHeaderSelectAgent = findViewById(R.id.tv_header_select_agent);
+        tvHeaderTitle = findViewById(R.id.tv_header_title);
+        ivHeaderSelectAgent = findViewById(R.id.iv_header_select_agent);
         ivHead = findViewById(R.id.iv_head);
         ivCreateChat = findViewById(R.id.iv_create_chat);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity(),
@@ -274,7 +276,8 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
             type = getArguments().getInt(Constant.INTENT_TYPE, SuperChatFragment.TYPE_HOME);
             if(type == TYPE_HOME){//首页
                 ivHead.setVisibility(View.VISIBLE);
-                llSelectAgent.setVisibility(View.VISIBLE);
+                tvHeaderSelectAgent.setVisibility(View.VISIBLE);
+                ivHeaderSelectAgent.setVisibility(View.VISIBLE);
                 ivCreateChat.setVisibility(View.VISIBLE);
                 selectOptionModel = (OptionModel) getArguments().getSerializable(Constant.INTENT_DATA1);
                 setFunctionRv();
@@ -309,7 +312,9 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 }
             }else if(type == TYPE_AGENT){//智能体
                 getCatDetailListBean bean = (getCatDetailListBean) getArguments().getSerializable(Constant.INTENT_DATA2);
-
+                if (bean != null && bean.getName() != null){
+                    tvHeaderTitle.setText(bean.getName());
+                }
                 if(bean != null){
                     if(bean.getIcon() != null){
                         vmChat.getChatMessages().getValue().add(new ChatMessage(bean.getDescription(),ChatAdapter.TYPE_USER_HEAD_AGENT,bean.getIcon()));
@@ -461,7 +466,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
             }
         });
 
-        llSelectAgent.setOnClickListener(new View.OnClickListener() {
+        tvHeaderSelectAgent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (superEditUtil != null ){
