@@ -1,9 +1,8 @@
 package com.fxzs.lingxiagent.view.user;
 
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 import android.widget.LinearLayout;
 
 import com.fxzs.lingxiagent.R;
+import com.fxzs.lingxiagent.lingxi.help.FunctionHelpActivity;
+import com.fxzs.lingxiagent.model.user.UserUtil;
 import com.fxzs.lingxiagent.model.user.dto.AppVersionResponse;
 import com.fxzs.lingxiagent.view.common.BaseActivity;
 import com.fxzs.lingxiagent.view.common.DataBindingUtils;
@@ -20,9 +21,9 @@ public class AboutAppActivity extends BaseActivity<VMAboutApp> {
     
     private ImageView ivBack;
     private TextView tvVersion;
-    private LinearLayout rlVersion;
     private LinearLayout rlLearnMore;
     private LinearLayout rlVersionUpdate;
+    private LinearLayout rlAgreement;
     private View viewUpdateDot; // 新版本提示红点
     
     @Override
@@ -52,29 +53,44 @@ public class AboutAppActivity extends BaseActivity<VMAboutApp> {
         // 初始化控件
         ivBack = findViewById(R.id.iv_back);
         tvVersion = findViewById(R.id.tv_version);
-        rlVersion = findViewById(R.id.rl_version);
         rlLearnMore = findViewById(R.id.rl_learn_more);
         rlVersionUpdate = findViewById(R.id.rl_version_update);
         viewUpdateDot = findViewById(R.id.view_update_dot);
+        rlAgreement = findViewById(R.id.rl_agreement);
         
         // 设置点击事件
         ivBack.setOnClickListener(v -> finish());
-        
-        rlVersion.setOnClickListener(v -> viewModel.onVersionClicked());
-        rlLearnMore.setOnClickListener(v -> viewModel.onLearnMoreClicked());
-        rlVersionUpdate.setOnClickListener(v -> viewModel.onVersionUpdateClicked());
+        rlLearnMore.setOnClickListener(v -> learnMore());
+        rlVersionUpdate.setOnClickListener(v -> upgradeAPP());
+        rlAgreement.setOnClickListener(view -> serviceAgreement());
         
         // 获取当前应用版本号
-        try {
-            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            String versionName = packageInfo.versionName;
-            viewModel.setVersionDisplay(versionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            viewModel.setVersionDisplay("1.0.0");
-        }
-        
+        viewModel.setVersionDisplay(UserUtil.getAppVersionName(this));
+
         // 获取最新版本信息
-        viewModel.fetchVersionInfo();
+        viewModel.fetchAppUpgradeInfo(this);
+    }
+
+    // 服务协议
+    private void serviceAgreement() {
+        Intent aboutIntent = new Intent(this, AgreementActivity.class);
+        startActivity(aboutIntent);
+    }
+
+    // 了解更多
+    private void learnMore() {
+        Intent aboutIntent = new Intent(this, FunctionHelpActivity.class);
+        startActivity(aboutIntent);
+    }
+
+    // 检查版本更新
+    private void upgradeAPP() {
+        AppVersionResponse versionInfo = viewModel.getVersionInfo().getValue();
+        if (versionInfo != null && !TextUtils.isEmpty(versionInfo.getDownloadUrl())) {
+            showUpdateDialog(versionInfo);
+        } else {
+            showToast("已是最新版本");
+        }
     }
     
     @Override
@@ -85,58 +101,19 @@ public class AboutAppActivity extends BaseActivity<VMAboutApp> {
     
     @Override
     protected void setupObservers() {
-        // 观察版本点击事件
-        viewModel.getVersionEvent().observe(this, event -> {
-            if (event != null && event) {
-                // TODO: 显示版本详情
-//                showToast("版本 1.2.5");
-            }
-        });
-        
-        // 观察了解更多事件
-        viewModel.getLearnMoreEvent().observe(this, event -> {
-            if (event != null && event) {
-                // 从版本信息中获取了解更多链接
-                AppVersionResponse versionInfo = viewModel.getVersionInfo().getValue();
-                if (versionInfo != null && versionInfo.getLearnMoreUrl() != null) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(versionInfo.getLearnMoreUrl()));
-                    startActivity(intent);
-                } else {
-                    showToast("暂无更多信息");
-                }
-            }
-        });
-        
-        // 观察版本更新事件
-        viewModel.getVersionUpdateEvent().observe(this, event -> {
-            if (event != null && event) {
-                // 如果已经有版本信息且需要更新，直接显示更新对话框
-                AppVersionResponse versionInfo = viewModel.getVersionInfo().getValue();
-                if (versionInfo != null && versionInfo.getNeedUpdate() != null && versionInfo.getNeedUpdate()) {
-                    showUpdateDialog(versionInfo);
-                } else {
-                    // 否则使用检查更新接口，传入当前版本号
-                    try {
-                        PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-                        String currentVersion = packageInfo.versionName;
-                        viewModel.checkVersionUpdate(currentVersion);
-                    } catch (PackageManager.NameNotFoundException e) {
-                        showToast("获取当前版本失败");
-                    }
-                }
-            }
-        });
-        
         // 观察版本信息
         viewModel.getVersionInfo().observe(this, versionInfo -> {
             if (versionInfo != null) {
                 // 如果需要更新，显示红点而不是弹窗
-                if (versionInfo.getNeedUpdate() != null && versionInfo.getNeedUpdate()) {
-                    // 显示红点
-                    viewUpdateDot.setVisibility(android.view.View.VISIBLE);
-                } else {
+                if (TextUtils.isEmpty(versionInfo.getDownloadUrl())) {
                     // 隐藏红点
                     viewUpdateDot.setVisibility(android.view.View.GONE);
+                } else {
+                    // 显示红点
+                    viewUpdateDot.setVisibility(android.view.View.VISIBLE);
+                    if (versionInfo.getUpdateMode() == 1) {
+                        showUpdateDialog(versionInfo);
+                    }
                 }
             }
         });
@@ -175,35 +152,34 @@ public class AboutAppActivity extends BaseActivity<VMAboutApp> {
             TextView btnUpdate = dialog.findViewById(R.id.btn_update);
             
             // 设置版本信息
-            String versionText = "发现新版本" + (versionInfo.getVersion() != null ? versionInfo.getVersion() : "1.0.0") + 
-                               "，新版本大小18.2MB，是否确定升级？";
+            String versionText = "发现新版本" + versionInfo.getVersionName() + "，新版本大小" + (versionInfo.getSize() / 1024 / 1024) + "MB，是否确定升级？";
             
             // 使用更新描述替代默认文本
-            if (versionInfo.getUdpateDesc() != null && !versionInfo.getUdpateDesc().isEmpty()) {
-                tvVersionInfo.setText(versionInfo.getUdpateDesc());
-            } else {
+            if (TextUtils.isEmpty(versionInfo.getUpdateContent())) {
                 tvVersionInfo.setText(versionText);
+            } else {
+                tvVersionInfo.setText(versionInfo.getUpdateContent());
             }
             
             // 设置按钮点击事件
             btnUpdate.setOnClickListener(v -> {
-                if (versionInfo.getApkUrl() != null && !versionInfo.getApkUrl().isEmpty()) {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(versionInfo.getApkUrl()));
-                    startActivity(intent);
-                    dialog.dismiss();
-                    
-                    // 如果是强制更新，关闭应用
-                    if (versionInfo.getForceUpdate() != null && versionInfo.getForceUpdate()) {
-                        finish();
-                    }
-                } else {
+                if (TextUtils.isEmpty(versionInfo.getDownloadUrl())) {
                     dialog.dismiss();
                     showToast("下载链接不可用");
+                } else {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(versionInfo.getDownloadUrl()));
+                    startActivity(intent);
+                    dialog.dismiss();
+
+                    // 如果是强制更新，关闭应用
+                    if (versionInfo.getUpdateMode() == 1) {
+                        finish();
+                    }
                 }
             });
             
             // 如果是强制更新，不显示取消按钮
-            if (versionInfo.getForceUpdate() != null && versionInfo.getForceUpdate()) {
+            if (versionInfo.getUpdateMode() == 1) {
                 btnCancel.setVisibility(View.GONE);
                 dialog.setCancelable(false);
             } else {

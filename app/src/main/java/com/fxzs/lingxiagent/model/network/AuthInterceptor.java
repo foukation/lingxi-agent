@@ -1,13 +1,11 @@
 package com.fxzs.lingxiagent.model.network;
 
+import com.fxzs.lingxiagent.model.auth.AuthHelper;
 import com.fxzs.lingxiagent.model.common.Constants;
 import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-
-import com.fxzs.lingxiagent.model.common.Constants;
-import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 
 import java.io.IOException;
 
@@ -15,9 +13,8 @@ import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
 /**
- * 认证拦截器 - 自动添加Token和tenant-id到请求头
+ * 认证拦截器 - 自动添加Token和签名到请求头
  */
 public class AuthInterceptor implements Interceptor {
     
@@ -49,14 +46,16 @@ public class AuthInterceptor implements Interceptor {
             if (!token.isEmpty()) {
                 requestBuilder.header(Constants.HEADER_AUTHORIZATION, Constants.HEADER_BEARER + token);
                 Log.d(TAG, "Added auth header for URL: " + url);
-                // 添加更详细的日志
-                Log.d(TAG, "Token used: " + token);
-                Log.d(TAG, "Token length: " + token.length());
             } else {
                 Log.d(TAG, "No token available for URL: " + url);
             }
         } else {
             Log.d(TAG, "No auth required for URL: " + url);
+        }
+        // APP版本升级，添加签名
+        boolean appUpgradeRequired = url.contains("/open-api/ota/app-check-upgrade");
+        if (appUpgradeRequired) {
+            requestBuilder.header("sign", AuthHelper.getInstance().getSignatureSHA256());
         }
         
         return chain.proceed(requestBuilder.build());

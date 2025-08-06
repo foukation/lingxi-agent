@@ -1,6 +1,7 @@
 package com.fxzs.lingxiagent.model.auth;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.cmic.sso.sdk.auth.AuthnHelper;
 import com.cmic.sso.sdk.auth.TokenListener;
@@ -11,9 +12,13 @@ import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+
 public class AuthHelper {
     private AuthnHelper mAuthnHelper;
     private AuthRepository authRepository;
+    private String packageName;
 
     private AuthHelper() {}
 
@@ -38,8 +43,14 @@ public class AuthHelper {
         //设置超时时间，默认8s，时间单位毫秒
         mAuthnHelper.setTimeOut(12000);
         authRepository = new AuthRepositoryImpl();
+
+        // APP启动后刷新token
         refreshToken();
+
+        packageName = context.getPackageName();
     }
+
+
 
     /**
      * 一键登录预取号。将返回用户手机号码脱敏中间四位的掩码字段，业务可以使用该字段构建授权页面。
@@ -129,6 +140,37 @@ public class AuthHelper {
         String refreshToken = SharedPreferencesUtil.getRefreshToken();
         if (!refreshToken.isEmpty()) {
             authRepository.refreshToken(refreshToken);
+        }
+    }
+
+    // 生成签名
+    public String getSignatureSHA256() {
+        String brand = Build.BRAND;
+        // 处理品牌名称的特殊情况
+        if (brand == null) {
+            brand = "unknown";
+        }
+        // 拼接原始字符串
+        String rawString = packageName + brand + System.currentTimeMillis();
+
+        try {
+            // 创建 SHA-256 哈希
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(rawString.getBytes(StandardCharsets.UTF_8));
+
+            // 将字节数组转换为十六进制字符串
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hash) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
+                hexString.append(hex);
+            }
+            return hexString.toString();
+
+        } catch (Exception e) {
+            return rawString;
         }
     }
 }

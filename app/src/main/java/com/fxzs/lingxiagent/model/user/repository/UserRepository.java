@@ -1,16 +1,19 @@
 package com.fxzs.lingxiagent.model.user.repository;
 
+import com.fxzs.lingxiagent.model.common.BaseResponse;
+import com.fxzs.lingxiagent.model.user.dto.AppVersionResponse;
 import com.fxzs.lingxiagent.model.user.dto.FeedbackDto;
 import com.fxzs.lingxiagent.model.user.dto.FeedbackReqDto;
-import com.fxzs.lingxiagent.model.user.dto.ResetPasswordReqDto;
 import com.fxzs.lingxiagent.model.user.dto.UpdateMobileReqDto;
 import com.fxzs.lingxiagent.model.user.dto.UpdatePasswordReqDto;
 import com.fxzs.lingxiagent.model.user.dto.UserDto;
 import com.fxzs.lingxiagent.model.user.dto.UserUpdateReqDto;
 
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
+import retrofit2.Call;
 
 public interface UserRepository {
     
@@ -30,16 +33,7 @@ public interface UserRepository {
     
     // 修改手机号
     void updateMobile(UpdateMobileReqDto updateMobileReq, Callback<Boolean> callback);
-    
-    // 重置密码
-//    void resetPassword(ResetPasswordReqDto resetPasswordReq, Callback<Boolean> callback);
-    
-    // 退出登录
-//    void logout(Callback<Boolean> callback);
-    
-    // 发送验证码
-//    void sendSmsCode(String mobile, int scene, Callback<Boolean> callback);
-    
+
     // 上传头像
     void uploadAvatar(String imagePath, Callback<String> callback);
     
@@ -55,6 +49,6 @@ public interface UserRepository {
     // 获取反馈详情
     void getFeedbackDetail(Long id, Callback<FeedbackDto> callback);
 
-    // 注销账号
-//    void deleteAccount(Callback<Boolean> callback);
+    // 检查APP版本升级
+    Call<BaseResponse<AppVersionResponse>> checkAppUpgrade(Map<String, String> params);
 }

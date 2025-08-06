@@ -2,6 +2,8 @@ package com.fxzs.lingxiagent;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -10,8 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.fxzs.lingxiagent.R;
 import com.fxzs.lingxiagent.model.auth.AuthHelper;
+import com.fxzs.lingxiagent.model.chat.dto.OptionModel;
+import com.fxzs.lingxiagent.network.ZNet.ApiResponse;
+import com.fxzs.lingxiagent.network.ZNet.HttpRequest;
 import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 import com.fxzs.lingxiagent.util.SignatureUtil;
 import com.fxzs.lingxiagent.util.ZUtils;
@@ -25,8 +29,11 @@ import com.fxzs.lingxiagent.view.meeting.MeetingFragment;
 import com.fxzs.lingxiagent.view.user.UserFragment;
 import com.fxzs.lingxiagent.viewmodel.main.VMMain;
 
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+
 public class MainActivity extends BaseActivity<VMMain> {
-    
+    private static final String TAG = "MainActivity";
     // 底部导航栏
     private LinearLayout navTabGui;
     private LinearLayout navTabPhone;
@@ -66,6 +73,11 @@ public class MainActivity extends BaseActivity<VMMain> {
             finish();
             return;
         }
+
+        // 后台线程初始化耗时操作
+        new Thread(() -> {
+            initLingxiConversationId();
+        }).start();
         // 打印签名信息（用于极光后台配置）
         SignatureUtil.logSignatureInfo(this);
     }
@@ -264,6 +276,38 @@ public class MainActivity extends BaseActivity<VMMain> {
 
         if (currentFragment != null && currentFragment instanceof ChatFragment) {
             ((ChatFragment)currentFragment).onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    /**
+     * 给灵犀对话创建对应的conversationId，用于历史消息的存储
+     */
+    private void initLingxiConversationId() {
+        String conversationId = SharedPreferencesUtil.getLingxiConversationId();
+        Log.d(TAG, "initLingxiConversationId " + conversationId);
+        if (TextUtils.isEmpty(conversationId)) {
+            HttpRequest request = new HttpRequest();
+            request.createMy("lingxi", "lingxi_chat", new Observer<ApiResponse<Integer>>() {
+                @Override
+                public void onSubscribe(Disposable d) {
+                }
+
+                @Override
+                public void onNext(ApiResponse<Integer> res) {
+                    if (res.getCode() == 0) {
+                        String conversationId = res.getData().toString();
+                        SharedPreferencesUtil.saveLingxiConversationId(conversationId);
+                    }
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                }
+
+                @Override
+                public void onComplete() {
+                }
+            });
         }
     }
 }
