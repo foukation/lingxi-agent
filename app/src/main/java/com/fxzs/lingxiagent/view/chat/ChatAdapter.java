@@ -114,7 +114,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     public List<ChatMessage> getSelectMessages() {
         List<ChatMessage> list = new ArrayList<>();
         list.add(chatMessages.get(mSharePos));
-        return list;
+        return chatMessages;
     }
 
     /**

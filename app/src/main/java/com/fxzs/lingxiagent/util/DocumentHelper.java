@@ -16,6 +16,12 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 
+import org.apache.poi.util.Units;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,6 +110,81 @@ public class DocumentHelper {
                 e.printStackTrace();
             }
         }).start();
+    }
+
+    /**
+     * 创建包含文本和图片的Word文档(.docx)
+     *
+     * @param text     要添加到Word中的文本
+     * @param bitmap    要添加到Word中的图片(Bitmap)，可为null
+     * @param fileName 生成的Word文件名，不包括扩展名
+     */
+    public void createWordWithTextAndImage(String text, Bitmap bitmap, String fileName) {
+        new Thread(() -> {
+            XWPFDocument document = null;
+            FileOutputStream fos = null;
+
+            try {
+                File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+                File appDir = new File(dir, context.getPackageName());
+
+                if (!appDir.exists() && !appDir.mkdirs()) {
+                    Toast.makeText(context, "无法创建目录", Toast.LENGTH_SHORT);
+                    return;
+                }
+
+                File file = new File(appDir, fileName + ".docx");
+                fos = new FileOutputStream(file);
+
+                document = new XWPFDocument();
+                if (text != null && !text.isEmpty()) {
+                    addTextToDocument(document, text);
+                }
+                if (bitmap != null) {
+                    addImageToDocument(document, bitmap);
+                }
+                document.write(fos);
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (document != null) document.close();
+                    if (fos != null) fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
+    private void addTextToDocument(XWPFDocument document, String text) {
+        String[] lines = text.split("\n");
+        for (String line : lines) {
+            XWPFParagraph paragraph = document.createParagraph();
+            XWPFRun run = paragraph.createRun();
+
+            try {
+                run.setText(line);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void addImageToDocument(XWPFDocument document, Bitmap bitmap) throws Exception {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bos);
+
+        XWPFParagraph paragraph = document.createParagraph();
+        XWPFRun run = paragraph.createRun();
+
+        run.addPicture(
+                new ByteArrayInputStream(bos.toByteArray()),
+                XWPFDocument.PICTURE_TYPE_PNG,
+                "image.png",
+                Units.toEMU(bitmap.getWidth()),
+                Units.toEMU(bitmap.getHeight())
+        );
     }
 
 }
