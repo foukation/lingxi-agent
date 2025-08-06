@@ -17,13 +17,16 @@
         card_view:cardMaxElevation="10dp"
 
 
-        android:layout_margin="2dp">
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        >
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/optionsRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
             android:maxHeight="200dp" />
 
     </androidx.cardview.widget.CardView>

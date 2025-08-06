@@ -203,7 +203,7 @@
             android:id="@+id/ll_local"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_white_r16"
+            android:background="@drawable/bg_white_stroke_r16"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">
@@ -254,7 +254,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/bg_white_r16"
+            android:background="@drawable/bg_white_stroke_r16"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="16dp">

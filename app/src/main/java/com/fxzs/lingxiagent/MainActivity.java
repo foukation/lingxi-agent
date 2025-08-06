@@ -16,6 +16,7 @@ import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 import com.fxzs.lingxiagent.util.SignatureUtil;
 import com.fxzs.lingxiagent.util.ZUtils;
 import com.fxzs.lingxiagent.view.agent.AgentFragment;
+import com.fxzs.lingxiagent.view.aiwork.AiWorkFragment;
 import com.fxzs.lingxiagent.view.auth.OneClickLoginActivity;
 import com.fxzs.lingxiagent.view.chat.ChatFragment;
 import com.fxzs.lingxiagent.view.common.BaseActivity;
@@ -38,6 +39,7 @@ public class MainActivity extends BaseActivity<VMMain> {
     private AgentFragment agentFragment;
     private DrawingNewFragment drawingFragment;
     private MeetingFragment meetingFragment;
+    private AiWorkFragment aiWorkFragment;
     private UserFragment userFragment;
     
     // 当前选中的导航项
@@ -50,7 +52,7 @@ public class MainActivity extends BaseActivity<VMMain> {
     private static final int TAB_LINGXI = 2;
     private static final int TAB_AI_JOB = 3;
     private static final int TAB_AGENT = 4;
-    
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,7 +126,8 @@ public class MainActivity extends BaseActivity<VMMain> {
         chatFragment = new ChatFragment();
         agentFragment = new AgentFragment();
         drawingFragment = new DrawingNewFragment();
-        meetingFragment = new MeetingFragment();
+        aiWorkFragment = new AiWorkFragment();
+//        meetingFragment = new MeetingFragment();
         userFragment = new UserFragment();
     }
     
@@ -182,7 +185,7 @@ public class MainActivity extends BaseActivity<VMMain> {
                 break;
             case TAB_AI_JOB:
                 selectedNavItem = navTabJob;
-                selectedFragment = meetingFragment;
+                selectedFragment = aiWorkFragment;
                 break;
             case TAB_AGENT:
                 selectedNavItem = navTabAgent;

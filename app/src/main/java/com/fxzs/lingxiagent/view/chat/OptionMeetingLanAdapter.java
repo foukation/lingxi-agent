@@ -51,7 +51,7 @@ public class OptionMeetingLanAdapter extends RecyclerView.Adapter<OptionMeetingL
 
         ZUtils.setViewBg(context,
                 holder.root_view,
-                position == selectedPosition? R.drawable.bg_lan_select : R.drawable.bg_white_r16);
+                position == selectedPosition? R.drawable.bg_lan_select : R.drawable.bg_white_stroke_r16);
 
         holder.itemView.setOnClickListener(v -> {
             selectedPosition = position;

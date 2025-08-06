@@ -294,6 +294,16 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"
             android:exported="false" />
+        <activity
+            android:name=".view.meeting.MeetingContainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
+        <activity
+            android:name=".view.drawing.DrawingContainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="false" />
             
         <!-- FileProvider for image capture -->
         <provider
