@@ -19,13 +19,11 @@ import retrofit2.http.Part;
 import retrofit2.http.Query;
 
 public interface UserApiService {
-    
     // 获取用户信息
     @GET("app-api/member/user/get")
     Call<BaseResponse<UserDto>> getUserProfile();
     
     // 更新用户信息
-//    @PUT("app-api/member/user/update")
     @POST("app-api/member/user/update-base-info")
     Call<BaseResponse<Boolean>> updateUserProfile(@Body Map<String, Object> params);
 
@@ -34,29 +32,13 @@ public interface UserApiService {
     @PUT("app-api/member/user/update-avatar")
     Call<BaseResponse<String>> updateAvatar(@Part MultipartBody.Part file);
 
-    // 修改密码
-//    @PUT("app-api/member/user/update-password")
-//    Call<BaseResponse<Boolean>> updatePassword(@Body Map<String, Object> params);
-    
     // 修改手机号
     @POST("app-api/member/user/update-mobile")
     Call<BaseResponse<Boolean>> updateMobile(@Body Map<String, Object> params);
-    
-    // 重置密码
-//    @PUT("app-api/member/user/reset-password")
-//    Call<BaseResponse<Boolean>> resetPassword(@Body Map<String, Object> params);
 
-    // 退出登录
-//    @POST("app-api/member/auth/logout")
-//    Call<BaseResponse<Boolean>> logout();
-
-//    // 发送验证码（用于修改手机号）
-//    @POST("app-api/member/auth/send-sms-code")
-//    Call<BaseResponse<Void>> sendSmsCode(@Body Map<String, Object> params);
-    
     // 上传文件
     @Multipart
-    @POST("app-api/infra/file/upload")
+    @POST("app-api/member/user/file/upload")
     Call<BaseResponse<String>> uploadFile(@Part MultipartBody.Part file);
     
     // 提交反馈

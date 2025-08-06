@@ -55,8 +55,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="center"
-                android:layout_weight="1"
-                android:visibility="invisible">
+                android:layout_weight="1">
                 <TextView
                     android:id="@+id/tv_header_title"
                     android:layout_width="wrap_content"
@@ -75,14 +74,18 @@
                     android:layout_marginLeft="8dp"
                     android:gravity="center"
                     android:text=""
+                    android:visibility="gone"
+                    android:minWidth="@dimen/dp_40"
                     android:textColor="@color/color_738FB4"
                     android:textSize="16sp"
                     android:textStyle="bold" />
                 <ImageView
+                    android:id="@+id/iv_header_select_agent"
                     android:layout_width="@dimen/dp_8"
                     android:layout_height="@dimen/dp_8"
                     android:scaleType="centerCrop"
                     android:gravity="center"
+                    android:visibility="gone"
                     android:layout_marginStart="@dimen/dp_6"
                     android:src="@drawable/lingxi_arrow_down"/>
 
