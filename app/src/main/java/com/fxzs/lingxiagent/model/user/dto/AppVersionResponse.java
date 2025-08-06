@@ -1,98 +1,98 @@
 package com.fxzs.lingxiagent.model.user.dto;
 
 public class AppVersionResponse {
-    private String version;
-    private Boolean forceUpdate;
-    private String apkUrl;
-    private String udpateDesc;
-    private String logo;
-    private String privacyPolicyUrl;
-    private String licenseAgreementUrl;
-    private String recordNumber;
-    private String learnMoreUrl;
-    private Boolean needUpdate;
-    
+    private int updateMode;// 0：实时升级(提醒用户升级)，1：强制升级(必须升级APP，否则无法使用)
+    private int versionCode;// 新版本号
+    private String versionName;// 新版本名称
+    private String updateContent;// 更新内容说明
+    private Boolean updatePrivacy;// 是否涉及更新隐私协议。true：涉及隐私协议更新，false：不涉及隐私协议更新
+    private String downloadUrl;// 安装包下载地址
+    private String learnMoreUrl;// 了解更多
+    private String sha256;// 安装包sha256值（大写）
+    private long size;// 升级包大小，字节
+    private long updateTime;// 升级utc时间戳(10位)，精确到秒。为空表示不指定时间
+
     // 默认构造函数
     public AppVersionResponse() {
     }
-    
-    public String getVersion() {
-        return version;
+
+    public int getUpdateMode() {
+        return updateMode;
     }
-    
-    public void setVersion(String version) {
-        this.version = version;
+
+    public String getUpdateContent() {
+        return updateContent;
     }
-    
-    public Boolean getForceUpdate() {
-        return forceUpdate;
+
+    public void setUpdateContent(String updateContent) {
+        this.updateContent = updateContent;
     }
-    
-    public void setForceUpdate(Boolean forceUpdate) {
-        this.forceUpdate = forceUpdate;
+
+    public void setUpdateMode(int updateMode) {
+        this.updateMode = updateMode;
     }
-    
-    public String getApkUrl() {
-        return apkUrl;
+
+    public int getVersionCode() {
+        return versionCode;
     }
-    
-    public void setApkUrl(String apkUrl) {
-        this.apkUrl = apkUrl;
+
+    public void setVersionCode(int versionCode) {
+        this.versionCode = versionCode;
     }
-    
-    public String getUdpateDesc() {
-        return udpateDesc;
+
+    public String getVersionName() {
+        return versionName;
     }
-    
-    public void setUdpateDesc(String udpateDesc) {
-        this.udpateDesc = udpateDesc;
+
+    public void setVersionName(String versionName) {
+        this.versionName = versionName;
     }
-    
-    public String getLogo() {
-        return logo;
+
+    public Boolean getUpdatePrivacy() {
+        return updatePrivacy;
     }
-    
-    public void setLogo(String logo) {
-        this.logo = logo;
+
+    public void setUpdatePrivacy(Boolean updatePrivacy) {
+        this.updatePrivacy = updatePrivacy;
     }
-    
-    public String getPrivacyPolicyUrl() {
-        return privacyPolicyUrl;
+
+    public String getDownloadUrl() {
+        return downloadUrl;
     }
-    
-    public void setPrivacyPolicyUrl(String privacyPolicyUrl) {
-        this.privacyPolicyUrl = privacyPolicyUrl;
+
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
     }
-    
-    public String getLicenseAgreementUrl() {
-        return licenseAgreementUrl;
-    }
-    
-    public void setLicenseAgreementUrl(String licenseAgreementUrl) {
-        this.licenseAgreementUrl = licenseAgreementUrl;
-    }
-    
-    public String getRecordNumber() {
-        return recordNumber;
-    }
-    
-    public void setRecordNumber(String recordNumber) {
-        this.recordNumber = recordNumber;
-    }
-    
+
     public String getLearnMoreUrl() {
         return learnMoreUrl;
     }
-    
+
     public void setLearnMoreUrl(String learnMoreUrl) {
         this.learnMoreUrl = learnMoreUrl;
     }
-    
-    public Boolean getNeedUpdate() {
-        return needUpdate;
+
+    public String getSha256() {
+        return sha256;
     }
-    
-    public void setNeedUpdate(Boolean needUpdate) {
-        this.needUpdate = needUpdate;
+
+    public void setSha256(String sha256) {
+        this.sha256 = sha256;
+    }
+
+    public long getSize() {
+        return size;
+    }
+
+    public void setSize(long size) {
+        this.size = size;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(long updateTime) {
+        this.updateTime = updateTime;
     }
 }

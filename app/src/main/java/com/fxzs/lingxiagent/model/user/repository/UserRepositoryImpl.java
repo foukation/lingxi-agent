@@ -5,7 +5,9 @@ import android.util.Log;
 
 import com.fxzs.lingxiagent.model.auth.api.AuthApiService;
 import com.fxzs.lingxiagent.model.common.BaseResponse;
+import com.fxzs.lingxiagent.model.common.Constants;
 import com.fxzs.lingxiagent.model.user.api.UserApiService;
+import com.fxzs.lingxiagent.model.user.dto.AppVersionResponse;
 import com.fxzs.lingxiagent.model.user.dto.FeedbackDto;
 import com.fxzs.lingxiagent.model.user.dto.FeedbackReqDto;
 import com.fxzs.lingxiagent.model.user.dto.UpdateMobileReqDto;
@@ -13,6 +15,7 @@ import com.fxzs.lingxiagent.model.user.dto.UpdatePasswordReqDto;
 import com.fxzs.lingxiagent.model.user.dto.UserDto;
 import com.fxzs.lingxiagent.model.user.dto.UserUpdateReqDto;
 import com.fxzs.lingxiagent.model.network.RetrofitClient;
+import com.fxzs.lingxiagent.util.AesUtil;
 import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 
 import java.io.File;
@@ -142,7 +145,7 @@ public class UserRepositoryImpl implements UserRepository {
         params.put("content", feedbackReq.getContent());
         String contact = feedbackReq.getContact();
         if (!TextUtils.isEmpty(contact)) {
-            params.put("contact", contact);
+            params.put("contact", AesUtil.encrypt(contact, Constants.KEY_ALIAS));
         }
         String imageUrls = feedbackReq.getImageUrls();
         if (!TextUtils.isEmpty(imageUrls)) {
@@ -301,88 +304,7 @@ public class UserRepositoryImpl implements UserRepository {
             }
         });
     }
-    
-//    @Override
-//    public void resetPassword(ResetPasswordReqDto resetPasswordReq, Callback<Boolean> callback) {
-//        Map<String, Object> params = new HashMap<>();
-//        params.put("mobile", resetPasswordReq.getMobile());
-//        params.put("code", resetPasswordReq.getCode());
-//        params.put("password", resetPasswordReq.getPassword());
-//
-//        userApiService.resetPassword(params).enqueue(new retrofit2.Callback<BaseResponse<Boolean>>() {
-//            @Override
-//            public void onResponse(Call<BaseResponse<Boolean>> call, Response<BaseResponse<Boolean>> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    BaseResponse<Boolean> baseResponse = response.body();
-//                    if (baseResponse.isSuccess()) {
-//                        callback.onSuccess(true);
-//                    } else {
-//                        callback.onError(baseResponse.getMsg());
-//                    }
-//                } else {
-//                    callback.onError("重置密码失败: " + response.code());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<BaseResponse<Boolean>> call, Throwable t) {
-//                Log.e(TAG, "resetPassword failed", t);
-//                callback.onError("网络错误: " + t.getMessage());
-//            }
-//        });
-//    }
-    
-//    @Override
-//    public void logout(Callback<Boolean> callback) {
-//        userApiService.logout().enqueue(new retrofit2.Callback<BaseResponse<Boolean>>() {
-//            @Override
-//            public void onResponse(Call<BaseResponse<Boolean>> call, Response<BaseResponse<Boolean>> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    BaseResponse<Boolean> baseResponse = response.body();
-//                    if (baseResponse.isSuccess()) {
-//                        callback.onSuccess(true);
-//                    } else {
-//                        callback.onError(baseResponse.getMsg());
-//                    }
-//                } else {
-//                    callback.onError("退出登录失败: " + response.code());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<BaseResponse<Boolean>> call, Throwable t) {
-//                Log.e(TAG, "logout failed", t);
-//                callback.onError("网络错误: " + t.getMessage());
-//            }
-//        });
-//    }
-    
-//    @Override
-//    public void sendSmsCode(String mobile, int scene, Callback<Boolean> callback) {
-//        SendSmsRequest request = new SendSmsRequest(mobile, scene);
-//        authApiService.sendSmsCode(request).enqueue(new retrofit2.Callback<BaseResponse<Boolean>>() {
-//            @Override
-//            public void onResponse(Call<BaseResponse<Boolean>> call, Response<BaseResponse<Boolean>> response) {
-//                if (response.isSuccessful() && response.body() != null) {
-//                    BaseResponse<Boolean> baseResponse = response.body();
-//                    if (baseResponse.isSuccess()) {
-//                        callback.onSuccess(true);
-//                    } else {
-//                        callback.onError(baseResponse.getMsg());
-//                    }
-//                } else {
-//                    callback.onError("发送验证码失败: " + response.code());
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<BaseResponse<Boolean>> call, Throwable t) {
-//                Log.e(TAG, "sendSmsCode failed", t);
-//                callback.onError("网络错误: " + t.getMessage());
-//            }
-//        });
-//    }
-    
+
     @Override
     public void uploadFile(MultipartBody.Part file, Callback<String> callback) {
         userApiService.uploadFile(file).enqueue(new retrofit2.Callback<BaseResponse<String>>() {
@@ -406,5 +328,10 @@ public class UserRepositoryImpl implements UserRepository {
                 callback.onError("网络错误: " + t.getMessage());
             }
         });
+    }
+
+    @Override
+    public Call<BaseResponse<AppVersionResponse>> checkAppUpgrade(Map<String, String> params) {
+        return userApiService.checkAppUpgrade(params);
     }
 }

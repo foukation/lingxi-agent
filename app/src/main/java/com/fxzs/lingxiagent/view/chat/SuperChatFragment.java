@@ -68,6 +68,7 @@ import com.fxzs.lingxiagent.model.drawing.dto.DrawingStyleDto;
 import com.fxzs.lingxiagent.network.ZNet.ApiResponse;
 import com.fxzs.lingxiagent.network.ZNet.HttpRequest;
 import com.fxzs.lingxiagent.network.ZNet.bean.ChatContent;
+import com.fxzs.lingxiagent.network.ZNet.bean.GetMenuBean;
 import com.fxzs.lingxiagent.network.ZNet.bean.getCatDetailListBean;
 import com.fxzs.lingxiagent.util.DocumentHelper;
 import com.fxzs.lingxiagent.util.GlobalDataHolder;
@@ -102,8 +103,12 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -584,7 +589,8 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
             @Override
             public void onError(String error) {
-
+                Log.d(TAG, "loadConversationHistory onError " + error);
+                loadingDialog.dismiss();
             }
         });
 
@@ -1910,4 +1916,47 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
         }
     }
 
+    /**
+     * 添加/批量添加历史数据
+     * @param message 添加的参数（对话的信息）
+     * @param type 消息的类型（user表示发送消息, assistant表示回复的消息）
+     */
+    private void addConversationHistory(String message, String type) {
+        String conversationId = SharedPreferencesUtil.getLingxiConversationId();
+        if(TextUtils.isEmpty(conversationId) || selectOptionModel == null) {
+            Log.d(TAG, "addConversationHistory error");
+            return;
+        }
+        // 创建 messages 列表
+        List<Map<String, Object>> messages = new ArrayList<>();
+        // 创建第一条消息
+        Map<String, Object> message1 = new HashMap<>();
+        message1.put("type", type);
+        message1.put("content", message);
+        message1.put("model", selectOptionModel.getModel());
+        message1.put("modelId", selectOptionModel.getId());
+        message1.put("createTime", getFormattedTime());
+        // 将消息添加到 messages 列表
+        messages.add(message1);
+        ChatRepository chatRepository = new ChatRepositoryImpl();
+        chatRepository.addConversationHistory(conversationId, messages, new ChatRepository.Callback<Integer>() {
+            @Override
+            public void onSuccess(Integer data) {
+                Log.d(TAG, "addConversationHistory onSuccess");
+            }
+
+            @Override
+            public void onError(String error) {
+                Log.d(TAG, "addConversationHistory onError " + error);
+            }
+        });
+    }
+
+    private String getFormattedTime() {
+        long currentTimeMillis = System.currentTimeMillis();
+        // 创建 SimpleDateFormat 对象
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        // 将时间戳转换为字符串
+        return sdf.format(new Date(currentTimeMillis));
+    }
 }

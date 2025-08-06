@@ -81,7 +81,7 @@
                     <LinearLayout
                         android:id="@+id/about_block"
                         android:layout_width="match_parent"
-                        android:layout_height="150dp"
+                        android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:background="@drawable/bg_block_rounded_16_gray"
                         android:layout_marginTop="12dp"
@@ -193,6 +193,39 @@
                                 android:src="@drawable/ic_arrow_right"
                                 android:tint="#CCCCCC" />
                         </LinearLayout>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginLeft="0dp"
+                            android:layout_marginRight="0dp"
+                            android:background="#EDEDED" />
+                        <LinearLayout
+                            android:id="@+id/rl_agreement"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:orientation="horizontal"
+                            android:background="@android:color/transparent"
+                            android:gravity="center_vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="服务协议"
+                                android:textColor="#1E1E1E"
+                                android:textSize="16sp"
+                                android:textStyle="normal"
+                                android:fontFamily="sans-serif"
+                                android:fontWeight="400" />
+
+                            <View
+                                android:layout_width="0dp"
+                                android:layout_height="6dp"
+                                android:layout_weight="1" />
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/ic_arrow_right"
+                                android:tint="#CCCCCC" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -209,20 +242,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="《软件许可及服务协议》《隐私保护指引》"
-            android:textColor="#1C77FF"
-            android:textSize="10sp"
-            android:fontFamily="sans-serif"
-            android:textStyle="normal"
-            android:fontWeight="400"
-            android:lineHeight="18sp"
-            android:letterSpacing="0"
-            android:gravity="center"
-            android:layout_marginBottom="4dp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ICP备案信息：粤B2-20090059-3375A"
+            android:text="ICP备案信息：京ICP备17049465号-20A"
             android:textColor="#B2B2B2"
             android:textSize="10sp"
             android:fontFamily="sans-serif"
@@ -248,7 +268,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="移动公司 版权所有"
+            android:text="中国移动通信集团终端有限公司 版权所有"
             android:textColor="#B2B2B2"
             android:textSize="10sp"
             android:fontFamily="sans-serif"

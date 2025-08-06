@@ -439,6 +439,10 @@
             android:authorities="${applicationId}.EasyFloatInitializer"
             android:exported="false"
             android:multiprocess="true" />
+        <activity
+            android:name=".lingxi.help.FunctionHelpActivity" />
+        <activity
+            android:name=".view.user.AgreementActivity" />
     </application>
 
 </manifest>

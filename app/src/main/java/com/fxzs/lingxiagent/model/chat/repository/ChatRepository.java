@@ -30,4 +30,10 @@ public interface ChatRepository {
      */
     void getListByConversationId(long id,Callback<List<ConversationDetailDto>> callback);
     void deleteConversation(long id,Callback<Boolean> callback);
+    /**
+     * 添加/批量添加历史数据
+     * @param conversationId 添加的参数（对话的conversationId, 可通过createMy接口创建）
+     * @param messages 添加的参数（对话的信息）
+     */
+    void addConversationHistory(String conversationId, List<Map<String, Object>> messages, Callback<Integer> callback);
 }

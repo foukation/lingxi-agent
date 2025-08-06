@@ -47,6 +47,14 @@ public interface ChatApiService {
      * */
     @GET("app-api/lt/ai/chat/message/list-by-conversation-id")
     Call<BaseResponse<List<ConversationDetailDto>>> getListByConversationId(@Query("conversationId") long id);
+
     @DELETE("app-api/lt/ai/chat/conversation/delete-my")
     Call<BaseResponse<Boolean>> deleteConversation(@Query("id") long id);
+
+    /**
+     * 添加/批量添加历史数据
+     * @param params 添加的参数（conversationId, messages等）
+     */
+    @POST("app-api/lt/ai/chat/message/batch-add-history")
+    Call<BaseResponse<Integer>> addConversationHistory(@Body Map<String, Object> params);
 }
