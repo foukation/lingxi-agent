@@ -1656,6 +1656,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 switchShareDatas(LONG_PIC_LAYOUT);
             }
         });
+        mLongPicUtil.createLongImage();
     }
 
     private void handleExportFile() {
@@ -1663,6 +1664,10 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
             @Override
             public void onWordSelected() {
+                DocumentHelper helper = new DocumentHelper(getActivity());
+                helper.createWordWithTextAndImage(mSelectMessages.get(0).getMessage(),
+                        BitmapFactory.decodeResource(getActivity().getResources(), R.mipmap.share_long_pic),
+                        "share_word_" + System.currentTimeMillis());
                 Toast.makeText(getActivity(), "导出Word文档成功", Toast.LENGTH_SHORT);
             }
 
