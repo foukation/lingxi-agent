@@ -155,4 +155,8 @@
     <color name="code_header_background_dark">#161B22</color>
     <color name="code_text_dark">#E6EDF3</color>
     <color name="code_border_dark">#30363D</color>
+
+    <color name="tag_text_selected">#1C77FF </color>
+    <color name="tag_indicator_selected">#4690FF </color>
+    <color name="tag_text_unselected">#1E1E1E</color>
 </resources>

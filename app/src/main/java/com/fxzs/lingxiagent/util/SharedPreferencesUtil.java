@@ -259,6 +259,21 @@ public class SharedPreferencesUtil {
     }
 
     /**
+     * 保存灵犀对话的conversationId
+     */
+    public static void saveLingxiConversationId(String conversationId) {
+        sPreferences.edit().putString("lingxi_conversationId", conversationId).apply();
+    }
+
+    /**
+     * 获取犀对话的conversationId
+     */
+    public static String getLingxiConversationId() {
+        return sPreferences.getString("lingxi_conversationId", "");
+    }
+
+
+    /**
      * 保存用户头像路径
      */
     public static void saveUserAvatar(String avatarPath) {

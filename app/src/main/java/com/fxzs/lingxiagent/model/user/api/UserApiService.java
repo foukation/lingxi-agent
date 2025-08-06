@@ -1,6 +1,7 @@
 package com.fxzs.lingxiagent.model.user.api;
 
 import com.fxzs.lingxiagent.model.common.BaseResponse;
+import com.fxzs.lingxiagent.model.user.dto.AppVersionResponse;
 import com.fxzs.lingxiagent.model.user.dto.FeedbackDto;
 import com.fxzs.lingxiagent.model.user.dto.UserDto;
 
@@ -10,7 +11,6 @@ import java.util.Map;
 import okhttp3.MultipartBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
-import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Multipart;
 import retrofit2.http.POST;
@@ -56,6 +56,9 @@ public interface UserApiService {
 
     // 注销账号
     @POST("app-api/member/user/clean-up")
-//    Call<BaseResponse<Boolean>> deleteAccount(@Query("id") Long id);
     Call<BaseResponse<Boolean>> deleteAccount(@Body Map<String, Object> params);
+
+    // 检查版本更新
+    @POST("open-api/ota/app-check-upgrade")
+    Call<BaseResponse<AppVersionResponse>> checkAppUpgrade(@Body Map<String, String> params);
 }
