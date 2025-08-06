@@ -43,8 +43,7 @@
         <ImageView
             android:id="@+id/longpic_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true" />
+            android:layout_height="wrap_content"/>
     </ScrollView>
 
 </LinearLayout>

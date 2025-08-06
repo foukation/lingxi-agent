@@ -36,7 +36,6 @@ public class SuperLongPicUtil {
         mChatRecyclerView = view;
 
         initView();
-        createLongImage();
     }
 
     public void setCallback(SuperShareCallback callback) {
@@ -55,7 +54,7 @@ public class SuperLongPicUtil {
         });
     }
 
-    private void createLongImage() {
+    public void createLongImage() {
         if (mShareCallback != null) {
             mSelectMessages = mShareCallback.getSelectMessages();
         }
