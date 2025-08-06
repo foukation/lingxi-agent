@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AI办公"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            android:textFontWeight="500"
+            android:textColor="@color/figma_text_primary"
+            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="14dp"/>
+
+        <ImageView
+            android:id="@+id/iv_avatar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+
+            android:paddingTop="16dp"
+            android:paddingLeft="16dp"
+            android:src="@drawable/bg_avatar_gradient"
+            android:contentDescription="@string/history" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal">
+      <LinearLayout
+          android:id="@+id/ll_meeting"
+          android:layout_width="0dp"
+          android:layout_weight="1"
+          android:layout_height="wrap_content"
+          android:gravity="center_horizontal"
+          android:background="@drawable/bg_white_r8"
+          android:paddingTop="6dp"
+          android:paddingBottom="6dp"
+          android:orientation="vertical">
+          <ImageView
+              android:layout_width="32dp"
+              android:layout_height="32dp"
+              android:background="@drawable/ai_work_meeting"
+              />
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="AI会议"
+              android:textSize="12sp"
+              android:fontFamily="sans-serif-medium"
+              android:textFontWeight="600"
+              android:textColor="@color/figma_text_primary"
+              android:layout_centerHorizontal="true"/>
+
+
+      </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/ll_ppt"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/bg_white_r8"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ai_work_ppt"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI PPT"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textFontWeight="600"
+                android:textColor="@color/figma_text_primary"
+                android:layout_centerHorizontal="true"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/ll_drawing"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/bg_white_r8"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ai_work_drawing"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="AI绘画"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textFontWeight="600"
+                android:textColor="@color/figma_text_primary"
+                android:layout_centerHorizontal="true"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"/>
+        <LinearLayout
+            android:id="@+id/ll_translate"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:background="@drawable/bg_white_r8"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:orientation="vertical">
+            <ImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ai_work_translate"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="同声传译"
+                android:textSize="12sp"
+                android:fontFamily="sans-serif-medium"
+                android:textFontWeight="600"
+                android:textColor="@color/figma_text_primary"
+                android:layout_centerHorizontal="true"/>
+
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="历史记录"
+            android:textSize="18sp"
+            android:fontFamily="sans-serif-medium"
+            android:textFontWeight="600"
+            android:textColor="@color/figma_text_primary"
+            android:layout_gravity="center"
+            android:layout_centerHorizontal="true" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/iv_filter"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/ai_work_filter"
+            />
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <LinearLayout
+            android:id="@+id/ll_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:background="@mipmap/icon_empty"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="暂无历史记录"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif-medium"
+                android:textFontWeight="400"
+                android:textColor="@color/figma_text_hint"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+</LinearLayout>

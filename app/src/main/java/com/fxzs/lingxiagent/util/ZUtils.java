@@ -32,13 +32,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fxzs.lingxiagent.IYAApplication;
 import com.fxzs.lingxiagent.R;
+import com.fxzs.lingxiagent.model.aiwork.AiWorkFilterBean;
 import com.fxzs.lingxiagent.model.chat.dto.AiWritingTypeBean;
 import com.fxzs.lingxiagent.model.chat.dto.OptionBean;
 import com.fxzs.lingxiagent.model.chat.dto.OptionModel;
+import com.fxzs.lingxiagent.view.aiwork.AiWorkAdapter;
+import com.fxzs.lingxiagent.view.aiwork.AiWorkFilterAdapter;
 import com.fxzs.lingxiagent.view.chat.OptionAdapter;
 import com.fxzs.lingxiagent.view.chat.OptionAiMeetingAdapter;
 import com.fxzs.lingxiagent.view.chat.OptionModelAdapter;
 import com.fxzs.lingxiagent.view.common.GlobalToast;
+import com.fxzs.lingxiagent.view.widget.CustomDividerItemDecoration;
 import com.fxzs.smartassist.util.ZUtil.ScreenUtils;
 import com.fxzs.smartassist.util.ZUtil.SizeUtils;
 
@@ -217,6 +221,72 @@ public class ZUtils {
         int popupHeight = popupView.getMeasuredHeight();
         int xOffset = 0;
         int yOffset = -anchorHeight - popupHeight - ZDpUtils.dpToPx((Activity) context,15); // 在anchorView上方10px处显示
+
+        // 显示弹窗
+        popupWindow.showAsDropDown(anchorView, xOffset, yOffset);
+    }
+
+    //ai办公筛选
+    public static void showAIWorkFilterPopup(Context context,View anchorView,
+                                             AiWorkFilterBean selectOptionModel,
+                                             AiWorkFilterAdapter.OnOptionSelectedListener listener) {
+        // 加载弹窗布局
+        View popupView = LayoutInflater.from(context).inflate(R.layout.popup_single_choice, null);
+        PopupWindow popupWindow = new PopupWindow(popupView,
+//                ZDpUtils.dpToPx((Activity) context,234)
+                ViewGroup.LayoutParams.MATCH_PARENT
+                , ViewGroup.LayoutParams.WRAP_CONTENT, true);
+
+        // 初始化RecyclerView
+        RecyclerView optionsRecyclerView = popupView.findViewById(R.id.optionsRecyclerView);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(context);
+        optionsRecyclerView.setLayoutManager(layoutManager);
+
+        List<AiWorkFilterBean> options = new ArrayList<>();
+        options.add(new AiWorkFilterBean("全部"));
+        options.add(new AiWorkFilterBean("AI会议", AiWorkAdapter.TYPE_MEETING));
+        options.add(new AiWorkFilterBean("AI PPT",AiWorkAdapter.TYPE_PPT));
+        options.add(new AiWorkFilterBean("同声传译",AiWorkAdapter.TYPE_TRANSLATE));
+        options.add(new AiWorkFilterBean("AI 绘画",AiWorkAdapter.TYPE_DRAWING));
+
+        // 设置选项数据和适配器
+//        List<OptionModel> options =new ArrayList<>();
+
+        AiWorkFilterAdapter optionAdapter = new AiWorkFilterAdapter(context,options, selected -> {
+            listener.onOptionSelected(selected);
+            popupWindow.dismiss();
+        });
+        optionsRecyclerView.setAdapter(optionAdapter);
+
+        if(selectOptionModel != null){
+            for (int i = 0; i < options.size(); i++) {
+                if(options.get(i).getName().equals(selectOptionModel.getName())){
+                    optionAdapter.setSelectedPosition(i);
+                }
+            }
+        }
+
+        //添加自定义分割线
+//        DividerItemDecoration divider = new DividerItemDecoration((Activity) context,DividerItemDecoration.VERTICAL);
+//        divider.setDrawable(context.getDrawable(R.drawable.custom_divider));
+        CustomDividerItemDecoration divider = new CustomDividerItemDecoration(context, LinearLayoutManager.VERTICAL);
+        optionsRecyclerView.addItemDecoration(divider);
+//        optionsRecyclerView.addItemDecoration(new DividerItemDecoration((Activity) context,DividerItemDecoration.VERTICAL));
+
+        // 设置弹窗背景
+//        popupWindow.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.edit_text));
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setFocusable(false);
+
+        // 计算弹窗显示位置（anchorView上方）
+        int[] location = new int[2];
+        anchorView.getLocationOnScreen(location);
+        int anchorHeight = anchorView.getHeight();
+        popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        int popupHeight = popupView.getMeasuredHeight();
+        int xOffset = 0;
+        int yOffset = ZDpUtils.dpToPx((Activity) context,15);
+//        int yOffset = -anchorHeight - popupHeight - ZDpUtils.dpToPx((Activity) context,15); // 在anchorView上方10px处显示
 
         // 显示弹窗
         popupWindow.showAsDropDown(anchorView, xOffset, yOffset);

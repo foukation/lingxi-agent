@@ -194,7 +194,7 @@ public class VMHistory extends BaseViewModel {
     /**
      * 加载绘画历史记录
      */
-    private void loadDrawingHistory(boolean isRefresh) {
+    public void loadDrawingHistory(boolean isRefresh) {
         try {
             Map<String, Object> params = createBaseParams();
 
@@ -224,7 +224,7 @@ public class VMHistory extends BaseViewModel {
     /**
      * 加载会议历史记录
      */
-    private void loadMeetingHistory(boolean isRefresh) {
+    public void loadMeetingHistory(boolean isRefresh) {
         Map<String, Object> params = createBaseParams();
         params.put("sort", 1);
         params.put("keyword", "");
