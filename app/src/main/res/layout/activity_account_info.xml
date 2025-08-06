@@ -88,8 +88,7 @@
                         android:layout_height="64dp"
                         android:layout_marginEnd="8dp"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_default_avatar"
-                        android:background="@drawable/bg_avatar_square_rounded" />
+                        android:src="@drawable/icon_user_head" />
                     <ImageView
                         android:id="@+id/iv_arrow_avatar"
                         android:layout_width="20dp"

@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fxzs.lingxiagent.R;
+import com.fxzs.lingxiagent.model.user.UserUtil;
 import com.fxzs.lingxiagent.view.common.BaseActivity;
 import com.fxzs.lingxiagent.view.common.DataBindingUtils;
 import com.fxzs.lingxiagent.view.common.LoadingProgressDialog;
@@ -219,9 +220,10 @@ public class FeedbackActivity extends BaseActivity<VMFeedback> {
                 showToast("请输入反馈内容");
                 return;
             }
-            
+
+            String versionName = UserUtil.getAppVersionName(this);
             // 校验通过，调用ViewModel提交
-            viewModel.submitFeedback();
+            viewModel.preSubmitFeedback(versionName);
         });
         
         // 添加文本变化监听 - 只用于更新字数显示
@@ -238,7 +240,7 @@ public class FeedbackActivity extends BaseActivity<VMFeedback> {
             public void afterTextChanged(Editable s) {}
         });
     }
-    
+
     @Override
     protected void setupDataBinding() {
         // 绑定EditText的双向绑定

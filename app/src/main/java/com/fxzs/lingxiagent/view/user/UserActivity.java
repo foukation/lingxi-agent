@@ -1,6 +1,7 @@
 package com.fxzs.lingxiagent.view.user;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,6 +37,12 @@ public class UserActivity extends BaseActivity<VMUserProfile> {
     @Override
     protected void initializeViews() {
 
+        findViewById(R.id.iv_back).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     @Override

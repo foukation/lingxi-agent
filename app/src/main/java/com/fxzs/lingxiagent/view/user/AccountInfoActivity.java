@@ -131,8 +131,8 @@ public class AccountInfoActivity extends BaseActivity<VMAccountInfo> {
                 int radiusPx = (int) (12.8f * getResources().getDisplayMetrics().density + 0.5f);
                 Glide.with(this)
                     .load(loadUrl)
-                    .placeholder(R.drawable.ic_default_avatar)
-                    .error(R.drawable.ic_default_avatar)
+                    .placeholder(R.drawable.icon_user_head)
+                    .error(R.drawable.icon_user_head)
                     .transform(new CenterCrop(), new RoundedCorners(radiusPx))
                     .into(ivAvatar);
             }
