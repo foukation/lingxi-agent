@@ -91,6 +91,7 @@ import com.fxzs.lingxiagent.view.common.VoiceRecordView;
 import com.fxzs.lingxiagent.view.drawing.DrawingActivity;
 import com.fxzs.lingxiagent.view.drawing.DrawingImageViewerActivity;
 import com.fxzs.lingxiagent.view.meeting.MeetingSummaryFragment;
+import com.fxzs.lingxiagent.view.user.UserActivity;
 import com.fxzs.lingxiagent.viewmodel.chat.VMChat;
 import com.fxzs.lingxiagent.viewmodel.meeting.VMMeetingSummary;
 import com.fxzs.lingxiagent.R;
@@ -466,6 +467,15 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 if (superEditUtil != null ){
                     superEditUtil.showChooseModelPopup(tvHeaderSelectAgent);
                 }
+            }
+        });
+
+        ivHead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 跳转到设置界面
+                Intent intent = new Intent(getActivity(), UserActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -917,19 +927,19 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                         }
                     }
                     selectOptionModel = optionModel;
-//                    if (selectOptionModel.getModel().equals(LINGXI_MODEL)){//灵犀
-//                        String requestUid = UUID.randomUUID().toString();
-//                        requestId = requestUid;
-//                        if (!Objects.equals(content, "")) {
-//                            chatManager.sendQuestion(content);
-//                            chatManager.simulateReply("正在为您加载..", false, false);
-//                            handleChatData(content);
-//                        }
-//                    }else {
+                    if (selectOptionModel.getModel().equals(LINGXI_MODEL)){//灵犀
+                        String requestUid = UUID.randomUUID().toString();
+                        requestId = requestUid;
+                        if (!Objects.equals(content, "")) {
+                            chatManager.sendQuestion(content);
+                            chatManager.simulateReply("正在为您加载..", false, false);
+                            handleChatData(content);
+                        }
+                    }else {
                         vmChat.setSelectOptionModel(optionModel);
                         vmChat.sendMessage(content);
                         TTSUtils.getInstance().cancelAndPlay();
-//                    }
+                    }
                     ZInputMethod.closeInputMethod(getActivity(),root_view);   //收起键盘
                 }
 
