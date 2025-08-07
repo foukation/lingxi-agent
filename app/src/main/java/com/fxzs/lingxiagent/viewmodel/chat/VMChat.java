@@ -14,6 +14,7 @@ import com.fxzs.lingxiagent.model.chat.dto.ChatMessage;
 import com.fxzs.lingxiagent.model.chat.dto.DrawingToChatBean;
 import com.fxzs.lingxiagent.model.common.BaseViewModel;
 import com.fxzs.lingxiagent.model.chat.dto.OptionModel;
+import com.fxzs.lingxiagent.model.common.Constants;
 import com.fxzs.lingxiagent.model.common.ObservableField;
 import com.fxzs.lingxiagent.model.drawing.api.GenerateImageRequest;
 import com.fxzs.lingxiagent.model.drawing.dto.AspectRatioDto;
@@ -28,6 +29,7 @@ import com.fxzs.lingxiagent.network.ZNet.ApiResponse;
 import com.fxzs.lingxiagent.network.ZNet.HttpRequest;
 import com.fxzs.lingxiagent.network.ZNet.bean.SSEBean;
 import com.fxzs.lingxiagent.network.ZNet.bean.getCatDetailListBean;
+import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 import com.fxzs.lingxiagent.util.ZUtil.Constant;
 import com.fxzs.lingxiagent.util.ZUtil.TTSUtils;
 import com.fxzs.lingxiagent.util.ZUtils;
@@ -380,9 +382,9 @@ public class VMChat extends BaseViewModel {
         List<ChatMessage> list;
         ZUtils.print("conversationId = "+conversationId.get());
         if(conversationId.get() == 0){
-            list = chatMessages.getValue();
-            list.clear();
-            chatMessages.postValue(list);
+//            list = chatMessages.getValue();
+//            list.clear();
+//            chatMessages.postValue(list);
         }else{
             list = chatMessages.getValue();
             chatMessages.postValue(list);
@@ -394,7 +396,7 @@ public class VMChat extends BaseViewModel {
                 @Override
                 public void back() {
                     sendStream(conversationId.get(), input);
-                    conversationId.setValue(0l);
+//                    conversationId.setValue(0l);
                 }
             });
 
@@ -425,7 +427,7 @@ public class VMChat extends BaseViewModel {
                 public void back() {
                     sendStream(conversationId.get(), prompt);
 
-                    conversationId.setValue(0l);
+//                    conversationId.setValue(0l);
                 }
             });
 
@@ -535,6 +537,7 @@ public class VMChat extends BaseViewModel {
                 if (res.getCode() == 0) {
                     conversationId.setValue(Long.parseLong(res.getData().toString()));
                     conversationId.postValue(Long.parseLong(res.getData().toString()));
+                    SharedPreferencesUtil.saveString(Constants.PREF_CONVERSATION_ID,conversationId.getValue()+"");
                     if (callback != null) callback.back();
                 }
             }

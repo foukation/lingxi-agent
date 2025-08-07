@@ -45,4 +45,6 @@ public class Constant {
     public static String transcription = "";
     public static boolean isLoadMeetingExchange = false;
 
+    public static boolean isUseLingXiTranslation = false;//是否使用灵犀翻译
+
 }

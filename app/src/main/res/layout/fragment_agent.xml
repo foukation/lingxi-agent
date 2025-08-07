@@ -38,6 +38,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
                 android:padding="12dp"
+                android:visibility="gone"
                 android:src="@drawable/ic_history"
                 android:contentDescription="@string/history" />
         </LinearLayout>

@@ -56,10 +56,12 @@ public class VMAiWork extends BaseViewModel {
             case AiWorkAdapter.TYPE_DRAWING:
                 android.util.Log.d("VMHistory", "加载绘画历史");
                 vmHistory.loadDrawingHistory(true);
+                vmHistory.getCurrentTabIndex().setValue(VMHistory.TAB_DRAWING);
                 break;
             case AiWorkAdapter.TYPE_MEETING:
                 android.util.Log.d("VMHistory", "加载会议历史");
                 vmHistory.loadMeetingHistory(true);
+                vmHistory.getCurrentTabIndex().setValue(VMHistory.TAB_MEETING);
                 break;
             case AiWorkAdapter.TYPE_PPT:
             case AiWorkAdapter.TYPE_TRANSLATE:

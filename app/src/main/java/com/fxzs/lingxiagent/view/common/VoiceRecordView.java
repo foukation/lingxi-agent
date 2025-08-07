@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -234,7 +235,7 @@ public class VoiceRecordView extends FrameLayout {
 
 
     private void toast(String content) {
-        GlobalToast.show((Activity)getContext(), content, GlobalToast.Type.ERROR);
+        GlobalToast.show((AppCompatActivity)getContext(), content, GlobalToast.Type.ERROR);
     }
 
     @Override

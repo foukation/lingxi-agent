@@ -111,6 +111,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 import io.reactivex.Observer;
@@ -211,6 +213,12 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
         args.putSerializable(Constant.INTENT_DATA2, (Serializable) list);
         setArguments(args);
     }
+    //首页
+    public SuperChatFragment(int type) {
+        Bundle args = new Bundle();
+        args.putInt(Constant.INTENT_TYPE, type);
+        setArguments(args);
+    }
     //智能体
     public SuperChatFragment(int type, long id, getCatDetailListBean bean ) {
         Bundle args = new Bundle();
@@ -289,8 +297,9 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 setBottomEdit();
                 String input = getArguments().getString(Constant.INTENT_DATA);
                 long id = getArguments().getLong(Constant.INTENT_ID,0);
-                vmChat.setSelectOptionModel(selectOptionModel);
+//                vmChat.setSelectOptionModel(selectOptionModel);
                 if(id != 0){
+                    ivCreateChat.setVisibility(View.GONE);
                     vmChat.getConversationId().setValue(id);
                     loadConversationHistory(id);
                     if(superEditUtil!= null){
@@ -298,6 +307,10 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                         superEditUtil.setBanSelectModel(true);
                     }
                 }else{
+
+                    vmChat.getChatMessages().getValue().add(new ChatMessage(ChatAdapter.TYPE_USER_HEAD_HOME));
+//                    vmChat.setSelectOptionModel(selectOptionModel);
+
                     fileList = (List<ChatFileBean>) getArguments().getSerializable(Constant.INTENT_DATA2);
                     if(fileList != null){//带图片的/带文件
                         vmChat.setSelectOptionModel(selectOptionModel);
@@ -313,6 +326,32 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                             tv_mode.setText(selectOptionModel.getName());
                             vmChat.sendMessage(input);
                         }
+                    }
+                    ivCreateChat.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            vmChat.getChatMessages().getValue().clear();
+                            vmChat.getChatMessages().getValue().add(new ChatMessage(ChatAdapter.TYPE_USER_HEAD_HOME));
+                            vmChat.getChatMessages().postValue(vmChat.getChatMessages().getValue());
+                            vmChat.getConversationId().set(0l);
+
+//                          long  finalId = Long.parseLong(SharedPreferencesUtil.getString(Constants.PREF_CONVERSATION_ID,"0"));
+//                        loadConversationHistory(finalId);
+
+                        }
+                    });
+
+                    if(id == 0){//如果不是从历史过来，就用最近一次存储的
+                        ZUtils.print("如果不是从历史过来，就用最近一次存储的 id = " + id);
+                        vmChat.getConversationId().setValue(id);
+                        Timer timer = new Timer();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                long id = Long.parseLong(SharedPreferencesUtil.getString(Constants.PREF_CONVERSATION_ID,"0"));
+                                loadConversationHistory(id);
+                            }
+                        },500);
                     }
                 }
             }else if(type == TYPE_AGENT){//智能体
@@ -528,19 +567,25 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
     }
 
     private void loadConversationHistory(long id) {
-        // 显示加载框
-        LoadingProgressDialog loadingDialog =
-                new LoadingProgressDialog(getActivity())
-                        .setMessage("加载中...")
-                        .setCancelable(false);
-        loadingDialog.show();
+
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                // 显示加载框
+//                LoadingProgressDialog loadingDialog =
+//                        new LoadingProgressDialog(getActivity())
+//                                .setMessage("加载中...")
+//                                .setCancelable(false);
+//                loadingDialog.show();
+//            }
+//        });
 
         ChatRepository repository = new ChatRepositoryImpl();
         // 调用API获取会话详情
         repository.getListByConversationId(id, new ChatRepository.Callback<List<ConversationDetailDto>>() {
             @Override
             public void onSuccess(List<ConversationDetailDto> list) {
-                loadingDialog.dismiss();
+//                loadingDialog.dismiss();
                 if(list != null && list.size() > 0){
                     for (int i = 0; i < list.size(); i++) {
                         ConversationDetailDto dto =  list.get(i);
@@ -590,7 +635,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
             @Override
             public void onError(String error) {
                 Log.d(TAG, "loadConversationHistory onError " + error);
-                loadingDialog.dismiss();
+//                loadingDialog.dismiss();
             }
         });
 
@@ -810,11 +855,15 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 //                return false;
 //            }
 
+            boolean canScroll = rv_chat.canScrollVertically(1) || rv_chat.canScrollVertically(-1);
             float rawX = motionEvent.getRawX();
             float rawY = motionEvent.getRawY();
             if(motionEvent.getAction() == MotionEvent.ACTION_DOWN){
                 if(!vmChat.getStreamEnd().getValue()){
-                    iv_scroll_down.setVisibility(View.VISIBLE);
+                    if (canScroll) {
+                        Log.d("RecyclerView", "内容可滚动，说明内容高度大于 RecyclerView 高度");
+                        iv_scroll_down.setVisibility(View.VISIBLE);
+                    }
                     isUserTouch = true;
                 }
 
@@ -825,9 +874,8 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 //                    iv_scroll_down.setVisibility(View.GONE);
                     isUserTouch = false;
                 }else {
-                    boolean canScroll = rv_chat.canScrollVertically(1) || rv_chat.canScrollVertically(-1);
                     if (canScroll) {
-//                        Log.d("RecyclerView", "内容可滚动，说明内容高度大于 RecyclerView 高度");
+                        Log.d("RecyclerView", "内容可滚动，说明内容高度大于 RecyclerView 高度");
                         iv_scroll_down.setVisibility(View.VISIBLE);
                     }
                     isUserTouch = true;
@@ -867,11 +915,11 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 // AI写作
                 ll_bottom.setVisibility(View.GONE);
                 ll_edit_writing.setVisibility(View.VISIBLE);
-                vmChat.getConversationId().postValue(0l);
+//                vmChat.getConversationId().postValue(0l);
                  setBottomAIWritingEdit();
             } else if (bean.getId() == Constant.ChatFunction.TYPE_AI_TRANSLATE) {
                 // AI翻译
-                vmChat.getConversationId().postValue(0l);
+//                vmChat.getConversationId().postValue(0l);
                 ll_bottom.setVisibility(View.GONE);
                 ll_edit_translate.setVisibility(View.VISIBLE);
                  setBottomTranslateEdit();
@@ -934,7 +982,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                         ZUtils.print("选中模型optionModel: " + optionModel.getName() + ", ID: " + optionModel.getId());
                         if (selectOptionModel.getId() != optionModel.getId()) {
                             //如果切换模型，就重置conversationId，重新建对话
-                            vmChat.getConversationId().setValue(0l);
+//                            vmChat.getConversationId().setValue(0l);
                         }
                     }
                     selectOptionModel = optionModel;
@@ -951,7 +999,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                         vmChat.sendMessage(content);
                         TTSUtils.getInstance().cancelAndPlay();
                     }
-                    ZInputMethod.closeInputMethod(getActivity(),root_view);   //收起键盘
+//                    ZInputMethod.closeInputMethod(getActivity(),root_view);   //收起键盘
                 }
 
             }
@@ -1004,6 +1052,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 SuperEditCallback.super.modeChange(model);
                 if (model != null && model.getName() !=null){
                     selectOptionModel = model;
+                    vmChat.setSelectOptionModel(selectOptionModel);
                     tvHeaderSelectAgent.setText(model.getName());
                 }
             }
@@ -1111,7 +1160,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
                         ll_bottom.setVisibility(View.VISIBLE);
                         ll_edit_writing.setVisibility(View.GONE);
-                        vmChat.getConversationId().postValue(0l);
+//                        vmChat.getConversationId().postValue(0l);
 
                         if (vmChat.getThinkStatus().getValue() != Constant.ThinkState.END) {
                             ll_stop.setVisibility(View.VISIBLE);
@@ -1165,16 +1214,31 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
                     @Override
                     public void send(String content, String prompt) {
-                        vmChat.sendTranslateMessage(content,prompt);
+                    }
+                    @Override
+                    public void send(String content, String prompt, String fromLang, String toLang) {
+                        AITranslateEditCallback.super.send(content, prompt, fromLang, toLang);
+                        if (Constant.isUseLingXiTranslation){
+                            Timber.tag(TAG).d("翻译内容="+content + "  原本语言="+fromLang + " 需要翻译语音="+toLang);
+                            if (chatDataFormat != null){
+                                chatDataFormat.init(requireActivity(), content);
+                                chatDataFormat.setTranslationLanguage(fromLang, toLang);
+                                chatDataFormat.startFlow(TabEntity.matchLocalModule(TabEntity.agentType));
+                            }
+                        }else {
+                            vmChat.sendTranslateMessage(content,prompt);
+                        }
+
                         ll_bottom.setVisibility(View.VISIBLE);
                         ll_edit_translate.setVisibility(View.GONE);
                     }
+
                     @Override
                     public void close() {
 
                         ll_bottom.setVisibility(View.VISIBLE);
                         ll_edit_translate.setVisibility(View.GONE);
-                        vmChat.getConversationId().postValue(0l);
+//                        vmChat.getConversationId().postValue(0l);
 
                         if (vmChat.getThinkStatus().getValue() != Constant.ThinkState.END) {
                             ll_stop.setVisibility(View.VISIBLE);
@@ -1466,7 +1530,9 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        vmChat.closeSSE();
+        if(vmChat != null){
+            vmChat.closeSSE();
+        }
 
         AsrOneUtils.getInstance().removeCallBack();
         superEditUtil = null;
