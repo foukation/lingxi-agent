@@ -1,4 +1,4 @@
-package com.example.service_api.data
+package com.fxzs.lingxiagent.lingxi.service_api.data
 
 data class AppData(
     val id: Int,

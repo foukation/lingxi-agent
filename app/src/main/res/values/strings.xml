@@ -32,4 +32,5 @@
     <string name="close_model" translatable="false">知道了</string>
     <string name="text_waiting_reply">正在为您加载...</string>
     <string name="text_function_help">功能说明</string>
+    <string name="exec_sys_control_default">暂不支持该指令</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.example.device_control
 
-import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.example.device_control.data.AppData
@@ -16,7 +16,7 @@ abstract class BaseManager {
         this.appInfoList = appInfoList
     }
     abstract fun start() :AgentResult
-    fun isChinaMobileInstalled(appPackage:String,context: Activity): Boolean {
+    fun isChinaMobileInstalled(appPackage:String,context: Context): Boolean {
         val intent = Intent(Intent.ACTION_VIEW, Uri.parse(appPackage))
         return intent.resolveActivity(context.packageManager) != null
     }

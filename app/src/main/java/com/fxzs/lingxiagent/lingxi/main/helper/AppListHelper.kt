@@ -1,8 +1,8 @@
 package com.fxzs.lingxiagent.helper
 
 import com.example.service_api.IntentionApi
-import com.example.service_api.data.AppData
-import com.example.service_api.data.ClientApiAppListRes
+import com.fxzs.lingxiagent.lingxi.service_api.data.AppData
+import com.fxzs.lingxiagent.lingxi.service_api.data.ClientApiAppListRes
 
 
 object  AppListHelper {
@@ -16,5 +16,9 @@ object  AppListHelper {
             onError = fun (_: String) {
             }
         )
+    }
+
+    fun setAppList(appInfoList: ArrayList<AppData>){
+        this.appInfoList = appInfoList
     }
 }
