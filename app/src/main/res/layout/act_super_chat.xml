@@ -245,7 +245,6 @@
             <include
                 android:id="@+id/ll_edit_main"
                 layout="@layout/layout_super_edit"
-                android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -256,7 +255,6 @@
                 layout="@layout/layout_super_agent_edit"
 
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
@@ -272,7 +270,6 @@
             layout="@layout/layout_edit_writing"
 
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
@@ -285,7 +282,6 @@
             layout="@layout/layout_edit_tranlate"
 
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"

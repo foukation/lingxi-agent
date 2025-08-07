@@ -1,4 +1,4 @@
-package com.fxzs.lingxiagent.conversation;
+package com.fxzs.lingxiagent.lingxi.lingxi_conversation;
 
 import android.annotation.SuppressLint
 import com.cmdc.ai.assist.AIAssistantManager
@@ -7,6 +7,7 @@ import com.cmdc.ai.assist.api.AISessionManager
 import com.cmdc.ai.assist.api.AISessionManager.buildMessagesInsideRcChat
 import com.cmdc.ai.assist.constraint.DialogueResult
 import com.cmdc.ai.assist.constraint.InsideRcChatRequest
+import com.fxzs.lingxiagent.conversation.AIConversationManager
 import java.util.UUID
 
 class ChatLingXiAdapter(
