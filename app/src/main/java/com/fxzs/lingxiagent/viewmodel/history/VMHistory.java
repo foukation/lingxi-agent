@@ -1,5 +1,7 @@
 package com.fxzs.lingxiagent.viewmodel.history;
 
+import android.text.TextUtils;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -18,6 +20,7 @@ import com.fxzs.lingxiagent.model.meeting.repository.MeetingRepositoryImpl;
 import com.fxzs.lingxiagent.network.ZNet.ApiResponse;
 import com.fxzs.lingxiagent.network.ZNet.HttpRequest;
 import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
+import com.fxzs.lingxiagent.util.ZUtils;
 import com.fxzs.lingxiagent.view.common.BaseViewModel;
 import com.fxzs.lingxiagent.view.user.HistoryItem;
 
@@ -69,7 +72,7 @@ public class VMHistory extends BaseViewModel {
     }
     
     // Getters
-    public LiveData<Integer> getCurrentTabIndex() {
+    public MutableLiveData<Integer> getCurrentTabIndex() {
         return currentTabIndex;
     }
     
@@ -397,11 +400,11 @@ public class VMHistory extends BaseViewModel {
                 if (image == null) continue;
 
                 // 添加日期分组头
-                String date = getDateFromDrawingTime(image.getCreateTime());
-                if (!date.equals(lastDate)) {
-                    items.add(new HistoryItem(HistoryItem.TYPE_DATE_HEADER, date, null, 0));
-                    lastDate = date;
-                }
+//                String date = getDateFromDrawingTime(image.getCreateTime());
+//                if (!date.equals(lastDate)) {
+//                    items.add(new HistoryItem(HistoryItem.TYPE_DATE_HEADER, date, null, 0));
+//                    lastDate = date;
+//                }
 
                 // 构建显示标题
                 String title = image.getPrompt();
@@ -487,10 +490,10 @@ public class VMHistory extends BaseViewModel {
         for (MeetingHistoryDto meeting : meetings) {
             // 使用会议名称中的时间戳或当前时间作为日期
             String date = getDateFromMeetingName(meeting.getName());
-            if (!date.equals(lastDate)) {
-                items.add(new HistoryItem(HistoryItem.TYPE_DATE_HEADER, date, null, 0));
-                lastDate = date;
-            }
+//            if (!date.equals(lastDate)) {
+//                items.add(new HistoryItem(HistoryItem.TYPE_DATE_HEADER, date, null, 0));
+//                lastDate = date;
+//            }
 
             // 构建显示标题
             String title = meeting.getName();
@@ -557,6 +560,10 @@ public class VMHistory extends BaseViewModel {
         } else if (currentTab == VMHistory.TAB_MEETING && item.getMeetingId() != null) {
             // 会议tab，跳转到会议详情页面
             id = item.getMeetingId()+"";
+        }
+        if(TextUtils.isEmpty(id)){
+            ZUtils.showToast("id为空");
+            return;
         }
         if(currentTab == VMHistory.TAB_DRAWING){//绘画
             updateSessionName(id,inputText);

@@ -53,6 +53,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     public static final  int TYPE_USER_FILE = 4;//用户-文件
     public static final  int TYPE_USER_FILE_IMAGE = 5;//用户-图片
     public static final  int TYPE_USER_HEAD_MEETING = 6;//用户-智能问答头部（固定头部）
+    public static final  int TYPE_USER_HEAD_HOME = 7;//用户-主页头部（固定头部）
 
     private static final int REFRESH_DELAY = 3000;
     private static final int POPUP_HEIGHT = 160;
@@ -160,6 +161,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             res =  R.layout.item_chat_file_rv;
         }else if(viewType == TYPE_USER_HEAD_MEETING){
             res = R.layout.item_meeting_head_message;
+        }else if(viewType == TYPE_USER_HEAD_HOME){
+            res = R.layout.item_home_head;
         }else {
             res = R.layout.item_agent_message;
         }
@@ -406,7 +409,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             @Override
             public void onClick(View view) {
                 if (callback != null) {
-                    ChatMessage mItem = chatMessages.get(position - 1);
+                    ChatMessage mItem = chatMessages.get(position);
                     callback.regenerateDrawing(mItem);
                 }
             }
@@ -644,7 +647,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             }
 
             // 防闪屏：先设置LayoutManager，避免RecyclerView重新测量
-            if (holder.recyclerViewAi.getLayoutManager() == null) {
+            if (holder.recyclerViewAi != null && holder.recyclerViewAi.getLayoutManager() == null) {
                 LinearLayoutManager layoutManager = new LinearLayoutManager(context);
                 layoutManager.setAutoMeasureEnabled(true);
                 holder.recyclerViewAi.setLayoutManager(layoutManager);

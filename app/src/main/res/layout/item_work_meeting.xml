@@ -22,7 +22,10 @@
             android:gravity="center_horizontal"
             android:padding="16dp"
             android:background="@drawable/bg_white_radius_16"
-            android:layout_margin="12dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -52,6 +55,7 @@
                     android:ellipsize="end"
                     android:layout_centerHorizontal="true"/>
                 <ImageView
+                    android:id="@+id/iv_more"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:background="@drawable/ai_work_more"

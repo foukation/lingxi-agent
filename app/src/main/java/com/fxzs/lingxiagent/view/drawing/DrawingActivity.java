@@ -3,7 +3,6 @@ package com.fxzs.lingxiagent.view.drawing;
 import static android.widget.ImageView.ScaleType.CENTER_CROP;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -46,17 +45,25 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.cmdc.ai.assist.api.AIFoundationKit;
+import com.cmdc.ai.assist.api.SpeechRecognitionPersistent;
+import com.cmdc.ai.assist.constraint.SpeechRecognitionPersistentData;
 import com.fxzs.lingxiagent.R;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.TabEntity;
+import com.fxzs.lingxiagent.lingxi.multimodal.utils.TtsMediaPlayer;
 import com.fxzs.lingxiagent.model.chat.dto.DrawingToChatBean;
 import com.fxzs.lingxiagent.model.drawing.dto.AspectRatioDto;
 import com.fxzs.lingxiagent.model.drawing.dto.DrawingImageDto;
 import com.fxzs.lingxiagent.model.drawing.dto.DrawingStyleDto;
+import com.fxzs.lingxiagent.util.ShadowUtils;
+import com.fxzs.lingxiagent.util.TtsXiaDuMediaPlayer;
 import com.fxzs.lingxiagent.util.ZUtil.Constant;
 import com.fxzs.lingxiagent.view.chat.SuperChatContainActivity;
 import com.fxzs.lingxiagent.view.common.BaseActivity;
 import com.fxzs.lingxiagent.view.common.DataBindingUtils;
 import com.fxzs.lingxiagent.view.common.VoiceInputDialog;
 import com.fxzs.lingxiagent.util.SpeechRecognitionUtil;
+import com.fxzs.lingxiagent.view.common.VoiceRecordView;
 import com.fxzs.lingxiagent.viewmodel.drawing.VMDrawing;
 import com.fxzs.lingxiagent.model.chat.callback.AsrCallback;
 import com.fxzs.lingxiagent.util.ZInputMethod;
@@ -65,12 +72,15 @@ import com.fxzs.lingxiagent.util.ZUtils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import timber.log.Timber;
 
 /**
  * AI绘画主界面
@@ -133,10 +143,21 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
     View rl_voice;
     View iv_logo;
 //    private View ll_bottom_edit;
-    private View ll_bottom_voice;
+    private VoiceRecordView voiceRecordView;
     private boolean isInArea = true;
     boolean isVoice = false;
+    private View styleRatio;
 
+    private String curAsrResult = "";
+    private final int PRESS_DOWN = 1;
+    private final int PRESS_UP = 2;
+    private final int PRESS_MOVE = 3;
+
+    private AIFoundationKit aiFoundationKit;
+    private SpeechRecognitionPersistent speechRecognitionPersistent;
+    private static final String TAG = "DrawingActivity";
+
+    private boolean isVoiceCancel;
     @Override
     protected int getLayoutResource() {
         return R.layout.activity_drawing_continue_edit;
@@ -224,9 +245,10 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
             rl_voice = findViewById(R.id.rl_voice);
             iv_logo = findViewById(R.id.iv_logo);
 //            ll_bottom_edit = findViewById(R.id.ll_bottom_edit);
-            ll_bottom_voice = findViewById(R.id.ll_bottom_voice);
+            voiceRecordView = findViewById(R.id.voiceRecordView);
+            styleRatio = findViewById(R.id.ll_style_ratio_container);
         Log.d("init", "ivReferenceImage=" + ivReferenceImage);
-
+            ShadowUtils.applyDefaultShadow(styleRatio,this);
         if (ivReferenceImage != null) {
             Log.d("DrawingActivity", "ivReferenceImage found, setting up image");
             try {
@@ -670,37 +692,7 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
 
         // 语音输入/发送按钮点击事件
         btnVoiceInput.setOnClickListener(v -> {
-            String prompt = viewModel.getPrompt().get();
-            Log.d("DrawingActivity", "Send button clicked - prompt: " + prompt);
-            Log.d("DrawingActivity", "Send button clicked - currentImage: " + (currentImage != null ? "not null" : "null"));
-            Log.d("DrawingActivity", "Send button clicked - isContinueEditMode: " + isContinueEditMode);
-
-            // 记录当前选择的风格和比例
-            logCurrentSelections();
-
-            // 验证ViewModel中的数据
-            verifyViewModelState();
-
-            if (prompt != null && !prompt.isEmpty()) {
-                // 有文本输入，执行发送功能
-                if (currentImage != null || isContinueEditMode) {
-                    // 已经生成过图片或者是继续编辑模式，在当前页面继续对话
-                    Log.d("DrawingActivity", "Calling handleContinueConversation");
-                    handleContinueConversation(prompt);
-                } else {
-                    // 第一次生成，跳转到对话页面
-                    Log.d("DrawingActivity", "Calling handleFirstGeneration");
-                    handleFirstGeneration(prompt);
-                }
-            } else {
-                ZInputMethod.hideKeyboard(DrawingActivity.this,v.getWindowToken());
-                // 没有文本输入，执行语音输入功能
-                onVoiceInputClick();
-                isVoice = true;
-                Log.d("DrawingActivity", "No prompt text, showing voice input message");
-                ll_input_container.setVisibility(View.GONE);
-                ll_voice.setVisibility(View.VISIBLE);
-            }
+            sendAgentJump(btnVoiceInput);
         });
         iv_keyboard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -743,36 +735,38 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
                 }
                 switch (motionEvent.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        onVoiceInputClick();
+//                        onVoiceInputClick();
                         // 手指按下
                         Log.d("TouchEvent", "手指按下 TextView");
 //                        tv_press.setBackgroundColor(Color.LTGRAY); // 示例：改变背景色
                         isInArea = true;
 
-                        AsrOneUtils.getInstance().recognizer();
-                        ll_bottom_voice.setVisibility(View.VISIBLE);
+//                        AsrOneUtils.getInstance().recognizer();
+                        voiceRecordView.setVisibility(View.VISIBLE);
 //                        ll_bottom_edit.setVisibility(View.GONE);
 //                        callback.pressDown();
+                        voiceStatusHandle(PRESS_DOWN,false,false);
                         break;
 
                     case MotionEvent.ACTION_UP:
                         // 手指松开
                         Log.d("TouchEvent", "手指松开 TextView");
 //                        tv_press.setBackgroundColor(Color.TRANSPARENT); // 示例：恢复背景色
-                        rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_blue_r20));
-                        tv_voice_hint.setText("松手发送，上移取消");
+//                        rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_blue_r20));
+//                        tv_voice_hint.setText("松手发送，上移取消");
 
 //                        Utils.print("is_running == "+is_running);
 //                        if (is_running) {
 //                            controller.stop();
 
-                        AsrOneUtils.getInstance().stop();
-                        ll_bottom_voice.setVisibility(View.GONE);
+//                        AsrOneUtils.getInstance().stop();
+                        voiceRecordView.setVisibility(View.GONE);
 //                        ll_bottom_edit.setVisibility(View.VISIBLE);
 //                            Utils.print("setEnabled == stop");
 //                            is_running = false;
 //                        }
 //                        callback.pressUp();
+                        voiceStatusHandle(PRESS_UP,isInArea,false);
                         break;
 
                     case MotionEvent.ACTION_MOVE:
@@ -782,11 +776,11 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
 
                         // 获取视图在屏幕中的位置
                         int[] location = new int[2];
-                        rl_voice.getLocationOnScreen(location);
+                        ll_voice.getLocationOnScreen(location);
                         int viewLeft = location[0];
                         int viewTop = location[1];
-                        int viewRight = viewLeft + rl_voice.getWidth();
-                        int viewBottom = viewTop + rl_voice.getHeight();
+                        int viewRight = viewLeft + ll_voice.getWidth();
+                        int viewBottom = viewTop + ll_voice.getHeight();
 
                         Log.d("TouchEvent", "rawX: " + rawX + ", rawY: " + rawY);
                         Log.d("TouchEvent", "viewLeft: " + viewLeft + ", viewTop: " + viewTop+ ", viewRight: " + viewRight+ ", viewBottom: " + viewBottom);
@@ -795,24 +789,26 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
                         // 判断是否在视图范围内
                         if (rawX < viewLeft || rawX > viewRight || rawY < viewTop || rawY > viewBottom) {
                             Log.d("TouchEvent", "手指移出 TextView 范围");
-                            rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_red_r20));
-                            tv_voice_hint.setText("松开取消");
+//                            rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_red_r20));
+//                            tv_voice_hint.setText("松开取消");
                             isInArea = false;
                         } else {
                             Log.d("TouchEvent", "手指在 TextView 范围内移动");
-                            rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_blue_r20));
-                            tv_voice_hint.setText("松手发送，上移取消");
+//                            rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_blue_r20));
+//                            tv_voice_hint.setText("松手发送，上移取消");
                             isInArea = true;
                         }
+                        voiceStatusHandle(PRESS_MOVE,false,isInArea);
+
                         break;
 
                     case MotionEvent.ACTION_CANCEL:
                         // 触摸取消（例如被父视图拦截）
                         Log.d("TouchEvent", "触摸取消");
-                        rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_blue_r20)); // 示例：恢复背景色
+//                        rl_voice.setBackground(getResources().getDrawable(R.drawable.bg_voice_blue_r20)); // 示例：恢复背景色
                         isInArea = false;
-                        AsrOneUtils.getInstance().stop();
-                        ll_bottom_voice.setVisibility(View.GONE);
+//                        AsrOneUtils.getInstance().stop();
+                        voiceRecordView.setVisibility(View.GONE);
 //                        ll_bottom_edit.setVisibility(View.VISIBLE);
                         break;
                 }
@@ -2416,43 +2412,43 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
 
                 inputContainer.setLayoutParams(params);
             } else if (layoutParams instanceof LinearLayout.LayoutParams) {
-                LinearLayout.LayoutParams params =
-                        (LinearLayout.LayoutParams) layoutParams;
+//                LinearLayout.LayoutParams params =
+//                        (LinearLayout.LayoutParams) layoutParams;
+//
+//                if (keyboardVisible) {
+//                    // 键盘弹起时，设置输入框为自适应高度，最大180dp
+//                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+//                    int marginBottom = (int) (20 * getResources().getDisplayMetrics().density);
+//                    params.bottomMargin = marginBottom;
+//                } else {
+//                    // 键盘收起时，恢复固定高度54dp
+//                    int fixedHeight = (int) (54 * getResources().getDisplayMetrics().density);
+//                    params.height = fixedHeight;
+//                    int marginBottom = (int) (20 * getResources().getDisplayMetrics().density);
+//                    params.bottomMargin = marginBottom;
+//                }
 
-                if (keyboardVisible) {
-                    // 键盘弹起时，设置输入框为自适应高度，最大180dp
-                    params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-                    int marginBottom = (int) (20 * getResources().getDisplayMetrics().density);
-                    params.bottomMargin = marginBottom;
-                } else {
-                    // 键盘收起时，恢复固定高度54dp
-                    int fixedHeight = (int) (54 * getResources().getDisplayMetrics().density);
-                    params.height = fixedHeight;
-                    int marginBottom = (int) (20 * getResources().getDisplayMetrics().density);
-                    params.bottomMargin = marginBottom;
-                }
-
-                inputContainer.setLayoutParams(params);
+//                inputContainer.setLayoutParams(params);
             }
         }
 
         // 调整EditText的最大高度
         if (editText != null) {
-            if (keyboardVisible) {
-                // 键盘弹起时，设置EditText为多行输入，最大高度180dp
-                int maxHeight = (int) (180 * getResources().getDisplayMetrics().density);
-                editText.setMaxHeight(maxHeight);
-                editText.setMaxLines(Integer.MAX_VALUE);
-                editText.setSingleLine(false);
-                editText.setGravity(android.view.Gravity.TOP | android.view.Gravity.START);
-            } else {
-                // 键盘收起时，恢复单行输入
-                int singleLineHeight = (int) (54 * getResources().getDisplayMetrics().density);
-                editText.setMaxHeight(singleLineHeight);
-                editText.setMaxLines(1);
-                editText.setSingleLine(true);
-                editText.setGravity(android.view.Gravity.CENTER_VERTICAL);
-            }
+//            if (keyboardVisible) {
+//                // 键盘弹起时，设置EditText为多行输入，最大高度180dp
+//                int maxHeight = (int) (180 * getResources().getDisplayMetrics().density);
+//                editText.setMaxHeight(maxHeight);
+//                editText.setMaxLines(Integer.MAX_VALUE);
+//                editText.setSingleLine(false);
+//                editText.setGravity(android.view.Gravity.TOP | android.view.Gravity.START);
+//            } else {
+//                // 键盘收起时，恢复单行输入
+//                int singleLineHeight = (int) (54 * getResources().getDisplayMetrics().density);
+//                editText.setMaxHeight(singleLineHeight);
+//                editText.setMaxLines(1);
+//                editText.setSingleLine(true);
+//                editText.setGravity(android.view.Gravity.CENTER_VERTICAL);
+//            }
         }
 
         // 对于继续编辑页面，还需要调整ScrollView的padding来确保内容可见
@@ -2737,6 +2733,150 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
             } catch (Exception fallbackException) {
                 Log.e("DrawingActivity", "Fallback height setting also failed", fallbackException);
             }
+        }
+    }
+
+
+    /**
+     * 录音按下、移动、松开处理
+     * @param type 状态
+     * @param isInArea 是否在区域
+     * @param status 切换显示
+     */
+    private void voiceStatusHandle(int type,boolean isInArea,boolean status){
+        if (type == PRESS_DOWN){
+            if (voiceRecordView != null && voiceRecordView.startRecording()){
+                voiceRecordView.show();
+            }
+            TtsXiaDuMediaPlayer.getInstance().stop();
+            TtsMediaPlayer.getInstance().stop();
+            toggleAsrRecognition();
+        }
+        else if (type == PRESS_MOVE){
+            if (voiceRecordView != null){
+                voiceRecordView.switchVoiceStatus(status);
+            }
+        }
+        else if (type == PRESS_UP){
+            if (voiceRecordView != null){
+                voiceRecordView.stopRecording();
+            }
+            if (!isInArea){
+                closeAsr();
+            }else {
+                cancelAsr();
+            }
+        }
+    }
+
+    private void toggleAsrRecognition() {
+        closeAsr();
+        startAsr();
+    }
+
+    public void closeAsr() {
+        if (speechRecognitionPersistent != null) {
+            Timber.tag(TAG).d("speechRecognition_ release()");
+            speechRecognitionPersistent.release();
+            isVoiceCancel = false;
+            speechRecognitionPersistent = null;
+        }
+
+    }
+
+    public void cancelAsr() {
+        if (speechRecognitionPersistent != null) {
+            Timber.tag(TAG).d("speechRecognition_ cancel()");
+            speechRecognitionPersistent.cancel();
+            isVoiceCancel = true;
+        }
+    }
+
+    private void startAsr() {
+        Timber.tag(TAG).d("初始化语音识别");
+        isVoiceCancel = false;
+        if (aiFoundationKit == null) {
+            aiFoundationKit = new AIFoundationKit();
+        }
+        speechRecognitionPersistent = aiFoundationKit.speechRecognitionPersistentHelp();
+
+        speechRecognitionPersistent.setListener(new SpeechRecognitionPersistent.ASRListener() {
+            @Override
+            public void onMessageReceived(@Nullable SpeechRecognitionPersistentData speechRecognitionPersistentData) {
+                Timber.tag(TAG).d("speechRecognition_ onMessageReceived : %s", speechRecognitionPersistentData.toString());
+                if (speechRecognitionPersistentData == null) {
+                    curAsrResult = "";
+                    isVoiceCancel = false;
+                    return;
+                }
+                String type = speechRecognitionPersistentData.getType();
+                if (type.equals("FIN_TEXT")) {
+                    curAsrResult += speechRecognitionPersistentData.getResult();
+                }
+                int errNo = speechRecognitionPersistentData.getErrorNumber();
+                if (!TextUtils.isEmpty(curAsrResult) && isVoiceCancel && errNo >= 0 && type.equals("FIN_TEXT")) {
+                    Timber.tag(TAG).d("识别结果内容 : %s", curAsrResult);
+                    viewModel.getPrompt().set(curAsrResult);
+                    sendAgentJump(voiceRecordView);
+                    isVoiceCancel = false;
+
+                }
+
+            }
+
+            @Override
+            public void onMessageReceived(@Nullable ByteBuffer byteBuffer) {
+
+            }
+
+            @Override
+            public void onClose(int i, @Nullable String s, boolean b) {
+                Timber.tag(TAG).d("speechRecognition_ onClose %s", s);
+
+            }
+
+            @Override
+            public void onError(@Nullable Exception e) {
+                Timber.tag(TAG).d("speechRecognition_ onError %s", e.getMessage());
+            }
+        });
+        Timber.tag(TAG).d("speechRecognition_ startRecognition()");
+        speechRecognitionPersistent.startRecognition();
+        curAsrResult = "";
+    }
+
+
+    private void sendAgentJump(View view){
+        String prompt = viewModel.getPrompt().get();
+        Log.d("DrawingActivity", "Send button clicked - prompt: " + prompt);
+        Log.d("DrawingActivity", "Send button clicked - currentImage: " + (currentImage != null ? "not null" : "null"));
+        Log.d("DrawingActivity", "Send button clicked - isContinueEditMode: " + isContinueEditMode);
+
+        // 记录当前选择的风格和比例
+        logCurrentSelections();
+
+        // 验证ViewModel中的数据
+        verifyViewModelState();
+
+        if (prompt != null && !prompt.isEmpty()) {
+            // 有文本输入，执行发送功能
+            if (currentImage != null || isContinueEditMode) {
+                // 已经生成过图片或者是继续编辑模式，在当前页面继续对话
+                Log.d("DrawingActivity", "Calling handleContinueConversation");
+                handleContinueConversation(prompt);
+            } else {
+                // 第一次生成，跳转到对话页面
+                Log.d("DrawingActivity", "Calling handleFirstGeneration");
+                handleFirstGeneration(prompt);
+            }
+        } else {
+            ZInputMethod.hideKeyboard(DrawingActivity.this,view.getWindowToken());
+            // 没有文本输入，执行语音输入功能
+            onVoiceInputClick();
+            isVoice = true;
+            Log.d("DrawingActivity", "No prompt text, showing voice input message");
+            ll_input_container.setVisibility(View.GONE);
+            ll_voice.setVisibility(View.VISIBLE);
         }
     }
 

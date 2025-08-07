@@ -23,6 +23,7 @@ import com.fxzs.lingxiagent.view.agent.AgentFragment;
 import com.fxzs.lingxiagent.view.aiwork.AiWorkFragment;
 import com.fxzs.lingxiagent.view.auth.OneClickLoginActivity;
 import com.fxzs.lingxiagent.view.chat.ChatFragment;
+import com.fxzs.lingxiagent.view.chat.SuperChatFragment;
 import com.fxzs.lingxiagent.view.common.BaseActivity;
 import com.fxzs.lingxiagent.view.drawing.DrawingNewFragment;
 import com.fxzs.lingxiagent.view.meeting.MeetingFragment;
@@ -42,7 +43,7 @@ public class MainActivity extends BaseActivity<VMMain> {
     private LinearLayout navTabAgent;
     
     // Fragment实例
-    private ChatFragment chatFragment;
+    private SuperChatFragment chatFragment;
     private AgentFragment agentFragment;
     private DrawingNewFragment drawingFragment;
     private MeetingFragment meetingFragment;
@@ -135,7 +136,7 @@ public class MainActivity extends BaseActivity<VMMain> {
      * 初始化所有Fragment
      */
     private void initFragments() {
-        chatFragment = new ChatFragment();
+        chatFragment = new SuperChatFragment(SuperChatFragment.TYPE_HOME);
         agentFragment = new AgentFragment();
         drawingFragment = new DrawingNewFragment();
         aiWorkFragment = new AiWorkFragment();
@@ -274,8 +275,8 @@ public class MainActivity extends BaseActivity<VMMain> {
         super.onActivityResult(requestCode, resultCode, data);
         ZUtils.print("MainActivity onActivityResult ====== > requestCode = "+requestCode+". resultCode = "+resultCode);
 
-        if (currentFragment != null && currentFragment instanceof ChatFragment) {
-            ((ChatFragment)currentFragment).onActivityResult(requestCode, resultCode, data);
+        if (currentFragment != null && currentFragment instanceof SuperChatFragment) {
+            ((SuperChatFragment)currentFragment).onActivityResult(requestCode, resultCode, data);
         }
     }
 

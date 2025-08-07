@@ -20,19 +20,20 @@
             android:gravity="center_vertical"
 
             android:paddingRight="16dp"
-            android:paddingTop="16dp"
             android:orientation="horizontal"
             android:background="@android:color/transparent"
             >
 
             <ImageView
                 android:id="@+id/back"
-                android:layout_width="@dimen/dp_24"
-                android:layout_height="@dimen/dp_24"
+                android:layout_width="@dimen/dp_56"
+                android:layout_height="@dimen/dp_40"
                 android:src="@mipmap/back"
                 android:scaleType="centerCrop"
                 android:orientation="horizontal"
-                android:paddingLeft="16dp"
+                android:paddingLeft="@dimen/dp_16"
+                android:paddingRight="@dimen/dp_16"
+                android:paddingTop="@dimen/dp_16"
                 android:visibility="visible"
                 />
 <!--            <TextView-->

@@ -33,6 +33,9 @@ public class ChatMessage {
 //        this.isHeader = isHeader;
 //        this.avatar = avatar;
 //    }
+    public ChatMessage(int msgType) {
+        this.msgType = msgType;
+    }
     public ChatMessage(String message, int msgType, String avatar) {
         this.message = message;
         this.msgType = msgType;

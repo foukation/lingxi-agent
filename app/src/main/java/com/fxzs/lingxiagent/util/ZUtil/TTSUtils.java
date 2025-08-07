@@ -343,16 +343,16 @@ public class TTSUtils {
     }
 
     public void cancelAndPlay(){
-        TTSUtils.getInstance().pausePlayer();
-        TTSUtils.getInstance().ttsCancel();
-        TTSUtils.getInstance().process();
-        TTSUtils.getInstance().ttsInit();
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        TTSUtils.getInstance().startPlayer();
+//        TTSUtils.getInstance().pausePlayer();
+//        TTSUtils.getInstance().ttsCancel();
+//        TTSUtils.getInstance().process();
+//        TTSUtils.getInstance().ttsInit();
+//
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//        TTSUtils.getInstance().startPlayer();
     }
 }

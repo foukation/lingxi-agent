@@ -243,7 +243,7 @@ public class ZUtils {
         optionsRecyclerView.setLayoutManager(layoutManager);
 
         List<AiWorkFilterBean> options = new ArrayList<>();
-        options.add(new AiWorkFilterBean("全部"));
+//        options.add(new AiWorkFilterBean("全部"));
         options.add(new AiWorkFilterBean("AI会议", AiWorkAdapter.TYPE_MEETING));
         options.add(new AiWorkFilterBean("AI PPT",AiWorkAdapter.TYPE_PPT));
         options.add(new AiWorkFilterBean("同声传译",AiWorkAdapter.TYPE_TRANSLATE));
