@@ -76,9 +76,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 
 public class SuperEditUtil {
@@ -678,6 +680,27 @@ public class SuperEditUtil {
     public void setSelectOptionModel(OptionModel option) {
         this.selectOptionModel = option;
 //        tv_mode.setText(selectOptionModel.getName());
+        callback.modeChange(selectOptionModel);
+    }
+
+    /**
+     * 刷新模型
+     */
+    public void refreshSelectModel(){
+        String modelCode =  GlobalSettings.getInstance().getSelectedModelCode();
+        if(selectOptionModel != null && modelCode.equals(selectOptionModel.getModel())){
+            return;
+        }
+        if (listModel.isEmpty()){
+            return;
+        }
+        for (int i = 0; i < listModel.size(); i++) {
+            String model = listModel.get(i).getModel();
+            if(model.equals(modelCode)){
+                selectOptionModel = listModel.get(i); // 设置中的首选大模型
+                break;
+            }
+        }
         callback.modeChange(selectOptionModel);
     }
 
