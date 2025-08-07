@@ -32,13 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.cmdc.ai.assist.api.AIFoundationKit;
 import com.cmdc.ai.assist.api.SpeechRecognitionPersistent;
-import com.cmdc.ai.assist.constraint.DialogueResult;
 import com.cmdc.ai.assist.constraint.SpeechRecognitionPersistentData;
-import com.example.service_api.HttpUrlConnectionHonor;
-import com.fxzs.lingxiagent.conversation.AIConversationManager;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatLingXiAdapter;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatDataFormat;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatManager;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.TabEntity;
 import com.fxzs.lingxiagent.lingxi.multimodal.utils.TtsMediaPlayer;
 import com.fxzs.lingxiagent.model.chat.callback.AIMeetingEditCallback;
@@ -84,7 +78,6 @@ import com.fxzs.lingxiagent.util.ZUtil.TTSUtils;
 import com.fxzs.lingxiagent.util.ZUtils;
 import com.fxzs.lingxiagent.view.common.BaseFragment;
 import com.fxzs.lingxiagent.view.common.ExportFileDialog;
-import com.fxzs.lingxiagent.view.common.LoadingProgressDialog;
 import com.fxzs.lingxiagent.view.common.VoiceRecordView;
 import com.fxzs.lingxiagent.view.drawing.DrawingActivity;
 import com.fxzs.lingxiagent.view.drawing.DrawingImageViewerActivity;
@@ -107,10 +100,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -1180,7 +1171,6 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                     @Override
                     public void voiceMove(boolean status) {
                         AIMeetingEditCallback.super.voiceMove(status);
-                        Timber.tag(TAG).d("翻译移动"+status);
                         voiceStatusHandle(PRESS_MOVE,false,status);
                     }
                 }
@@ -1965,5 +1955,13 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         // 将时间戳转换为字符串
         return sdf.format(new Date(currentTimeMillis));
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (superEditUtil != null){
+            superEditUtil.refreshSelectModel();
+        }
     }
 }
