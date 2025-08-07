@@ -1,15 +1,26 @@
 package com.fxzs.lingxiagent.lingxi.lingxi_conversation;
 
+import android.app.Activity;
+import android.os.Build;
+import android.text.TextUtils;
 import com.cmdc.ai.assist.constraint.DialogueResult;
+import com.example.device_control.AgentResult;
+import com.example.device_control.SchedulerManagerFactory;
 import com.example.service_api.HttpUrlConnectionHonor;
+import com.fxzs.lingxiagent.R;
+import com.fxzs.lingxiagent.helper.AppListHelper;
 import com.fxzs.lingxiagent.lingxi.config.ChatFlowCallback;
+import com.fxzs.lingxiagent.lingxi.main.utils.GsonUtils;
 import com.fxzs.lingxiagent.lingxi.multimodal.utils.TtsMediaPlayer;
+import com.fxzs.lingxiagent.model.user.dto.FAQItem;
 import com.fxzs.lingxiagent.util.MediaPlayerUtils;
 import com.fxzs.lingxiagent.util.TtsXiaDuMediaPlayer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import timber.log.Timber;
 
@@ -19,8 +30,15 @@ public class ChatDataFormat {
 	public LocalModule mainCurModule = null;
 	private DialogueResult result = null;
 	boolean isBreakFlow = false;
+	private SchedulerManagerFactory schedulerManagerFactory = null;
+	private final WeakReference<Activity> activityRef;
 
-	public void init() {
+    public ChatDataFormat(Activity activityRef) {
+		this.activityRef = new WeakReference<>(activityRef);
+
+	}
+
+    public void init() {
 		MediaPlayerUtils.getInstance().release();
 		TtsXiaDuMediaPlayer.getInstance().stop();
 		TtsMediaPlayer.getInstance().stop();
@@ -75,6 +93,7 @@ public class ChatDataFormat {
 			}
 
 			if (curModule == LocalModule.SYS_CONTROL) {
+				execScheduler(callback);
 				return;
 			}
 
@@ -87,6 +106,13 @@ public class ChatDataFormat {
 			}
 
 			if (curModule == LocalModule.MEDIA) {
+				execScheduler(callback);
+				return;
+			}
+
+			if (curModule == LocalModule.MUSIC){
+				isBreakFlow = true;
+				callback.receive(LocalModule.SYS_CONTROL, isBreakFlow, activityRef.get().getString(R.string.exec_sys_control_default));
 				return;
 			}
 
@@ -100,11 +126,10 @@ public class ChatDataFormat {
 					callback.receive(LocalModule.CHAT, false, answer);
 				}
 			}
-
-			// 如果对话结束，更新状态并执行兜底操作
-			if (isEnd == 1) {
-				callback.end();
-			}
+		}
+        // 如果对话结束，更新状态并执行兜底操作
+		if (isEnd == 1) {
+			callback.end();
 		}
 	}
 
@@ -161,6 +186,11 @@ public class ChatDataFormat {
 					} else if (domain.equals(IntentDomain.MEDIA.getAlias())) {
 						// 处理媒体相关的意图
 						if (intent.equals(MediaIntent.MEDIA_VIDEOPLY.getAlias()) | intent.equals(MediaIntent.MEDIA_UNICAST.getAlias())) {
+							if (schedulerManagerFactory == null) {
+								schedulerManagerFactory = new SchedulerManagerFactory(activityRef.get());
+								schedulerManagerFactory.setAppList(Objects.requireNonNull(GsonUtils.toJson(AppListHelper.INSTANCE.getAppInfoList())));
+							}
+							schedulerManagerFactory.updateIntent(nlu.toString(), domain);
 							return LocalModule.MEDIA;
 						} else if (intent.equals(MediaIntent.MEDIA_MUSIC.getAlias())) {
 							return LocalModule.MUSIC;
@@ -177,6 +207,11 @@ public class ChatDataFormat {
 									domain.equals(IntentDomain.CUSTOMERSERVICE.getAlias()) |
 									domain.equals(IntentDomain.MEMBERSHIP.getAlias())) {
 						// 处理系统控制、电话和汽车控制相关的意图
+						if (schedulerManagerFactory == null) {
+							schedulerManagerFactory = new SchedulerManagerFactory(activityRef.get());
+							schedulerManagerFactory.setAppList(Objects.requireNonNull(GsonUtils.toJson(AppListHelper.INSTANCE.getAppInfoList())));
+						}
+						schedulerManagerFactory.updateIntent(nlu.toString(), domain);
 						return LocalModule.SYS_CONTROL;
 					} else if (domain.equals(IntentDomain.NAVIGATION.getAlias())) {
 						// 处理导航相关的意图
@@ -225,7 +260,21 @@ public class ChatDataFormat {
 	public void addMusicView() {
 	}
 
-	public void execScheduler() {
+	public void execScheduler(ChatFlowCallback callback) {
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+			String resultStr;
+			AgentResult agentResult = schedulerManagerFactory.start();
+			if (agentResult.getResult()) {
+				resultStr = !Objects.equals(agentResult.getSucMsg(), "") ? agentResult.getSucMsg() : "指令执行成功";
+			} else {
+				resultStr = !Objects.equals(agentResult.getErrMsg(), "") ? agentResult.getErrMsg() : "指令执行失败";
+			}
+
+			if (!TextUtils.isEmpty(resultStr)) {
+				isBreakFlow = true;
+				callback.receive(LocalModule.SYS_CONTROL, isBreakFlow, resultStr);
+			}
+		}
 	}
 
 	public void execTranslate() {

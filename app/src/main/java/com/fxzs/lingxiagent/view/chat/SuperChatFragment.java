@@ -240,7 +240,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 //        setContentView(R.layout.act_super_chat);
         GlobalDataHolder.init(requireContext()); // 初始化全局共享数据
         vmChat = new ViewModelProvider(this).get(VMChat.class);
-
+        vmChat.setContext(requireActivity());
         ll_bottom = findViewById(R.id.ll_bottom);
         ll_edit_writing = findViewById(R.id.ll_edit_writing);
         ll_edit_translate = findViewById(R.id.ll_edit_translate);

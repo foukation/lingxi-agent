@@ -1,5 +1,6 @@
 package com.fxzs.lingxiagent.viewmodel.chat;
 
+import android.app.Activity;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,14 +9,15 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.cmdc.ai.assist.constraint.DialogueResult;
-import com.example.service_api.HttpUrlConnectionHonor;
+import com.fxzs.lingxiagent.lingxi.service_api.data.AppData;
 import com.fxzs.lingxiagent.conversation.AIConversationManager;
+import com.fxzs.lingxiagent.helper.AppListHelper;
 import com.fxzs.lingxiagent.lingxi.config.ChatFlowCallback;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatLingXiAdapter;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatDataFormat;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatManager;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.LocalModule;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.TabEntity;
+import com.fxzs.lingxiagent.lingxi.main.utils.JsonUtil;
 import com.fxzs.lingxiagent.model.chat.callback.CreateMyCallback;
 import com.fxzs.lingxiagent.model.chat.callback.SSECallback;
 import com.fxzs.lingxiagent.model.chat.dto.ChatFileBean;
@@ -38,6 +40,7 @@ import com.fxzs.lingxiagent.network.ZNet.ApiResponse;
 import com.fxzs.lingxiagent.network.ZNet.HttpRequest;
 import com.fxzs.lingxiagent.network.ZNet.bean.SSEBean;
 import com.fxzs.lingxiagent.network.ZNet.bean.getCatDetailListBean;
+import com.fxzs.lingxiagent.util.GlobalSettings;
 import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
 import com.fxzs.lingxiagent.util.ZUtil.Constant;
 import com.fxzs.lingxiagent.util.ZUtil.TTSUtils;
@@ -47,6 +50,7 @@ import com.fxzs.lingxiagent.view.chat.SuperChatFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -122,13 +126,19 @@ public class VMChat extends BaseViewModel {
     private String requestId;
 	private ChatDataFormat chatDataFormat;
     private AIConversationManager aiConversationManager;
+    private WeakReference<Activity> activityRef;
+
 
     public VMChat(@NonNull Application application) {
         super(application);
         request = new HttpRequest();
         repository = DrawingRepositoryImpl.getInstance();
-        initChatManager();
         initAIConversationManager();
+    }
+    public void setContext(Activity activity){
+        this.activityRef = new WeakReference<>(activity);
+        initChatManager();
+        getAppList();
     }
 
     public MutableLiveData<List<ChatMessage>> getChatMessages() { return chatMessages; }
@@ -144,7 +154,7 @@ public class VMChat extends BaseViewModel {
 
     private void initChatManager() {
         if (chatDataFormat == null) {
-            chatDataFormat = new ChatDataFormat();
+            chatDataFormat = new ChatDataFormat(activityRef.get());
         }
     }
 
@@ -155,6 +165,7 @@ public class VMChat extends BaseViewModel {
 
     public void setSelectOptionModel(OptionModel option) {
         this.selectOptionModel = option;
+        GlobalSettings.getInstance().setSelectedModel(getApplication(), selectOptionModel.getModel(), selectOptionModel.getName());
     }
 
     public void setSelectAgentBean(getCatDetailListBean selectAgentBean) {
@@ -1206,5 +1217,18 @@ public class VMChat extends BaseViewModel {
         this.referenceImageUrl = null;
     }
 
+    /**
+     * 获取云端app 信息
+     */
+    private void getAppList(){
+        try {
+            Type listType = new TypeToken<ArrayList<AppData>>() {}.getType();
+            ArrayList<AppData> appList =  JsonUtil.parseJson(getApplication().getApplicationContext(),"app_list.json", listType);
+            AppListHelper.INSTANCE.setAppList(appList);
+        }catch (Exception e){
+            e.printStackTrace();
+            Timber.d("app列表解析失败%s", e.getMessage());
+        }
+    }
 
 }

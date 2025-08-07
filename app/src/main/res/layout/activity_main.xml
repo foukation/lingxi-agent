@@ -40,7 +40,8 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_nav_tab_gui"
@@ -69,7 +70,8 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_nav_tab_phone"
@@ -88,26 +90,6 @@
                     android:layout_marginTop="2dp" />
 
             </LinearLayout>
-
-            <!-- linxgxi -->
-            <LinearLayout
-                android:id="@+id/nav_tab_lingxi"
-                android:layout_width="0dp"
-                android:layout_height="64dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true">
-
-                <ImageView
-                    android:id="@+id/iv_nav_lingxi"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_tab_chat_selected" />
-
-            </LinearLayout>
-
             <!-- 会议 -->
             <LinearLayout
                 android:id="@+id/nav_tab_job"
@@ -135,6 +117,24 @@
                     android:textColor="@color/nav_text_color"
                     android:textSize="10sp"
                     android:layout_marginTop="2dp" />
+
+            </LinearLayout>
+            <!-- linxgxi -->
+            <LinearLayout
+                android:id="@+id/nav_tab_lingxi"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true">
+
+                <ImageView
+                    android:id="@+id/iv_nav_lingxi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_tab_chat_selected" />
 
             </LinearLayout>
 

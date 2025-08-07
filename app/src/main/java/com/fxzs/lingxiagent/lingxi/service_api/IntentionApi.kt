@@ -4,7 +4,7 @@ import android.os.StrictMode
 import com.example.service_api.config.ApiUrl
 import com.example.service_api.data.ClientApiActionsRes
 import com.example.service_api.data.ClientApiActionsResMul
-import com.example.service_api.data.ClientApiAppListRes
+import com.fxzs.lingxiagent.lingxi.service_api.data.ClientApiAppListRes
 import com.example.service_api.data.ClientApiGetTokenRes
 import com.example.service_api.data.ClientTimeData
 import com.example.service_api.data.ClientTimeRes
