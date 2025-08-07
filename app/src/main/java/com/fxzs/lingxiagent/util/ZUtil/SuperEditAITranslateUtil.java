@@ -79,20 +79,20 @@ public class SuperEditAITranslateUtil {
 
         setUI();
         getModel();
-//        AsrOneUtils.getInstance().init((Activity) context);
-//
-//        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
-//            @Override
-//            public void callback(String result) {
-//
-//                ZUtils.print("isInArea = "+isInArea);
-//                ZUtils.print("result = "+result);
-//                if(isInArea){
-//                    sendMsg(result);
-//                }
-//
-//            }
-//        });
+        AsrOneUtils.getInstance().init((Activity) context);
+
+        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
+            @Override
+            public void callback(String result) {
+
+                ZUtils.print("isInArea = "+isInArea);
+                ZUtils.print("result = "+result);
+                if(isInArea){
+                    sendMsg(result);
+                }
+
+            }
+        });
     }
 
     private void setUI() {
@@ -164,7 +164,7 @@ public class SuperEditAITranslateUtil {
         iv_close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                AsrOneUtils.getInstance().removeCallBack();
+                AsrOneUtils.getInstance().removeCallBack();
                 changeSoftkey(0,null);
                 if (callback != null) {
                     callback.close();
@@ -407,7 +407,7 @@ public class SuperEditAITranslateUtil {
         ed.setText("");
 //        callback.send(content,sendContent);
         callback.send(content,sendContent,sleet1,sleet2);
-//        AsrOneUtils.getInstance().removeCallBack();
+        AsrOneUtils.getInstance().removeCallBack();
     }
 
     public  void setOnListenSoft(View root_view){
@@ -471,7 +471,7 @@ public class SuperEditAITranslateUtil {
         }else {
             listModel2.add(new AiWritingTypeBean("英语"));
             listModel2.add(new AiWritingTypeBean("简体中文"));
-            listModel2.add(new AiWritingTypeBean("繁体中文"));
+            listModel.add(new AiWritingTypeBean("繁体中文"));
         }
 
 

@@ -3,19 +3,12 @@ package com.fxzs.lingxiagent.viewmodel.chat;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
-import com.cmdc.ai.assist.constraint.DialogueResult;
-import com.example.service_api.HttpUrlConnectionHonor;
-import com.fxzs.lingxiagent.conversation.AIConversationManager;
-import com.fxzs.lingxiagent.lingxi.config.ChatFlowCallback;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatLingXiAdapter;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatDataFormat;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatManager;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.LocalModule;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.TabEntity;
+import com.fxzs.lingxiagent.lingxi.main.utils.BroadcastReceiverHelper;
 import com.fxzs.lingxiagent.model.chat.callback.CreateMyCallback;
 import com.fxzs.lingxiagent.model.chat.callback.SSECallback;
 import com.fxzs.lingxiagent.model.chat.dto.ChatFileBean;
@@ -47,20 +40,18 @@ import com.fxzs.lingxiagent.view.chat.SuperChatFragment;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import timber.log.Timber;
 
 public class VMChat extends BaseViewModel {
     private final MutableLiveData<List<ChatMessage>> chatMessages = new MutableLiveData<>(new ArrayList<>());
@@ -87,7 +78,7 @@ public class VMChat extends BaseViewModel {
     private long startTime = 0;
     private long endTime = 0;
 
-	//drawing
+    //drawing
     private String selectedRatio = "1:1";
     private final ObservableField<Long> conversationId = new ObservableField<>(0l);
     private final ObservableField<Integer> progress = new ObservableField<>(0);
@@ -119,38 +110,44 @@ public class VMChat extends BaseViewModel {
     private String meetingId;
     private String transcriptionResult;
 
-    private String requestId;
-	private ChatDataFormat chatDataFormat;
-    private AIConversationManager aiConversationManager;
+    private BroadcastReceiverHelper broadcastReceiverHelper;
 
     public VMChat(@NonNull Application application) {
         super(application);
         request = new HttpRequest();
         repository = DrawingRepositoryImpl.getInstance();
-        initChatManager();
-        initAIConversationManager();
     }
 
-    public MutableLiveData<List<ChatMessage>> getChatMessages() { return chatMessages; }
-    public LiveData<String> getAiResponse() { return aiResponse; }
-    public MutableLiveData<Boolean> getLoading() { return loading; }
-    public LiveData<Boolean> getStreamEnd() { return streamEnd; }
-    public LiveData<String> getThinkMessage() { return thinkMessage; }
-    public LiveData<String> getThinkMessageTitle() { return thinkMessageTitle; }
-    public LiveData<Integer> getThinkStatus() { return thinkStatus; }
+    public MutableLiveData<List<ChatMessage>> getChatMessages() {
+        return chatMessages;
+    }
+
+    public LiveData<String> getAiResponse() {
+        return aiResponse;
+    }
+
+    public MutableLiveData<Boolean> getLoading() {
+        return loading;
+    }
+
+    public LiveData<Boolean> getStreamEnd() {
+        return streamEnd;
+    }
+
+    public LiveData<String> getThinkMessage() {
+        return thinkMessage;
+    }
+
+    public LiveData<String> getThinkMessageTitle() {
+        return thinkMessageTitle;
+    }
+
+    public LiveData<Integer> getThinkStatus() {
+        return thinkStatus;
+    }
+
     public ObservableField<Long> getConversationId() {
         return conversationId;
-    }
-
-    private void initChatManager() {
-        if (chatDataFormat == null) {
-            chatDataFormat = new ChatDataFormat();
-        }
-    }
-
-    private void initAIConversationManager() {
-        aiConversationManager = new AIConversationManager();
-        aiConversationManager.setAllowInterrupt(false);
     }
 
     public void setSelectOptionModel(OptionModel option) {
@@ -159,6 +156,12 @@ public class VMChat extends BaseViewModel {
 
     public void setSelectAgentBean(getCatDetailListBean selectAgentBean) {
         this.selectAgentBean = selectAgentBean;
+    }
+
+    public void registerBroadcastReceiverHelper() {
+        if (broadcastReceiverHelper != null)
+            return;
+        broadcastReceiverHelper = new BroadcastReceiverHelper(this);
     }
 
     public MutableLiveData<Boolean> getIsAutoPlay() {
@@ -184,8 +187,6 @@ public class VMChat extends BaseViewModel {
     public MutableLiveData<DrawingImageDto> getGeneratedImage() {
         return generatedImage;
     }
-
-
 
     public void setContinueEditMode(boolean continueEditMode) {
         isContinueEditMode = continueEditMode;
@@ -224,17 +225,19 @@ public class VMChat extends BaseViewModel {
     }
 
     public void sendMessage(String input) {
-        sendMsg(input,true);
+        sendMsg(input, true);
     }
+
     public void sendMessageHistory(String input) {
-        sendMsg(input,false);
+        sendMsg(input, false);
     }
-    public void sendMsg(String input,boolean isSendStream) {
+
+    public void sendMsg(String input, boolean isSendStream) {
         if (input == null || input.trim().isEmpty()) return;
         loading.setValue(true);
         addUserMsg(input);
         mFiles.clear();//普通文本消息把文件信息清除
-        if(isSendStream && selectOptionModel != null){
+        if (isSendStream && selectOptionModel != null) {
             createMy(selectOptionModel.getModel(), input, new CreateMyCallback() {
                 @Override
                 public void back() {
@@ -250,7 +253,7 @@ public class VMChat extends BaseViewModel {
 //        {"id":136,"keyId":null,"name":"腾讯混元","model":"hunyuan-turbo-latest","
         mFiles = files;
         mFileAnalyseUrl.clear();
-        if(files != null && files.size() > 0){
+        if (files != null && files.size() > 0) {
             for (int i = 0; i < files.size(); i++) {
                 mFileAnalyseUrl.add(files.get(i).getPath());
             }
@@ -266,8 +269,8 @@ public class VMChat extends BaseViewModel {
 //        "新对话 | 详细总结文档内容"
 
         String newInput = input;
-        if(!isImage){
-            newInput =  "新对话 | "+input;
+        if (!isImage) {
+            newInput = "新对话 | " + input;
         }
         createMy(selectOptionModel.getModel(), newInput, new CreateMyCallback() {
             @Override
@@ -280,24 +283,25 @@ public class VMChat extends BaseViewModel {
     //发送绘画消息
     public void sendDrawingMessage(String input) {
 
-        if(isGenerating.getValue()){
+        if (isGenerating.getValue()) {
             ZUtils.showToast("请等待生成成功");
 //            GlobalToast.show(IYAApplication.getInstance(),"请等待生成成功", GlobalToast.Type.NORMAL);
             return;
         }
         selectDrawingToChatBean = new DrawingToChatBean();
         selectDrawingToChatBean.setPrompt(input);
-        sendDrawingMessage(input,true);
+        sendDrawingMessage(input, true);
     }
+
     //发送绘画消息(重新生成)
     public void sendDrawingMessage(DrawingImageDto imageDto) {
 
-        if(isGenerating.getValue()){
+        if (isGenerating.getValue()) {
             ZUtils.showToast("请等待生成成功");
 //            GlobalToast.show(IYAApplication.getInstance(),"请等待生成成功", GlobalToast.Type.NORMAL);
             return;
         }
-        if(imageDto == null){
+        if (imageDto == null) {
             return;
         }
         String input = imageDto.getPrompt();
@@ -308,13 +312,14 @@ public class VMChat extends BaseViewModel {
         selectDrawingStyleDto = new DrawingStyleDto();
         selectDrawingStyleDto.setId(imageDto.getStyleId());
 
-        selectDrawingToChatBean.setRatio(imageDto.getWidth()+":"+imageDto.getHeight());
-        selectedRatio = imageDto.getWidth()+":"+imageDto.getHeight();
-        sendDrawingMessage(input,true);
+        selectDrawingToChatBean.setRatio(imageDto.getWidth() + ":" + imageDto.getHeight());
+        selectedRatio = imageDto.getWidth() + ":" + imageDto.getHeight();
+        sendDrawingMessage(input, true);
     }
-    public void sendDrawingMessage(String input,String referenceImageUrl) {
 
-        if(isGenerating.getValue()){
+    public void sendDrawingMessage(String input, String referenceImageUrl) {
+
+        if (isGenerating.getValue()) {
             ZUtils.showToast("请等待生成成功");
 //            GlobalToast.show(IYAApplication.getInstance(),"请等待生成成功", GlobalToast.Type.NORMAL);
             return;
@@ -322,26 +327,29 @@ public class VMChat extends BaseViewModel {
         selectDrawingToChatBean = new DrawingToChatBean();
         selectDrawingToChatBean.setPrompt(input);
         selectDrawingToChatBean.setReference_image_url(referenceImageUrl);
-        sendDrawingMessage(input,true);
+        sendDrawingMessage(input, true);
     }
+
     //发送绘画消息（历史记录）
     public void sendDrawingMessageHistory(String input) {
-        sendDrawingMessage(input,false);
+        sendDrawingMessage(input, false);
     }
-    public void sendDrawingMessage(String input,boolean isGenerate) {
+
+    public void sendDrawingMessage(String input, boolean isGenerate) {
 //        if (input == null || input.trim().isEmpty() || selectOptionModel == null) return;
         loading.setValue(true);
         addUserMsg(input);
         aiDrawingMsg = addAIDrawingMsg();
-        if(isGenerate){
+        if (isGenerate) {
             generateImage();
         }
     }
-    public void refreshSendMessage(String input,int type) {
+
+    public void refreshSendMessage(String input, int type) {
         if (input == null || input.trim().isEmpty()) return;
-        if(type == SuperChatFragment.TYPE_HOME){
+        if (type == SuperChatFragment.TYPE_HOME) {
             if (selectOptionModel == null) return;
-            chatMessages.getValue().remove(chatMessages.getValue().size()-1);
+            chatMessages.getValue().remove(chatMessages.getValue().size() - 1);
             loading.setValue(true);
 //        addUserMsg(input);
             createMy(selectOptionModel.getModel(), input, new CreateMyCallback() {
@@ -350,9 +358,9 @@ public class VMChat extends BaseViewModel {
                     sendStream(conversationId.get(), input);
                 }
             });
-        }else if(type == SuperChatFragment.TYPE_AGENT){
+        } else if (type == SuperChatFragment.TYPE_AGENT) {
             sendAgentMessage(input);
-        }else if(type == SuperChatFragment.TYPE_MEETING_QA){
+        } else if (type == SuperChatFragment.TYPE_MEETING_QA) {
             sendMeetingMessage(input);
         }
     }
@@ -362,7 +370,7 @@ public class VMChat extends BaseViewModel {
         if (input == null || input.trim().isEmpty() || selectAgentBean == null) return;
         loading.setValue(true);
         addUserMsg(input);
-        createMyAgent(selectAgentBean.getBotId(),selectAgentBean.getModelName(),selectAgentBean.getMenuId()+"", new CreateMyCallback() {
+        createMyAgent(selectAgentBean.getBotId(), selectAgentBean.getModelName(), selectAgentBean.getMenuId() + "", new CreateMyCallback() {
             @Override
             public void back() {
                 sendStream(conversationId.get(), input);
@@ -372,28 +380,29 @@ public class VMChat extends BaseViewModel {
 
     //会议-智能问答消息
     public void sendMeetingMessage(String input) {
-        if (input == null || input.trim().isEmpty() ) return;
+        if (input == null || input.trim().isEmpty()) return;
         loading.setValue(true);
         addUserMsg(input);
         sendStream(conversationId.get(), input);
     }
+
     //会议-智能问答初始化
     public void initMeeting() {
         String model = "bot-20250307112049-znnjx";
         String title = "智能问答";
         String systemMessage = "你是由中国的深度求索（DeepSeek）公司开发的智能助手DeepSeek-R1。如您有任何任何问题，我会尽我所能为您提供帮助。";
-        createMyMeeting(model,title,systemMessage, new CreateMyCallback() {
+        createMyMeeting(model, title, systemMessage, new CreateMyCallback() {
             @Override
             public void back() {
 
-                bindMeetingAndConversationId(meetingId, conversationId.get()+"", new CreateMyCallback() {
+                bindMeetingAndConversationId(meetingId, conversationId.get() + "", new CreateMyCallback() {
                     @Override
                     public void back() {
 
 //                        String transcription = Constant.transcription;
 
-                        String  systemMessage = transcriptionResult;//TODO 填充会议内容
-                        updateMyMeeting(conversationId.get()+"", systemMessage, new CreateMyCallback() {
+                        String systemMessage = transcriptionResult;//TODO 填充会议内容
+                        updateMyMeeting(conversationId.get() + "", systemMessage, new CreateMyCallback() {
                             @Override
                             public void back() {
 
@@ -408,18 +417,27 @@ public class VMChat extends BaseViewModel {
 
     public void sendAIWritingMessage(String input) {
         List<ChatMessage> list;
+<<<<<<< Updated upstream
         ZUtils.print("conversationId = "+conversationId.get());
         if(conversationId.get() == 0){
 //            list = chatMessages.getValue();
 //            list.clear();
 //            chatMessages.postValue(list);
         }else{
+=======
+        ZUtils.print("conversationId = " + conversationId.get());
+        if (conversationId.get() == 0) {
+            list = chatMessages.getValue();
+            list.clear();
+            chatMessages.postValue(list);
+        } else {
+>>>>>>> Stashed changes
             list = chatMessages.getValue();
             chatMessages.postValue(list);
         }
 //        ZUtils.print(" chatMessages.getValue() = "+ chatMessages.getValue().size());
         addUserMsg(input);
-        if(conversationId.get() == 0){
+        if (conversationId.get() == 0) {
             createMy(selectOptionModel.getModel(), input, new CreateMyCallback() {
                 @Override
                 public void back() {
@@ -428,19 +446,19 @@ public class VMChat extends BaseViewModel {
                 }
             });
 
-        }else {
+        } else {
             sendStream(conversationId.get(), input);
         }
     }
 
-    public void sendTranslateMessage(String content,String prompt) {
+    public void sendTranslateMessage(String content, String prompt) {
         List<ChatMessage> list;
-        ZUtils.print("conversationId = "+conversationId.get());
-        if(conversationId.get() == 0){
+        ZUtils.print("conversationId = " + conversationId.get());
+        if (conversationId.get() == 0) {
 //            list = chatMessages.getValue();
 //            list.clear();
 //            chatMessages.postValue(list);
-        }else{
+        } else {
             list = chatMessages.getValue();
             chatMessages.postValue(list);
         }
@@ -449,7 +467,7 @@ public class VMChat extends BaseViewModel {
 //        chatMessages.postValue(list);
 
         addUserMsg(content);
-        if(conversationId.get() == 0 ){
+        if (conversationId.get() == 0) {
             createMy(selectOptionModel.getModel(), content, new CreateMyCallback() {
                 @Override
                 public void back() {
@@ -459,7 +477,7 @@ public class VMChat extends BaseViewModel {
                 }
             });
 
-        }else {
+        } else {
             sendStream(conversationId.get(), prompt);
         }
     }
@@ -469,22 +487,24 @@ public class VMChat extends BaseViewModel {
         if (list == null) list = new ArrayList<>();
         ChatMessage userMsg = new ChatMessage(input, true);
         list.add(userMsg);
-        ZUtils.print("addUserMsg = "+list.size());
+        ZUtils.print("addUserMsg = " + list.size());
         chatMessages.postValue(list);
     }
+
     private void addUserMsgWithFile() {
         List<ChatMessage> list = chatMessages.getValue();
         if (list == null) list = new ArrayList<>();
 //        ChatMessage userMsg = new ChatMessage(input, true);
 
         boolean isImage = mFiles.get(0).isImage();
-        ChatMessage userMsg = new ChatMessage(mFiles,isImage? ChatAdapter.TYPE_USER_FILE_IMAGE:ChatAdapter.TYPE_USER_FILE);
+        ChatMessage userMsg = new ChatMessage(mFiles, isImage ? ChatAdapter.TYPE_USER_FILE_IMAGE : ChatAdapter.TYPE_USER_FILE);
         list.add(userMsg);
-        ZUtils.print("addUserMsg = "+list.size());
+        ZUtils.print("addUserMsg = " + list.size());
         chatMessages.postValue(list);
     }
+
     public void addUserMsgWithFile(List<ChatFileBean> mFiles) {
-        if(mFiles == null || mFiles.size() == 0){
+        if (mFiles == null || mFiles.size() == 0) {
             return;
         }
         List<ChatMessage> list = chatMessages.getValue();
@@ -492,9 +512,9 @@ public class VMChat extends BaseViewModel {
 //        ChatMessage userMsg = new ChatMessage(input, true);
 
         boolean isImage = mFiles.get(0).isImage();
-        ChatMessage userMsg = new ChatMessage(mFiles,isImage? ChatAdapter.TYPE_USER_FILE_IMAGE:ChatAdapter.TYPE_USER_FILE);
+        ChatMessage userMsg = new ChatMessage(mFiles, isImage ? ChatAdapter.TYPE_USER_FILE_IMAGE : ChatAdapter.TYPE_USER_FILE);
         list.add(userMsg);
-        ZUtils.print("addUserMsg = "+list.size());
+        ZUtils.print("addUserMsg = " + list.size());
         chatMessages.postValue(list);
     }
 
@@ -506,6 +526,7 @@ public class VMChat extends BaseViewModel {
         chatMessages.postValue(list);
         return aiMsg;
     }
+
     public ChatMessage addAIMsgHistory(String input) {
         List<ChatMessage> list = chatMessages.getValue();
         if (list == null) list = new ArrayList<>();
@@ -516,6 +537,7 @@ public class VMChat extends BaseViewModel {
         chatMessages.postValue(list);
         return aiMsg;
     }
+
     //添加AI绘画回复
     public ChatMessage addAIDrawingMsg() {
         List<ChatMessage> list = chatMessages.getValue();
@@ -525,25 +547,29 @@ public class VMChat extends BaseViewModel {
         chatMessages.postValue(list);
         return aiMsg;
     }
+
     public void updateAIDrawingMsg(int progress) {
-         aiDrawingMsg.setProgress(progress);
+        aiDrawingMsg.setProgress(progress);
 
         chatMessages.postValue(chatMessages.getValue());
     }
+
     public void updateAIDrawingMsg(String url) {
-         aiDrawingMsg.setUrl(url);
+        aiDrawingMsg.setUrl(url);
 
         chatMessages.postValue(chatMessages.getValue());
     }
+
     public void updateAIDrawingMsg(DrawingImageDto imageDto) {
-         aiDrawingMsg.setDrawingImageDto(imageDto);
+        aiDrawingMsg.setDrawingImageDto(imageDto);
 
         chatMessages.postValue(chatMessages.getValue());
     }
+
     public ChatMessage addAIMsg(String msg) {
         List<ChatMessage> list = chatMessages.getValue();
         if (list == null) list = new ArrayList<>();
-        ChatMessage aiMsg = new ChatMessage(msg, false,Constant.ThinkState.END);
+        ChatMessage aiMsg = new ChatMessage(msg, false, Constant.ThinkState.END);
         aiMsg.setThinkMessage("");
         list.add(aiMsg);
         chatMessages.postValue(list);
@@ -551,15 +577,17 @@ public class VMChat extends BaseViewModel {
     }
 
     public void createMy(String model, String title, CreateMyCallback callback) {
-        if(conversationId.get() != 0){//创建过的就直接返回
-            if (callback != null){
+        if (conversationId.get() != 0) {//创建过的就直接返回
+            if (callback != null) {
                 callback.back();
             }
             return;
         }
         request.createMy(model, title, new Observer<ApiResponse<Integer>>() {
             @Override
-            public void onSubscribe(Disposable d) {}
+            public void onSubscribe(Disposable d) {
+            }
+
             @Override
             public void onNext(ApiResponse<Integer> res) {
                 if (res.getCode() == 0) {
@@ -569,16 +597,23 @@ public class VMChat extends BaseViewModel {
                     if (callback != null) callback.back();
                 }
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
-            public void onComplete() {}
+            public void onComplete() {
+            }
         });
     }
+
     public void createMyWithFile(String model, String title, CreateMyCallback callback) {
         request.createMy(model, title, new Observer<ApiResponse<Integer>>() {
             @Override
-            public void onSubscribe(Disposable d) {}
+            public void onSubscribe(Disposable d) {
+            }
+
             @Override
             public void onNext(ApiResponse<Integer> res) {
                 if (res.getCode() == 0) {
@@ -586,22 +621,29 @@ public class VMChat extends BaseViewModel {
                     if (callback != null) callback.back();
                 }
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
-            public void onComplete() {}
+            public void onComplete() {
+            }
         });
     }
-    public void createMyAgent(String model, String title,String aiMenuId, CreateMyCallback callback) {
-        if(conversationId.get() != 0){//创建过的就直接返回
-            if (callback != null){
+
+    public void createMyAgent(String model, String title, String aiMenuId, CreateMyCallback callback) {
+        if (conversationId.get() != 0) {//创建过的就直接返回
+            if (callback != null) {
                 callback.back();
             }
             return;
         }
-        request.createMy(model, title,aiMenuId, new Observer<ApiResponse<Integer>>() {
+        request.createMy(model, title, aiMenuId, new Observer<ApiResponse<Integer>>() {
             @Override
-            public void onSubscribe(Disposable d) {}
+            public void onSubscribe(Disposable d) {
+            }
+
             @Override
             public void onNext(ApiResponse<Integer> res) {
                 if (res.getCode() == 0) {
@@ -609,16 +651,23 @@ public class VMChat extends BaseViewModel {
                     if (callback != null) callback.back();
                 }
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
-            public void onComplete() {}
+            public void onComplete() {
+            }
         });
     }
-    public void createMyMeeting(String model, String title,String systemMessage, CreateMyCallback callback) {
-        request.createMyMeeting(model, title,systemMessage, new Observer<ApiResponse<Integer>>() {
+
+    public void createMyMeeting(String model, String title, String systemMessage, CreateMyCallback callback) {
+        request.createMyMeeting(model, title, systemMessage, new Observer<ApiResponse<Integer>>() {
             @Override
-            public void onSubscribe(Disposable d) {}
+            public void onSubscribe(Disposable d) {
+            }
+
             @Override
             public void onNext(ApiResponse<Integer> res) {
                 if (res.getCode() == 0) {
@@ -626,15 +675,20 @@ public class VMChat extends BaseViewModel {
                     if (callback != null) callback.back();
                 }
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
-            public void onComplete() {}
+            public void onComplete() {
+            }
         });
     }
+
     public void bindMeetingAndConversationId(String meetingId, String conversionId, CreateMyCallback callback) {
         MeetingRepository repository = new MeetingRepositoryImpl();
-        repository.bindMeetingAndConversationId(meetingId,conversionId)  .observeForever(updateResult -> {
+        repository.bindMeetingAndConversationId(meetingId, conversionId).observeForever(updateResult -> {
             if (updateResult != null) {
                 if (updateResult.isSuccess()) {
                     if (callback != null) callback.back();
@@ -643,132 +697,66 @@ public class VMChat extends BaseViewModel {
             }
         });
     }
-    public void updateMyMeeting(String id,String systemMessage, CreateMyCallback callback) {
-        request.updateMyMeeting(id,systemMessage, new Observer<ApiResponse<Boolean>>() {
+
+    public void updateMyMeeting(String id, String systemMessage, CreateMyCallback callback) {
+        request.updateMyMeeting(id, systemMessage, new Observer<ApiResponse<Boolean>>() {
             @Override
-            public void onSubscribe(Disposable d) {}
+            public void onSubscribe(Disposable d) {
+            }
+
             @Override
             public void onNext(ApiResponse<Boolean> res) {
                 if (res.getCode() == 0) {
                     if (callback != null) callback.back();
                 }
             }
+
             @Override
-            public void onError(Throwable e) {}
+            public void onError(Throwable e) {
+            }
+
             @Override
-            public void onComplete() {}
+            public void onComplete() {
+            }
         });
     }
 
     public void sendStream(long conversationId, String title) {
-        closeSSE();
-        fullResponse = "";
-        ResponseThink = "";
-        startTime = System.currentTimeMillis();
+
         ChatMessage aiMessage = addAIMsg();
-        aiMessage.setThinkMessageTitle("思考中");
-        aiMessage.setStatus(Constant.ThinkState.START);
-        thinkMessageTitle.postValue("思考中");
-        thinkStatus.postValue(Constant.ThinkState.START);
-        isStreamEnd = false;
-        streamEnd.postValue(false);
 
-	    String LING_XI_MODEL = "10086";
-
-	    if (Objects.equals(selectOptionModel.getModel(), LING_XI_MODEL)) {
-            requestId = UUID.randomUUID().toString();
-            chatDataFormat.init();
-            if (TabEntity.agentType == TabEntity.TabType.CHAT) {
-                new ChatLingXiAdapter(aiConversationManager, requestId).insideRcChat(title, (DialogueResult result) -> {
-                    if (result == null) {
-                        setError("生成失败");
-                    }
-                    mainHandler.post(() -> {
-                        chatDataFormat.startFlow(result, new ChatFlowCallback() {
-                            @Override
-                            public void receive(LocalModule curModel, Boolean isBreak, String content) {
-                                Timber.tag("chatDataFormat").d("startFlow:%s", content);
-                                fullResponse = content;
-                                ResponseThink = "";
-                                aiMessage.setThinkMessage(ResponseThink);
-                                aiMessage.setMessage(fullResponse);
-                                aiMessage.setStatus(Constant.ThinkState.THINKING);
-                                thinkMessage.postValue(ResponseThink);
-                                aiResponse.postValue(fullResponse);
-                                thinkStatus.postValue(Constant.ThinkState.THINKING);
-                                currentIndex = fullResponse.length();
-                                chatMessages.postValue(chatMessages.getValue());
-                            }
-
-                            @Override
-                            public void end() {
-                                isStreamEnd = true;
-                                endTime = System.currentTimeMillis();
-                                long second = (endTime - startTime) / 1000;
-                                aiMessage.setThinkMessageTitle("思考过程（用时" + second + "秒）");
-                                aiMessage.setStatus(Constant.ThinkState.END);
-                                thinkMessageTitle.postValue("思考过程（用时" + second + "秒）");
-                                thinkStatus.postValue(Constant.ThinkState.END);
-                                chatMessages.postValue(chatMessages.getValue());
-                                streamEnd.postValue(true);
-                            }
-                        });
-                    });
-                    sseDisposable = request.getSseDisposable();
-                    return null;
-                });
-            }
-        }
-        else {
-            request.sendStreams(conversationId, selectOptionModel != null?selectOptionModel.getId():selectAgentBean.getModelId(), title, mFiles, new SSECallback() {
-                @Override
-                public void receive(String responseBodyString) {
-                    Gson gson = new GsonBuilder().setLenient().create();
-                    Type type = new TypeToken<ApiResponse<SSEBean>>() {}.getType();
-                    ApiResponse<SSEBean> res = gson.fromJson(responseBodyString, type);
-                    if (res.getCode() == 0) {
+        initSendState(aiMessage);
+//        List<String> fileAnalyseUrl = new ArrayList<>();
+        request.sendStreams(conversationId, selectOptionModel != null ? selectOptionModel.getId() : selectAgentBean.getModelId(), title, mFiles, new SSECallback() {
+            @Override
+            public void receive(String responseBodyString) {
+                Gson gson = new GsonBuilder().setLenient().create();
+                Type type = new TypeToken<ApiResponse<SSEBean>>() {
+                }.getType();
+                ApiResponse<SSEBean> res = gson.fromJson(responseBodyString, type);
+                if (res.getCode() == 0) {
 //                    if("".equals(fullResponse)){
 //                        ZUtils.print("TTSUtils.getInstance().ttsStart");
 //                        TTSUtils.getInstance().ttsStart();
 //                    }
-                        if (res.getData().getReceive().getType().equals("assistant-reason")) {
-                            ResponseThink += res.getData().getReceive().getContent();
-                        } else {
-                            fullResponse += res.getData().getReceive().getContent();
-                            if(isAutoPlay.getValue()){
-                                TTSUtils.getInstance().ttsText(res.getData().getReceive().getContent(),false);
-                            }
+                    if (res.getData().getReceive().getType().equals("assistant-reason")) {
+                        ResponseThink += res.getData().getReceive().getContent();
+                    } else {
+                        fullResponse += res.getData().getReceive().getContent();
+                        if (isAutoPlay.getValue()) {
+                            TTSUtils.getInstance().ttsText(res.getData().getReceive().getContent(), false);
                         }
+                    }
+                    receiveResponse(aiMessage);
+                }
+            }
 
-                        aiMessage.setThinkMessage(ResponseThink);
-                        aiMessage.setMessage(fullResponse);
-                        aiMessage.setStatus(Constant.ThinkState.THINKING);
-                        thinkMessage.postValue(ResponseThink);
-                        aiResponse.postValue(fullResponse);
-                        thinkStatus.postValue(Constant.ThinkState.THINKING);
-                        currentIndex = fullResponse.length();
-                        chatMessages.postValue(chatMessages.getValue());
-                    }
-                }
-                @Override
-                public void end() {
-                    isStreamEnd = true;
-                    endTime = System.currentTimeMillis();
-                    long second = (endTime - startTime) / 1000;
-                    aiMessage.setThinkMessageTitle("思考过程（用时" + second + "秒）");
-                    aiMessage.setStatus(Constant.ThinkState.END);
-                    thinkMessageTitle.postValue("思考过程（用时" + second + "秒）");
-                    thinkStatus.postValue(Constant.ThinkState.END);
-                    chatMessages.postValue(chatMessages.getValue());
-                    streamEnd.postValue(true);
-//                TTSUtils.getInstance().ttsStop();
-                    if(isAutoPlay.getValue()){
-                        TTSUtils.getInstance().ttsText("",true);
-                    }
-                }
-            });
-            sseDisposable = request.getSseDisposable();
-        }
+            @Override
+            public void end() {
+                endResponse(aiMessage);
+            }
+        });
+        sseDisposable = request.getSseDisposable();
     }
 
     public void closeSSE() {
@@ -781,24 +769,27 @@ public class VMChat extends BaseViewModel {
     protected void onCleared() {
         closeSSE();
         handler.removeCallbacksAndMessages(null);
+        broadcastReceiverHelper.unregisterLocalReceiver();
     }
 
     public void resendMsg() {
         List<ChatMessage> list = chatMessages.getValue();
-        ChatMessage msg =  getResendMsg();
+        ChatMessage msg = getResendMsg();
 
     }
+
     public void removeLast2Msg() {
         List<ChatMessage> list = chatMessages.getValue();
-        list.remove(list.size()-1);
-        list.remove(list.size()-1);
+        list.remove(list.size() - 1);
+        list.remove(list.size() - 1);
         chatMessages.postValue(list);
 
     }
+
     public ChatMessage getResendMsg() {
         List<ChatMessage> list = chatMessages.getValue();
-        if(list.size()>1){
-         return list.get(list.size()-2);
+        if (list.size() > 1) {
+            return list.get(list.size() - 2);
 
         }
         return null;
@@ -818,7 +809,6 @@ public class VMChat extends BaseViewModel {
 //        android.util.Log.d("VMDrawing", "isContinueEditMode: " + isContinueEditMode);
 
 
-
         if (/*!generateEnabled.get() ||*/ isGenerating.get()) {
 //            android.util.Log.w("VMDrawing", "Generation blocked: generateEnabled=" + generateEnabled.get() + ", isGenerating=" + isGenerating.get());
             return;
@@ -827,7 +817,7 @@ public class VMChat extends BaseViewModel {
         // 准备请求参数
         GenerateImageRequest request = new GenerateImageRequest();
 
-        if(selectDrawingToChatBean == null){
+        if (selectDrawingToChatBean == null) {
             return;
         }
         // 组合提示词
@@ -922,7 +912,7 @@ public class VMChat extends BaseViewModel {
         updateAIDrawingMsg(0);
         DrawingImageDto imageDto = new DrawingImageDto();
         imageDto.setPrompt(prompt);
-        if(request.getStyleId() != null){
+        if (request.getStyleId() != null) {
             imageDto.setStyleId(request.getStyleId());
         }
         imageDto.setWidth(width);
@@ -1206,5 +1196,51 @@ public class VMChat extends BaseViewModel {
         this.referenceImageUrl = null;
     }
 
+    public void receiveResponse(ChatMessage aiMessage, String fullResponse) {
+        ResponseThink = fullResponse;
+        receiveResponse(aiMessage);
+    }
+
+    private void receiveResponse(ChatMessage aiMessage) {
+        aiMessage.setThinkMessage(ResponseThink);
+        aiMessage.setMessage(fullResponse);
+        aiMessage.setStatus(Constant.ThinkState.THINKING);
+        thinkMessage.postValue(ResponseThink);
+        aiResponse.postValue(fullResponse);
+        thinkStatus.postValue(Constant.ThinkState.THINKING);
+        currentIndex = fullResponse.length();
+        chatMessages.postValue(chatMessages.getValue());
+    }
+
+    public void endResponse(ChatMessage aiMessage) {
+        isStreamEnd = true;
+        endTime = System.currentTimeMillis();
+        long second = (endTime - startTime) / 1000;
+        aiMessage.setThinkMessageTitle("思考过程（用时" + second + "秒）");
+        aiMessage.setStatus(Constant.ThinkState.END);
+        thinkMessageTitle.postValue("思考过程（用时" + second + "秒）");
+        thinkStatus.postValue(Constant.ThinkState.END);
+        chatMessages.postValue(chatMessages.getValue());
+        streamEnd.postValue(true);
+//                TTSUtils.getInstance().ttsStop();
+        if (isAutoPlay.getValue()) {
+            TTSUtils.getInstance().ttsText("", true);
+        }
+    }
+
+    public void initSendState(ChatMessage aiMessage) {
+
+        aiMessage.setThinkMessageTitle("思考中");
+        aiMessage.setStatus(Constant.ThinkState.START);
+
+        closeSSE();//发流之前关掉之前的
+        fullResponse = "";
+        ResponseThink = "";
+        startTime = System.currentTimeMillis();
+        thinkMessageTitle.postValue("思考中");
+        thinkStatus.postValue(Constant.ThinkState.START);
+        isStreamEnd = false;
+        streamEnd.postValue(false);
+    }
 
 }

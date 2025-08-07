@@ -470,32 +470,32 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
             throw e;
         }
 
-//        AsrOneUtils.getInstance().init(this);
-//
-//        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
-//            @Override
-//            public void callback(String result) {
-//
-//                ZUtils.print("isInArea = "+isInArea);
-//                ZUtils.print("result = "+result);
-////                ZUtils.print("selectOptionModel = "+selectOptionModel.toString());
-//                if(isInArea){
-//                    if (result != null && !result.isEmpty()) {
-//                        // 有文本输入，执行发送功能
-//                        if (currentImage != null || isContinueEditMode) {
-//                            // 已经生成过图片或者是继续编辑模式，在当前页面继续对话
-//                            Log.d("DrawingActivity", "Calling handleContinueConversation");
-//                            handleContinueConversation(result);
-//                        } else {
-//                            // 第一次生成，跳转到对话页面
-//                            Log.d("DrawingActivity", "Calling handleFirstGeneration");
-//                            handleFirstGeneration(result);
-//                        }
-//                    }
-//                }
-//
-//            }
-//        });
+        AsrOneUtils.getInstance().init(this);
+
+        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
+            @Override
+            public void callback(String result) {
+
+                ZUtils.print("isInArea = "+isInArea);
+                ZUtils.print("result = "+result);
+//                ZUtils.print("selectOptionModel = "+selectOptionModel.toString());
+                if(isInArea){
+                    if (result != null && !result.isEmpty()) {
+                        // 有文本输入，执行发送功能
+                        if (currentImage != null || isContinueEditMode) {
+                            // 已经生成过图片或者是继续编辑模式，在当前页面继续对话
+                            Log.d("DrawingActivity", "Calling handleContinueConversation");
+                            handleContinueConversation(result);
+                        } else {
+                            // 第一次生成，跳转到对话页面
+                            Log.d("DrawingActivity", "Calling handleFirstGeneration");
+                            handleFirstGeneration(result);
+                        }
+                    }
+                }
+
+            }
+        });
     }
 
     private void handleIntent() {
@@ -2010,7 +2010,7 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
     protected void onDestroy() {
         super.onDestroy();
 
-//        AsrOneUtils.getInstance().removeCallBack();
+        AsrOneUtils.getInstance().removeCallBack();
         // 释放语音识别资源
         if (speechRecognitionUtil != null) {
             speechRecognitionUtil.destroy();
@@ -2816,23 +2816,11 @@ public class DrawingActivity extends BaseActivity<VMDrawing> {
                 int errNo = speechRecognitionPersistentData.getErrorNumber();
                 if (!TextUtils.isEmpty(curAsrResult) && isVoiceCancel && errNo >= 0 && type.equals("FIN_TEXT")) {
                     Timber.tag(TAG).d("识别结果内容 : %s", curAsrResult);
-//                    viewModel.getPrompt().set(curAsrResult);
-//                    sendAgentJump(voiceRecordView);
-                    // 有文本输入，执行发送功能
-                    if (currentImage != null || isContinueEditMode) {
-                        // 已经生成过图片或者是继续编辑模式，在当前页面继续对话
-                        Log.d("DrawingActivity", "Calling handleContinueConversation");
-                        handleContinueConversation(curAsrResult);
-                    } else {
-                        // 第一次生成，跳转到对话页面
-                        Log.d("DrawingActivity", "Calling handleFirstGeneration");
-                        handleFirstGeneration(curAsrResult);
-                    }
+                    viewModel.getPrompt().set(curAsrResult);
+                    sendAgentJump(voiceRecordView);
                     isVoiceCancel = false;
 
                 }
-
-
 
             }
 

@@ -82,22 +82,22 @@ public class SuperAgentUtil {
 //        if(listModel == null || listModel.size() == 0){
 //            getModel(); // 获取模型列表
 //        }
-//        AsrOneUtils.getInstance().init((Activity) context);
-//
-//        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
-//            @Override
-//            public void callback(String result) {
-//
-//                ZUtils.print("isInArea = "+isInArea);
-//                ZUtils.print("result = "+result);
-////                ZUtils.print("selectOptionModel = "+selectOptionModel.toString());
-//                if(isInArea){
-////                    String text = AsrOneUtils.getResult();
-//                    callback.send(result,selectOptionModel);
-//                }
-//
-//            }
-//        });
+        AsrOneUtils.getInstance().init((Activity) context);
+
+        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
+            @Override
+            public void callback(String result) {
+
+                ZUtils.print("isInArea = "+isInArea);
+                ZUtils.print("result = "+result);
+//                ZUtils.print("selectOptionModel = "+selectOptionModel.toString());
+                if(isInArea){
+//                    String text = AsrOneUtils.getResult();
+                    callback.send(result,selectOptionModel);
+                }
+
+            }
+        });
     }
 
     private void setUI() {

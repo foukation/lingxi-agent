@@ -93,7 +93,7 @@ public class ShadowUtils {
         applyShadow(
                 view,
                 context,
-                10, // elevation dp
+                16, // elevation dp
                 ContextCompat.getColor(context, R.color.color_606F8B),
                 16,
                 false,
