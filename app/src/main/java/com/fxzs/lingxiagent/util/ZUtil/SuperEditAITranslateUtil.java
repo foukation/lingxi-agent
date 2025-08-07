@@ -398,11 +398,15 @@ public class SuperEditAITranslateUtil {
             return;
         }
         changeSoftkey(0,null);
-        String sendContent = content+" 翻译为"+sleet2;
-        content = "帮我把这段文本翻译成"+sleet2+":\""+content+"\"";
-        ed.setText("");
-        callback.send(content,sendContent);
+        String sendContent = content;
+        if (!Constant.isUseLingXiTranslation){
+            sendContent = content+" 翻译为"+sleet2;
+            content = "帮我把这段文本翻译成"+sleet2+":\""+content+"\"";
+        }
 
+        ed.setText("");
+//        callback.send(content,sendContent);
+        callback.send(content,sendContent,sleet1,sleet2);
         AsrOneUtils.getInstance().removeCallBack();
     }
 
@@ -433,17 +437,43 @@ public class SuperEditAITranslateUtil {
 
     public void getModel(){
         listModel = new ArrayList<>();
-        listModel.add(new AiWritingTypeBean("自动检测"));
-        listModel.add(new AiWritingTypeBean("英语"));
-        listModel.add(new AiWritingTypeBean("简体中文"));
-        listModel.add(new AiWritingTypeBean("繁体中文"));
+        if (Constant.isUseLingXiTranslation){
+            listModel.add(new AiWritingTypeBean("中文"));
+            listModel.add(new AiWritingTypeBean("英语"));
+            listModel.add(new AiWritingTypeBean("日语"));
+            listModel.add(new AiWritingTypeBean("韩语"));
+            listModel.add(new AiWritingTypeBean("西班牙语"));
+            listModel.add(new AiWritingTypeBean("法语"));
+            listModel.add(new AiWritingTypeBean("德语"));
+            listModel.add(new AiWritingTypeBean("俄语"));
+            listModel.add(new AiWritingTypeBean("意大利语"));
+        }else {
+            listModel.add(new AiWritingTypeBean("自动检测"));
+            listModel.add(new AiWritingTypeBean("英语"));
+            listModel.add(new AiWritingTypeBean("简体中文"));
+            listModel.add(new AiWritingTypeBean("繁体中文"));
+        }
+
 
         selectOption1 = listModel.get(0);
 
         listModel2 = new ArrayList<>();
-        listModel2.add(new AiWritingTypeBean("英语"));
-        listModel2.add(new AiWritingTypeBean("简体中文"));
-        listModel2.add(new AiWritingTypeBean("繁体中文"));
+        if (Constant.isUseLingXiTranslation){
+            listModel2.add(new AiWritingTypeBean("中文"));
+            listModel2.add(new AiWritingTypeBean("英语"));
+            listModel2.add(new AiWritingTypeBean("日语"));
+            listModel2.add(new AiWritingTypeBean("韩语"));
+            listModel2.add(new AiWritingTypeBean("西班牙语"));
+            listModel2.add(new AiWritingTypeBean("法语"));
+            listModel2.add(new AiWritingTypeBean("德语"));
+            listModel2.add(new AiWritingTypeBean("俄语"));
+            listModel2.add(new AiWritingTypeBean("意大利语"));
+        }else {
+            listModel2.add(new AiWritingTypeBean("英语"));
+            listModel2.add(new AiWritingTypeBean("简体中文"));
+            listModel.add(new AiWritingTypeBean("繁体中文"));
+        }
+
 
         selectOption2 = listModel2.get(1);
         tv_to.setText(selectOption2.getName());

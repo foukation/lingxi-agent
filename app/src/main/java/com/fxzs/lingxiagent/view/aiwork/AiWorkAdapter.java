@@ -1,6 +1,7 @@
 package com.fxzs.lingxiagent.view.aiwork;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,6 +37,8 @@ import com.fxzs.lingxiagent.util.ZUtils;
 import com.fxzs.lingxiagent.view.agent.AgentAdapter;
 import com.fxzs.lingxiagent.view.chat.ChatFileAdapter;
 import com.fxzs.lingxiagent.view.chat.IconTextAdapter;
+import com.fxzs.lingxiagent.view.common.HistoryMenuPopup;
+import com.fxzs.lingxiagent.view.user.HistoryAdapter;
 import com.fxzs.lingxiagent.view.user.HistoryItem;
 
 import org.commonmark.ext.gfm.tables.TableBlock;
@@ -65,6 +69,8 @@ public class AiWorkAdapter extends RecyclerView.Adapter<AiWorkAdapter.ChatViewHo
 
     int type = TYPE_DRAWING;
 
+    private HistoryAdapter.OnMoreActionListener onMoreActionListener;
+    private HistoryAdapter.OnItemClickListener onItemClickListener;
 
     public AiWorkAdapter(Context context, List<HistoryItem> datas) {
         Log.d(TAG, "AiWorkAdapter: Constructor called");
@@ -82,6 +88,21 @@ public class AiWorkAdapter extends RecyclerView.Adapter<AiWorkAdapter.ChatViewHo
     public void setType(int type) {
         this.type = type;
         notifyDataSetChanged();
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public interface OnMoreActionListener {
+        void onMoreAction(View anchor, HistoryItem item, int actionType);
+    }
+
+    public void setOnMoreActionListener(HistoryAdapter.OnMoreActionListener listener) {
+        this.onMoreActionListener = listener;
+    }
+    public void setOnItemClickListener(HistoryAdapter.OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     @NonNull
@@ -129,6 +150,7 @@ public class AiWorkAdapter extends RecyclerView.Adapter<AiWorkAdapter.ChatViewHo
         public TextView tv_date;
         public ImageView iv_content;
         public View ll_card;
+        public View iv_more;
 
 
         ChatViewHolder(@NonNull View itemView) {
@@ -138,13 +160,25 @@ public class AiWorkAdapter extends RecyclerView.Adapter<AiWorkAdapter.ChatViewHo
             tv_date = itemView.findViewById(R.id.tv_date);
             ll_card = itemView.findViewById(R.id.ll_card);
             iv_content = itemView.findViewById(R.id.iv_content);
+            iv_more = itemView.findViewById(R.id.iv_more);
 
         }
 
 
         void bind(HistoryItem data) {
 
-            ShadowUtils.applyDefaultShadow(ll_card,context);
+//            ShadowUtils.applyDefaultShadow(ll_card,context);
+            ShadowUtils.  applyShadow(
+                    ll_card,
+                    context,
+                    8, // elevation dp
+                    ContextCompat.getColor(context, R.color.color_606F8B),
+                    8,
+                    false,
+                    Color.TRANSPARENT,
+                    0,
+                    Color.WHITE
+            );
 //        String url = data.getIcon();
 //        ImageUtil.netRadius(context,url,iv_cover);
 //        tv_title.setText(data.getModelName());
@@ -153,6 +187,46 @@ public class AiWorkAdapter extends RecyclerView.Adapter<AiWorkAdapter.ChatViewHo
             if(iv_content != null){
                 ImageUtil.netRadius(context, data.getImageUrl(), iv_content);
             }
+            // 设置点击事件
+            itemView.setOnClickListener(v -> {
+                if (onItemClickListener != null) {
+                    // 根据不同的数据类型判断是否可以点击
+                    boolean canClick = (data.getSessionId() != null) ||
+                            (data.getConversationId() != null) ||
+                            (data.getMeetingId() != null);
+                    if (canClick) {
+                        onItemClickListener.onItemClick(data);
+                    }
+                }
+            });
+            iv_more.setOnClickListener(v -> {
+//                android.util.Log.d("HistoryAdapter", "ivMore clicked, isDrawingTab=" + isDrawingTab + ", moreActionListener=" + (moreActionListener != null));
+                if (onMoreActionListener != null) {
+                    // 使用自定义弹窗
+                    HistoryMenuPopup menuPopup =
+                            new HistoryMenuPopup(
+                                    itemView.getContext(),
+                                    data,
+                                    new HistoryMenuPopup.OnMenuItemClickListener() {
+                                        @Override
+                                        public void onViewDetail(HistoryItem item) {
+                                            onMoreActionListener.onMoreAction(iv_more, item, 0);
+                                        }
+
+                                        @Override
+                                        public void onRename(HistoryItem item) {
+                                            onMoreActionListener.onMoreAction(iv_more, item, 1);
+                                        }
+
+                                        @Override
+                                        public void onDelete(HistoryItem item) {
+                                            onMoreActionListener.onMoreAction(iv_more, item, 2);
+                                        }
+                                    }
+                            );
+                    menuPopup.showAsDropDown(iv_more);
+                }
+            });
 //            tv_content.setText(data.ge());
 
         }

@@ -39,6 +39,7 @@ public class Constants {
     public static final String PREF_USER_AVATAR = "user_avatar";
     public static final String PREF_CLIENT_IP = "client_ip";
     public static final String PREF_INTENTION_TOKEN = "intention_token";
+    public static final String PREF_CONVERSATION_ID = "conversation_id";//主页最近一次对话id
     // 网络请求超时时间（秒）
     public static final int CONNECT_TIMEOUT = 30;
     public static final int READ_TIMEOUT = 30;

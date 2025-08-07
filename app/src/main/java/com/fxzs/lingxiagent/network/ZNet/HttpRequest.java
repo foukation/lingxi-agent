@@ -9,6 +9,7 @@ import com.fxzs.lingxiagent.model.chat.dto.ChatFileBean;
 import com.fxzs.lingxiagent.network.ZNet.bean.ChatContent;
 import com.fxzs.lingxiagent.network.ZNet.bean.ChatContentRequest;
 import com.fxzs.lingxiagent.util.ZUtils;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -212,6 +213,9 @@ public class HttpRequest extends Request {
 
         map.put("formatBody","");
         ZUtils.print("map = "+map.toString());
+        Gson gson = new Gson();
+        String jsonString = gson.toJson(map);
+        ZUtils.print("map = "+jsonString);
 
         SseApi api = RetrofitClient.createSseApi();
         ZUtils.print("SseApi = "+api.toString());

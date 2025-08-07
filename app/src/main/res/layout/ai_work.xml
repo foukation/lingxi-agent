@@ -28,8 +28,7 @@
 
             android:paddingTop="16dp"
             android:paddingLeft="16dp"
-            android:src="@drawable/bg_avatar_gradient"
-            android:contentDescription="@string/history" />
+            android:src="@drawable/ic_app_logo"/>
 
     </RelativeLayout>
 

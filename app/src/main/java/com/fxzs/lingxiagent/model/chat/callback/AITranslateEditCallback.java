@@ -11,4 +11,6 @@ public interface AITranslateEditCallback {
     void pressUp(boolean isInArea);
 
     default void voiceMove(boolean status){}
+
+    default void send(String content,String prompt,String fromLang,String toLang){};
 }

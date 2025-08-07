@@ -505,7 +505,6 @@ public class SuperEditUtil {
                 // 文本改变后，s 是当前文本内容
                 String input = s.toString();
                 int lineCount = ed.getLineCount();
-
                 // 比如，实时显示输入内容
                 Log.d("EditText", "当前输入: " + input);
                 ZUtils.setTextColor(context,tv_ed_fake,input.length() > 0?R.color.text_black:R.color.text_hint_color);
@@ -1061,13 +1060,14 @@ public class SuperEditUtil {
         }
     }
 
+    String content = "";
     private void sendText(String result) {
         boolean isNetworkAvailable = NetworkUtils.isNetworkAvailable(context);
         if(!isNetworkAvailable){
             GlobalToast.show((Activity) context,"网络错误，请检查网络连接", GlobalToast.Type.ERROR);
             return;
         }
-        String content = "";
+
         if (callback != null) {
             if(!TextUtils.isEmpty(result.trim())){
                 content = result;
@@ -1084,7 +1084,10 @@ public class SuperEditUtil {
             }
 
             ed.setText("");
-            callback.send(content,selectOptionModel);
+            ZInputMethod.hideKeyboard(context,root_view.getWindowToken());
+            //键盘收起期间如果请求网络数据会导致UI 500ms 的卡顿，先执行收起，延时100ms执行网络请求
+            root_view.postDelayed(() -> callback.send(content,selectOptionModel),100);
+
         }
     }
     public void changeModel(int type){
