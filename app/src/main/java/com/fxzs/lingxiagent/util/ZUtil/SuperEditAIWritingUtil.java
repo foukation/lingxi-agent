@@ -86,20 +86,20 @@ public class SuperEditAIWritingUtil {
 //        listModel = SpUtils.loadDataList(context);
          getModel();
         setUI();
-        AsrOneUtils.getInstance().init((Activity) context);
-
-        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
-            @Override
-            public void callback(String result) {
-
-                ZUtils.print("isInArea = "+isInArea);
-                ZUtils.print("result = "+result);
-                if(isInArea){
-                    sendMsg(result);
-                }
-
-            }
-        });
+//        AsrOneUtils.getInstance().init((Activity) context);
+//
+//        AsrOneUtils.getInstance().setCallBack(new AsrCallback() {
+//            @Override
+//            public void callback(String result) {
+//
+//                ZUtils.print("isInArea = "+isInArea);
+//                ZUtils.print("result = "+result);
+//                if(isInArea){
+//                    sendMsg(result);
+//                }
+//
+//            }
+//        });
     }
 
     private void setUI() {
@@ -155,7 +155,7 @@ public class SuperEditAIWritingUtil {
             @Override
             public void onClick(View view) {
 
-                AsrOneUtils.getInstance().removeCallBack();
+//                AsrOneUtils.getInstance().removeCallBack();
                 changeSoftkey(0,null);
                 if (callback != null) {
                     callback.close();
@@ -405,7 +405,7 @@ public class SuperEditAIWritingUtil {
             }
         }
         ed.setText("");
-        AsrOneUtils.getInstance().removeCallBack();//发送之后清空
+//        AsrOneUtils.getInstance().removeCallBack();//发送之后清空
         callback.send(sendContent);
     }
 

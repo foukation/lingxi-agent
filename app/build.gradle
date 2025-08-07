@@ -134,6 +134,7 @@ dependencies {
     implementation group: 'io.noties', name: 'prism4j', version: '2.0.0'
     annotationProcessor group: 'io.noties', name: 'prism4j-bundler', version: '2.0.0'
 
+    implementation 'com.airbnb.android:lottie:6.1.0'
 
     configurations.all {
         resolutionStrategy {

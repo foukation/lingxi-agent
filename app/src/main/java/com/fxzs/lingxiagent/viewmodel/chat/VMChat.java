@@ -7,6 +7,15 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.cmdc.ai.assist.constraint.DialogueResult;
+import com.example.service_api.HttpUrlConnectionHonor;
+import com.fxzs.lingxiagent.conversation.AIConversationManager;
+import com.fxzs.lingxiagent.lingxi.config.ChatFlowCallback;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatLingXiAdapter;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatDataFormat;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatManager;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.LocalModule;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.TabEntity;
 import com.fxzs.lingxiagent.model.chat.callback.CreateMyCallback;
 import com.fxzs.lingxiagent.model.chat.callback.SSECallback;
 import com.fxzs.lingxiagent.model.chat.dto.ChatFileBean;
@@ -44,11 +53,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 public class VMChat extends BaseViewModel {
     private final MutableLiveData<List<ChatMessage>> chatMessages = new MutableLiveData<>(new ArrayList<>());
@@ -64,7 +76,7 @@ public class VMChat extends BaseViewModel {
     private getCatDetailListBean selectAgentBean;
     private DrawingToChatBean selectDrawingToChatBean;
     private DrawingStyleDto selectDrawingStyleDto;
-//    private long conversationId;
+    //    private long conversationId;
     private boolean isStreamEnd = false;
     private String ResponseThink = "";
     private String fullResponse = "";
@@ -75,7 +87,7 @@ public class VMChat extends BaseViewModel {
     private long startTime = 0;
     private long endTime = 0;
 
-    //drawing
+	//drawing
     private String selectedRatio = "1:1";
     private final ObservableField<Long> conversationId = new ObservableField<>(0l);
     private final ObservableField<Integer> progress = new ObservableField<>(0);
@@ -107,10 +119,16 @@ public class VMChat extends BaseViewModel {
     private String meetingId;
     private String transcriptionResult;
 
+    private String requestId;
+	private ChatDataFormat chatDataFormat;
+    private AIConversationManager aiConversationManager;
+
     public VMChat(@NonNull Application application) {
         super(application);
         request = new HttpRequest();
         repository = DrawingRepositoryImpl.getInstance();
+        initChatManager();
+        initAIConversationManager();
     }
 
     public MutableLiveData<List<ChatMessage>> getChatMessages() { return chatMessages; }
@@ -120,9 +138,19 @@ public class VMChat extends BaseViewModel {
     public LiveData<String> getThinkMessage() { return thinkMessage; }
     public LiveData<String> getThinkMessageTitle() { return thinkMessageTitle; }
     public LiveData<Integer> getThinkStatus() { return thinkStatus; }
-
     public ObservableField<Long> getConversationId() {
         return conversationId;
+    }
+
+    private void initChatManager() {
+        if (chatDataFormat == null) {
+            chatDataFormat = new ChatDataFormat();
+        }
+    }
+
+    private void initAIConversationManager() {
+        aiConversationManager = new AIConversationManager();
+        aiConversationManager.setAllowInterrupt(false);
     }
 
     public void setSelectOptionModel(OptionModel option) {
@@ -633,7 +661,7 @@ public class VMChat extends BaseViewModel {
     }
 
     public void sendStream(long conversationId, String title) {
-        closeSSE();//发流之前关掉之前的
+        closeSSE();
         fullResponse = "";
         ResponseThink = "";
         startTime = System.currentTimeMillis();
@@ -644,54 +672,103 @@ public class VMChat extends BaseViewModel {
         thinkStatus.postValue(Constant.ThinkState.START);
         isStreamEnd = false;
         streamEnd.postValue(false);
-//        List<String> fileAnalyseUrl = new ArrayList<>();
-        request.sendStreams(conversationId, selectOptionModel != null?selectOptionModel.getId():selectAgentBean.getModelId(), title, mFiles, new SSECallback() {
-            @Override
-            public void receive(String responseBodyString) {
-                Gson gson = new GsonBuilder().setLenient().create();
-                Type type = new TypeToken<ApiResponse<SSEBean>>() {}.getType();
-                ApiResponse<SSEBean> res = gson.fromJson(responseBodyString, type);
-                if (res.getCode() == 0) {
+
+	    String LING_XI_MODEL = "10086";
+
+	    if (Objects.equals(selectOptionModel.getModel(), LING_XI_MODEL)) {
+            requestId = UUID.randomUUID().toString();
+            chatDataFormat.init();
+            if (TabEntity.agentType == TabEntity.TabType.CHAT) {
+                new ChatLingXiAdapter(aiConversationManager, requestId).insideRcChat(title, (DialogueResult result) -> {
+                    if (result == null) {
+                        setError("生成失败");
+                    }
+                    mainHandler.post(() -> {
+                        chatDataFormat.startFlow(result, new ChatFlowCallback() {
+                            @Override
+                            public void receive(LocalModule curModel, Boolean isBreak, String content) {
+                                Timber.tag("chatDataFormat").d("startFlow:%s", content);
+                                fullResponse = content;
+                                ResponseThink = "";
+                                aiMessage.setThinkMessage(ResponseThink);
+                                aiMessage.setMessage(fullResponse);
+                                aiMessage.setStatus(Constant.ThinkState.THINKING);
+                                thinkMessage.postValue(ResponseThink);
+                                aiResponse.postValue(fullResponse);
+                                thinkStatus.postValue(Constant.ThinkState.THINKING);
+                                currentIndex = fullResponse.length();
+                                chatMessages.postValue(chatMessages.getValue());
+                            }
+
+                            @Override
+                            public void end() {
+                                isStreamEnd = true;
+                                endTime = System.currentTimeMillis();
+                                long second = (endTime - startTime) / 1000;
+                                aiMessage.setThinkMessageTitle("思考过程（用时" + second + "秒）");
+                                aiMessage.setStatus(Constant.ThinkState.END);
+                                thinkMessageTitle.postValue("思考过程（用时" + second + "秒）");
+                                thinkStatus.postValue(Constant.ThinkState.END);
+                                chatMessages.postValue(chatMessages.getValue());
+                                streamEnd.postValue(true);
+                            }
+                        });
+                    });
+                    sseDisposable = request.getSseDisposable();
+                    return null;
+                });
+            }
+        }
+        else {
+            request.sendStreams(conversationId, selectOptionModel != null?selectOptionModel.getId():selectAgentBean.getModelId(), title, mFiles, new SSECallback() {
+                @Override
+                public void receive(String responseBodyString) {
+                    Gson gson = new GsonBuilder().setLenient().create();
+                    Type type = new TypeToken<ApiResponse<SSEBean>>() {}.getType();
+                    ApiResponse<SSEBean> res = gson.fromJson(responseBodyString, type);
+                    if (res.getCode() == 0) {
 //                    if("".equals(fullResponse)){
 //                        ZUtils.print("TTSUtils.getInstance().ttsStart");
 //                        TTSUtils.getInstance().ttsStart();
 //                    }
-                    if (res.getData().getReceive().getType().equals("assistant-reason")) {
-                        ResponseThink += res.getData().getReceive().getContent();
-                    } else {
-                        fullResponse += res.getData().getReceive().getContent();
-                        if(isAutoPlay.getValue()){
-                            TTSUtils.getInstance().ttsText(res.getData().getReceive().getContent(),false);
+                        if (res.getData().getReceive().getType().equals("assistant-reason")) {
+                            ResponseThink += res.getData().getReceive().getContent();
+                        } else {
+                            fullResponse += res.getData().getReceive().getContent();
+                            if(isAutoPlay.getValue()){
+                                TTSUtils.getInstance().ttsText(res.getData().getReceive().getContent(),false);
+                            }
                         }
+
+                        aiMessage.setThinkMessage(ResponseThink);
+                        aiMessage.setMessage(fullResponse);
+                        aiMessage.setStatus(Constant.ThinkState.THINKING);
+                        thinkMessage.postValue(ResponseThink);
+                        aiResponse.postValue(fullResponse);
+                        thinkStatus.postValue(Constant.ThinkState.THINKING);
+                        currentIndex = fullResponse.length();
+                        chatMessages.postValue(chatMessages.getValue());
                     }
-                    aiMessage.setThinkMessage(ResponseThink);
-                    aiMessage.setMessage(fullResponse);
-                    aiMessage.setStatus(Constant.ThinkState.THINKING);
-                    thinkMessage.postValue(ResponseThink);
-                    aiResponse.postValue(fullResponse);
-                    thinkStatus.postValue(Constant.ThinkState.THINKING);
-                    currentIndex = fullResponse.length();
+                }
+                @Override
+                public void end() {
+                    isStreamEnd = true;
+                    endTime = System.currentTimeMillis();
+                    long second = (endTime - startTime) / 1000;
+                    aiMessage.setThinkMessageTitle("思考过程（用时" + second + "秒）");
+                    aiMessage.setStatus(Constant.ThinkState.END);
+                    thinkMessageTitle.postValue("思考过程（用时" + second + "秒）");
+                    thinkStatus.postValue(Constant.ThinkState.END);
                     chatMessages.postValue(chatMessages.getValue());
-                }
-            }
-            @Override
-            public void end() {
-                isStreamEnd = true;
-                endTime = System.currentTimeMillis();
-                long second = (endTime - startTime) / 1000;
-                aiMessage.setThinkMessageTitle("思考过程（用时" + second + "秒）");
-                aiMessage.setStatus(Constant.ThinkState.END);
-                thinkMessageTitle.postValue("思考过程（用时" + second + "秒）");
-                thinkStatus.postValue(Constant.ThinkState.END);
-                chatMessages.postValue(chatMessages.getValue());
-                streamEnd.postValue(true);
+                    streamEnd.postValue(true);
 //                TTSUtils.getInstance().ttsStop();
-                if(isAutoPlay.getValue()){
-                    TTSUtils.getInstance().ttsText("",true);
+                    if(isAutoPlay.getValue()){
+                        TTSUtils.getInstance().ttsText("",true);
+                    }
                 }
-            }
-        });
-        sseDisposable = request.getSseDisposable();
+            });
+            sseDisposable = request.getSseDisposable();
+        }
     }
 
     public void closeSSE() {
