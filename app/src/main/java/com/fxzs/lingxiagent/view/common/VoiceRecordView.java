@@ -72,7 +72,7 @@ public class VoiceRecordView extends FrameLayout {
     private void init(Context context) {
         voiceFile =  new File(getContext().getCacheDir(), "temp.3gp");
         if (bottomPadding == 0){
-            bottomPadding = SizeUtils.dpToPx(24);
+            bottomPadding = SizeUtils.dpToPx(8);
         }
         Log.d("测测ce2 ","高度"+bottomPadding);
         view = LayoutInflater.from(context).inflate(R.layout.dialog_record, this, true);

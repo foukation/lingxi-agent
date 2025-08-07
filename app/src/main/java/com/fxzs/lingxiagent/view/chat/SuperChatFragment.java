@@ -3,11 +3,11 @@ package com.fxzs.lingxiagent.view.chat;
 import static android.app.Activity.RESULT_OK;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.NinePatch;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,7 +26,6 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -37,12 +36,10 @@ import com.cmdc.ai.assist.constraint.DialogueResult;
 import com.cmdc.ai.assist.constraint.SpeechRecognitionPersistentData;
 import com.example.service_api.HttpUrlConnectionHonor;
 import com.fxzs.lingxiagent.conversation.AIConversationManager;
-import com.fxzs.lingxiagent.conversation.ChatLingXiAdapter;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatLingXiAdapter;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatDataFormat;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.ChatManager;
-import com.fxzs.lingxiagent.lingxi.lingxi_conversation.Message;
 import com.fxzs.lingxiagent.lingxi.lingxi_conversation.TabEntity;
-import com.fxzs.lingxiagent.lingxi.main.utils.BroadcastUtils;
 import com.fxzs.lingxiagent.lingxi.multimodal.utils.TtsMediaPlayer;
 import com.fxzs.lingxiagent.model.chat.callback.AIMeetingEditCallback;
 import com.fxzs.lingxiagent.model.chat.callback.AITranslateEditCallback;
@@ -189,11 +186,6 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
     private ImageView ivHead,ivCreateChat,ivHeaderSelectAgent;
     private final String LINGXI_MODEL = "10086";
 
-    private String requestId;
-    private ChatManager chatManager;
-    private ChatDataFormat chatDataFormat;
-    private HttpUrlConnectionHonor honorHttp;
-    private AIConversationManager aiConversationManager;
 
     //历史进入
     public SuperChatFragment(int type,String input,long id,OptionModel optionModel ) {
@@ -282,9 +274,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
         mShareItemAdapter = new ShareItemtAdapter(mShareDatas, mItemClickListener);
         mShareItemList.setAdapter(mShareItemAdapter);
-        initHonor();
-        initChatManager();
-        initAIConversationManager();
+
         if (getArguments() != null) {
             type = getArguments().getInt(Constant.INTENT_TYPE, SuperChatFragment.TYPE_HOME);
             if(type == TYPE_HOME){//首页
@@ -390,6 +380,9 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 setAgentBottomEdit();
                 iv_history.setVisibility(View.GONE);
             }else if(type == TYPE_DRAWING){//绘画
+                tvHeaderTitle.setText("AI绘画");
+                iv_history.setVisibility(View.GONE);
+                iv_top_play.setVisibility(View.INVISIBLE);
                 DrawingToChatBean bean = (DrawingToChatBean) getArguments().getSerializable(Constant.INTENT_DATA);
                 DrawingStyleDto styleDto = (DrawingStyleDto) getArguments().getSerializable(Constant.INTENT_DATA1);
                 vmChat.setSelectDrawingToChatBean(bean);
@@ -426,8 +419,6 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
                 }
                 setAgentBottomEdit();
-                iv_history.setVisibility(View.GONE);
-                iv_top_play.setVisibility(View.GONE);
             }else if(type == TYPE_MEETING){//会议摘要
                 ll_header.setVisibility(View.GONE);
                 Bundle args = getArguments();
@@ -782,6 +773,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
     float lastX;
     float lastY;
+    @SuppressLint("ClickableViewAccessibility")
     private void setChatRv() {
         rv_chat.setItemAnimator(null);
         rv_chat.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -986,20 +978,12 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                         }
                     }
                     selectOptionModel = optionModel;
-                    if (selectOptionModel.getModel().equals(LINGXI_MODEL)){//灵犀
-                        String requestUid = UUID.randomUUID().toString();
-                        requestId = requestUid;
-                        if (!Objects.equals(content, "")) {
-                            chatManager.sendQuestion(content);
-                            chatManager.simulateReply("正在为您加载..", false, false);
-                            handleChatData(content);
-                        }
-                    }else {
-                        vmChat.setSelectOptionModel(optionModel);
-                        vmChat.sendMessage(content);
-                        TTSUtils.getInstance().cancelAndPlay();
-                    }
-//                    ZInputMethod.closeInputMethod(getActivity(),root_view);   //收起键盘
+                    vmChat.sendMessage(content);
+                    vmChat.setSelectOptionModel(optionModel);
+
+                    TTSUtils.getInstance().cancelAndPlay();
+                    // 收起键盘
+                    ZInputMethod.closeInputMethod(getActivity(),root_view);
                 }
 
             }
@@ -1220,11 +1204,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                         AITranslateEditCallback.super.send(content, prompt, fromLang, toLang);
                         if (Constant.isUseLingXiTranslation){
                             Timber.tag(TAG).d("翻译内容="+content + "  原本语言="+fromLang + " 需要翻译语音="+toLang);
-                            if (chatDataFormat != null){
-                                chatDataFormat.init(requireActivity(), content);
-                                chatDataFormat.setTranslationLanguage(fromLang, toLang);
-                                chatDataFormat.startFlow(TabEntity.matchLocalModule(TabEntity.agentType));
-                            }
+
                         }else {
                             vmChat.sendTranslateMessage(content,prompt);
                         }
@@ -1940,45 +1920,6 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
             }else {
                 cancelAsr();
             }
-        }
-    }
-
-
-    /**
-     * 灵犀智能体
-     */
-    private void initChatManager() {
-        this.chatManager = new ChatManager();
-        this.chatManager.init(requireActivity());
-        if (chatDataFormat == null) {
-            chatDataFormat = new ChatDataFormat();
-        }
-    }
-
-    private void initAIConversationManager() {
-        aiConversationManager = new AIConversationManager();
-        aiConversationManager.setAllowInterrupt(false);
-
-    }
-
-    private void initHonor() {
-        honorHttp = new HttpUrlConnectionHonor(requireContext());
-    }
-
-    private void handleChatData(String curAsrResult) {
-        chatDataFormat.init(requireActivity(), curAsrResult);
-        if (TabEntity.agentType == TabEntity.TabType.CHAT) {
-            new ChatLingXiAdapter(aiConversationManager, requestId).insideRcChat(curAsrResult, (DialogueResult result) -> {
-                if (result == null) {
-                    return null;
-                }
-                requireActivity().runOnUiThread(() -> {
-                    chatDataFormat.startFlow(result, honorHttp);
-                });
-                return null;
-            });
-        }  else {
-            chatDataFormat.startFlow(TabEntity.matchLocalModule(TabEntity.agentType), honorHttp);
         }
     }
 
