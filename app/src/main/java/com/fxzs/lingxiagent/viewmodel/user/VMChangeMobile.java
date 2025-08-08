@@ -99,7 +99,7 @@ public class VMChangeMobile extends BaseViewModel {
             public void onChanged(BaseResponse<Boolean> response) {
                 setLoading(false);
                 if (response.isSuccess()) {
-                    setSuccess("验证码已发送");
+                    setSuccess("验证码已发送，5分钟内有效");
                     // 开始倒计时
                     startCountdown();
                 } else {
@@ -194,7 +194,7 @@ public class VMChangeMobile extends BaseViewModel {
         isCountingDown = true;
         sendCodeEnabled.set(false);
         
-        countDownTimer = new CountDownTimer(60000, 1000) {
+        countDownTimer = new CountDownTimer(Constants.SMS_COUNTDOWN * 1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 int seconds = (int) (millisUntilFinished / 1000);

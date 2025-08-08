@@ -1,18 +1,30 @@
 package com.fxzs.lingxiagent.lingxi.lingxi_conversation;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import com.cmdc.ai.assist.constraint.DialogueResult;
 import com.example.device_control.AgentResult;
 import com.example.device_control.SchedulerManagerFactory;
-import com.example.service_api.HttpUrlConnectionHonor;
 import com.fxzs.lingxiagent.R;
 import com.fxzs.lingxiagent.helper.AppListHelper;
 import com.fxzs.lingxiagent.lingxi.config.ChatFlowCallback;
 import com.fxzs.lingxiagent.lingxi.main.utils.GsonUtils;
 import com.fxzs.lingxiagent.lingxi.multimodal.utils.TtsMediaPlayer;
+import com.fxzs.lingxiagent.model.honor.api.HonorApiService;
+import com.fxzs.lingxiagent.model.honor.dto.BodyData;
+import com.fxzs.lingxiagent.model.honor.dto.CardData;
+import com.fxzs.lingxiagent.model.honor.dto.CommandsData;
+import com.fxzs.lingxiagent.model.honor.dto.HtmlInfo;
+import com.fxzs.lingxiagent.model.honor.dto.TripHonorRes;
+import com.fxzs.lingxiagent.model.honor.repository.HonorRepositoryImpl;
+import com.fxzs.lingxiagent.model.honor.repository.StreamHandler;
 import com.fxzs.lingxiagent.util.MediaPlayerUtils;
 import com.fxzs.lingxiagent.util.TtsXiaDuMediaPlayer;
 
@@ -20,6 +32,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -33,6 +47,8 @@ public class ChatDataFormat {
 	boolean isBreakFlow = false;
 	private DialogueResult result = null;
 	private SchedulerManagerFactory schedulerManagerFactory = null;
+	private HonorApiService honorApiService;
+	private String asrResult;
 
 	public ChatDataFormat(Activity activityRef) {
 		this.activityRef = new WeakReference<>(activityRef);
@@ -81,10 +97,11 @@ public class ChatDataFormat {
 
 			// 根据当前模块执行相应的操作
 			if (curModule == LocalModule.TRAVEL) {
+				execTravelHonor(asrResult, callback);
 				return;
 			}
 
-			if (curModule == LocalModule.TRIP) {
+			if (curModule == LocalModule.MEET) {
 				return;
 			}
 
@@ -105,10 +122,10 @@ public class ChatDataFormat {
 				String percent = getPercentData();
 				ArrayList<String> imageList = getImgData();
 				if (!percent.isEmpty()) {
-					callback.receive(LocalModule.CHAT, false, percent);
+					callback.receive(AdapterType.CHAT, false, percent);
 				}
 				if (imageList != null) {
-					callback.receive(LocalModule.IMG, true, imageList);
+					callback.receive(imageList);
 				}
 			}
 
@@ -119,21 +136,21 @@ public class ChatDataFormat {
 
 			if (curModule == LocalModule.MUSIC) {
 				isBreakFlow = true;
-				callback.receive(LocalModule.CHAT, isBreakFlow, activityRef.get().getString(R.string.exec_sys_control_default));
+				callback.receive(AdapterType.CHAT, false, activityRef.get().getString(R.string.exec_sys_control_default));
 				return;
 			}
 
 			if (curModule == LocalModule.WEATHER) {
 				String lastAnswer = result.getAssistant_answer_content();
 				if (lastAnswer != null) {
-					callback.receive(LocalModule.CHAT, false, lastAnswer);
+					callback.receive(AdapterType.CHAT, false, lastAnswer);
 				}
 			}
 
 			if (curModule == LocalModule.CHAT) {
 				String answer = getAnswerData();
 				if (!answer.isEmpty()) {
-					callback.receive(LocalModule.CHAT, false, answer);
+					callback.receive(AdapterType.CHAT, false, answer);
 				}
 			}
 		}
@@ -173,6 +190,8 @@ public class ChatDataFormat {
 					// 提取domain和intent字段
 					String domain = nluFir.optString("domain");
 					String intent = nluFir.optString("intent");
+					asrResult = nluFir.optString("rewrite");
+
 					// 根据domain和intent的值决定返回的本地模块
 					if (domain.equals(IntentDomain.CHAT.getAlias())) {
 						// 处理聊天相关的意图
@@ -227,25 +246,31 @@ public class ChatDataFormat {
 					} else if (domain.equals(IntentDomain.NAVIGATION.getAlias())) {
 						// 处理导航相关的意图
 						if (intent.equals(NavIntent.NAV_AIGuide.getAlias())) {
+							isBreakFlow = true;
 							return LocalModule.TRAVEL;
 						} else if (intent.equals(NavIntent.NAV_POI.getAlias())) {
+							isBreakFlow = true;
 							return LocalModule.TRIP;
 						} else if (intent.equals(NavIntent.NAV_NAV.getAlias())) {
+							isBreakFlow = true;
 							return LocalModule.ACTION;
 						} else {
 							return LocalModule.CHAT;
 						}
 					} else if (domain.equals(IntentDomain.ALARM.getAlias())) {
+						isBreakFlow = true;
 						// 处理闹钟相关的意图
 						return LocalModule.ACTION;
 					} else if (domain.equals(IntentDomain.DRINK.getAlias())) {
 						// 处理饮料相关的意图
 						return LocalModule.CHAT;
 					} else if (domain.equals(IntentDomain.UNCLEAR.getAlias())) {
+						isBreakFlow = true;
 						// 处理不明确的意图
 						return LocalModule.WEATHER;
 					} else if (domain.equals(IntentDomain.TRAVEL.getAlias())) {
-						// 处理不明确的意图
+						isBreakFlow = true;
+						// 处理出行意图
 						return LocalModule.TRAVEL;
 					} else {
 						// 默认处理聊天意图
@@ -268,10 +293,9 @@ public class ChatDataFormat {
 			} else {
 				resultStr = !Objects.equals(agentResult.getErrMsg(), "") ? agentResult.getErrMsg() : "指令执行失败";
 			}
-
 			if (!TextUtils.isEmpty(resultStr)) {
 				isBreakFlow = true;
-				callback.receive(LocalModule.CHAT, isBreakFlow, resultStr);
+				callback.receive(AdapterType.CHAT, isBreakFlow, resultStr);
 			}
 		}
 	}
@@ -279,13 +303,97 @@ public class ChatDataFormat {
 	public void execTranslate() {
 	}
 
-	public void execTripHonor(HttpUrlConnectionHonor HonorHttp) {
+	public void execTravelHonor(String result, ChatFlowCallback callback) {
+		HonorRepositoryImpl honorHttp = new HonorRepositoryImpl(activityRef.get());
+		StringBuilder totalCotText = new StringBuilder();
+		StringBuilder totalText = new StringBuilder();
+		final boolean[] isFirCot = {true};
+		honorHttp.sendStreamRequest(result, new StreamHandler() {
+			@Override
+			public void onStreamStop() {
+				callback.end();
+			}
+
+			@Override
+			public void onDataChunk(@NonNull TripHonorRes resp) {
+				if (resp.getErrorCode().equals("0")) {
+					CommandsData commands = resp.getChoices().getMessage().getHybridContent().getCommands();
+					String type = commands.getHead().getNamespace();
+					BodyData body = commands.getBody();
+					String richText = body.getText();
+					if (type.equals("think")) {
+						totalCotText.append(richText);
+						if (isFirCot[0]) {
+							isFirCot[0] = false;
+						}
+						callback.receive(AdapterType.COT, false, String.valueOf(totalCotText));
+					} else if (isFirCot[0] && type.equals("rich_text")) {
+						if (richText != null) {
+							totalText.append(richText);
+							callback.receive(AdapterType.CHAT, false, richText);
+						}
+					} else if (!isFirCot[0] && type.equals("rich_text")) {
+						if (richText != null) {
+							totalText.append(richText);
+							callback.receive(AdapterType.CHAT, false, String.valueOf(totalText));
+						}
+					} else if (type.equals("card")) {
+						new Handler(Looper.getMainLooper()).postDelayed(() -> showHonorCard(body), 600);
+					}
+				}
+			}
+
+			@Override
+			public void onStreamComplete() {
+				callback.end();
+			}
+
+			@Override
+			public void onError(@NonNull String errMsg) {
+				callback.end();
+			}
+		});
+	}
+
+	public void execMeetHonor() {
 	}
 
 	private void showHonorCard(BodyData body) {
+		if (body.getJsCards() != null && !body.getJsCards().isEmpty()) {
+			for (int i = 0; i < body.getJsCards().size(); i++) {
+				CardData cardData = body.getJsCards().get(i);
+				String serviceId = cardData.getServiceId();
+				String templateId = cardData.getTemplateId();
+				if (templateId == null) {
+					if (!Objects.equals(serviceId, "")) {
+						showHonorServiceCard(cardData);
+					}
+				}
+			}
+		}
 	}
 
+	@SuppressLint({"NewApi", "LocalSuppress"})
 	private void showHonorServiceCard(CardData cardData) {
+		String content;
+		content = URLEncoder.encode(cardData.getContent(), StandardCharsets.UTF_8);
+		String type = cardData.getType();
+		HtmlInfo newServiceCardData = null;
+		if (type.equals(ServiceTemplateType.PLANE.getAlias())) {
+
+		} else if (type.equals(ServiceTemplateType.TRAIN.getAlias())) {
+
+		} else if (type.equals(ServiceTemplateType.HOTEL.getAlias())) {
+
+		} else if (type.equals(ServiceTemplateType.HOME.getAlias())) {
+
+		} else if (type.equals(ServiceTemplateType.ORDER.getAlias())) {
+
+		} else if (type.equals(ServiceTemplateType.FOOD.getAlias())) {
+		}
+
+		if (newServiceCardData != null) {
+		}
 	}
 
 	public void execAction() {

@@ -60,7 +60,7 @@ public class ForgetPwdActivity extends AppCompatActivity {
                     return;
                 }
                 // TODO: 发送验证码逻辑
-                Toast.makeText(ForgetPwdActivity.this, "验证码已发送", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ForgetPwdActivity.this, "验证码已发送，5分钟内有效", Toast.LENGTH_SHORT).show();
             }
         });
         

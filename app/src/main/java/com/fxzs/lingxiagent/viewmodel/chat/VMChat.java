@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.cmdc.ai.assist.constraint.DialogueResult;
+import com.fxzs.lingxiagent.lingxi.lingxi_conversation.AdapterType;
 import com.fxzs.lingxiagent.lingxi.service_api.data.AppData;
 import com.fxzs.lingxiagent.conversation.AIConversationManager;
 import com.fxzs.lingxiagent.helper.AppListHelper;
@@ -725,10 +726,9 @@ public class VMChat extends BaseViewModel {
                     mainHandler.post(() -> {
                         chatDataFormat.startFlow(result, new ChatFlowCallback() {
                             @Override
-                            public void receive(LocalModule curModel, Boolean isBreak, String content) {
-                                if (curModel == LocalModule.CHAT) {
+                            public void receive(AdapterType type, Boolean isBreak, String content) {
+                                if (type == AdapterType.CHAT) {
                                     fullResponse = content;
-                                    ResponseThink = "";
                                     aiMessage.setThinkMessage(ResponseThink);
                                     aiMessage.setMessage(fullResponse);
                                     aiMessage.setStatus(Constant.ThinkState.THINKING);
@@ -738,13 +738,19 @@ public class VMChat extends BaseViewModel {
                                     currentIndex = fullResponse.length();
                                     chatMessages.postValue(chatMessages.getValue());
                                 }
+                                if (type == AdapterType.COT) {
+                                    ResponseThink = content;
+                                    aiMessage.setThinkMessage(ResponseThink);
+                                    aiMessage.setStatus(Constant.ThinkState.THINKING);
+                                    thinkMessage.postValue(ResponseThink);
+                                    thinkStatus.postValue(Constant.ThinkState.THINKING);
+                                    chatMessages.postValue(chatMessages.getValue());
+                                }
                             }
 
                             @Override
-                            public void receive(LocalModule curModel, Boolean isBreak, ArrayList<String> imageList) {
-                                if (curModel == LocalModule.IMG) {
-                                    addAIImages(imageList);
-                                }
+                            public void receive(ArrayList<String> imageList) {
+                                addAIImages(imageList);
                             }
 
                             @Override

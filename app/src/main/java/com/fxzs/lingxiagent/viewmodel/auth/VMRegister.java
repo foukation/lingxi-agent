@@ -30,6 +30,7 @@ public class VMRegister extends BaseViewModel {
     
     // 业务状态
     private final MutableLiveData<Boolean> registerResult = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> sendSmsResult = new MutableLiveData<>();
     private final MutableLiveData<LoginResponse> loginBySmsResult = new MutableLiveData<>();
 
     private int countdownSeconds = 0;
@@ -85,6 +86,10 @@ public class VMRegister extends BaseViewModel {
     
     public MutableLiveData<Boolean> getRegisterResult() {
         return registerResult;
+    }
+
+    public MutableLiveData<Boolean> getSendSmsResult() {
+        return sendSmsResult;
     }
 
     public MutableLiveData<LoginResponse> getLoginBySmsResult() {
@@ -194,7 +199,8 @@ public class VMRegister extends BaseViewModel {
 
                 if (null != response) {
                     if (response.isSuccess()) {
-                        setSuccess("验证码已发送");
+                        setSuccess("验证码已发送，5分钟内有效");
+                        sendSmsResult.setValue(true);
                         startCountdown();
                     } else {
                         String msg = response.getMsg();

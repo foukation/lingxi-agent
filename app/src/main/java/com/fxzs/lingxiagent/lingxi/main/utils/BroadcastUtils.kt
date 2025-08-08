@@ -2,8 +2,6 @@ package com.fxzs.lingxiagent.lingxi.main.utils
 
 import android.content.Intent
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.example.service_api.data.CardContentList
-import com.example.service_api.data.HtmlInfo
 import com.fxzs.lingxiagent.IYAApplication
 import com.fxzs.lingxiagent.lingxi.config.PermissionType
 
@@ -60,12 +58,6 @@ object BroadcastUtils {
     fun replyTripCardBroadcast(content: String) {
         val broadcastIntent = Intent(BroadcastConstants.ACTION_TRIP_CARD_REPLY)
         broadcastIntent.putExtra("content", content)
-        LocalBroadcastManager.getInstance(IYAApplication.getInstance()).sendBroadcast(broadcastIntent)
-    }
-
-    fun replyTravelHtmlBroadcast(htmlInfo: HtmlInfo) {
-        val broadcastIntent = Intent(BroadcastConstants.ACTION_TRAVEL_HTML_REPLY)
-        broadcastIntent.putExtra("htmlInfo", htmlInfo)
         LocalBroadcastManager.getInstance(IYAApplication.getInstance()).sendBroadcast(broadcastIntent)
     }
 

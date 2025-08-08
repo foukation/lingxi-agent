@@ -84,7 +84,9 @@ import com.fxzs.lingxiagent.view.common.BaseFragment;
 import com.fxzs.lingxiagent.view.common.ExportFileDialog;
 import com.fxzs.lingxiagent.view.common.VoiceRecordView;
 import com.fxzs.lingxiagent.view.drawing.DrawingActivity;
+import com.fxzs.lingxiagent.view.drawing.DrawingContainActivity;
 import com.fxzs.lingxiagent.view.drawing.DrawingImageViewerActivity;
+import com.fxzs.lingxiagent.view.meeting.MeetingContainActivity;
 import com.fxzs.lingxiagent.view.meeting.MeetingSummaryFragment;
 import com.fxzs.lingxiagent.view.user.UserActivity;
 import com.fxzs.lingxiagent.viewmodel.chat.VMChat;
@@ -1003,9 +1005,11 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 // PPT 生成
             } else if (bean.getId() == Constant.ChatFunction.TYPE_AI_PIC) {
                 // AI绘画
-//                finish();
+                startActivity(new Intent(getActivity(), DrawingContainActivity.class));
+
             } else if (bean.getId() == Constant.ChatFunction.TYPE_AI_MEETING) {
                 // AI 会议
+                startActivity(new Intent(getActivity(), MeetingContainActivity.class));
             } else if (bean.getId() == Constant.ChatFunction.TYPE_VOICE) {
                 // 同声传译
             } else if (bean.getId() == Constant.ChatFunction.TYPE_TRAVEL || bean.getId() == Constant.ChatFunction.TYPE_PART) {
@@ -1384,33 +1388,35 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 layoutManager.scrollToPosition(vmChat.getChatMessages().getValue().size() - 1);
                 holder = rv_chat.findViewHolderForAdapterPosition(vmChat.getChatMessages().getValue().size() - 1);
             }
-            if (holder !=null && holder instanceof ChatAdapter.ChatViewHolder) {
-                /* LinearLayout textView = ((ChatAdapter.ChatViewHolder) holder).root_view;
-                // 强制重新布局以确保高度准确
-                textView.requestLayout();
-                // 延迟获取高度，等待 Markdown 渲染完成
-                textView.post(() -> {
-                    if(isUserTouch){
-                        return;
-                    }
-                    if (mIsUserScrolling) {
-                        return;
-                    }
-                    int textViewHeight = textView.getHeight();
-                    ZUtils.print( "TextView height: " + textViewHeight);
-                    ZUtils.print( "lastTextViewHeight height: " + lastTextViewHeight);
+            if (holder instanceof ChatAdapter.ChatViewHolder) {
+                LinearLayout textView = ((ChatAdapter.ChatViewHolder) holder).root_view;
+                if (textView != null) {
+                    // 强制重新布局以确保高度准确
+                    textView.requestLayout();
+                    // 延迟获取高度，等待 Markdown 渲染完成
+                    textView.post(() -> {
+                        if(isUserTouch){
+                            return;
+                        }
+                        if (mIsUserScrolling) {
+                            return;
+                        }
+                        int textViewHeight = textView.getHeight();
+                        ZUtils.print( "TextView height: " + textViewHeight);
+                        ZUtils.print( "lastTextViewHeight height: " + lastTextViewHeight);
 //                    Log.d(TAG, "rv_chat height: " + rv_chat.getHeight());
-                    // 仅当 TextView 高度超过 RecyclerView 高度时滚动
+                        // 仅当 TextView 高度超过 RecyclerView 高度时滚动
 //                    if(lastTextViewHeight == textViewHeight){
 //                        return;
 //                    }
 //                    lastTextViewHeight = textViewHeight;
-                    if (textViewHeight > rv_chat.getHeight()) {
-                        layoutManager.scrollToPositionWithOffset(vmChat.getChatMessages().getValue().size() - 1, -textViewHeight);
-                    } else {
-                        layoutManager.scrollToPosition(vmChat.getChatMessages().getValue().size() - 1);
-                    }
-                });*/
+                        if (textViewHeight > rv_chat.getHeight()) {
+                            layoutManager.scrollToPositionWithOffset(vmChat.getChatMessages().getValue().size() - 1, -textViewHeight);
+                        } else {
+                            layoutManager.scrollToPosition(vmChat.getChatMessages().getValue().size() - 1);
+                        }
+                    });
+                }
             }
         }
     }

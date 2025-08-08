@@ -175,6 +175,15 @@ public class RegisterActivity extends BaseActivity<VMRegister> {
     
     @Override
     protected void setupObservers() {
+        // 观察发送验证码的结果
+        viewModel.getSendSmsResult().observe(this, new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean success) {
+                if (null != success && success) {
+                    tvRemainFailCount.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
         // 添加对registerEnabled的观察，用于调试
         viewModel.getRegisterEnabled().observeForever(enabled -> {
             android.util.Log.d("RegisterActivity", "registerEnabled changed to: " + enabled);
