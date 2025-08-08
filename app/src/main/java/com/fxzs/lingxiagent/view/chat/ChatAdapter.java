@@ -331,7 +331,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         public void onBindViewHolder(ViewHolder holder, int position) {
             String imageUrl = imagesPath.get(position);
             Glide.with(holder.itemView.getContext()).load(imageUrl).placeholder(R.drawable.dog).transform(new CenterCrop(), new RoundedCorners(ScreenUtils.INSTANCE.dpToPx(8, context))).into(holder.imageView);
-            holder.imageView.setOnClickListener(v -> showImageOptions(position));
+            holder.imageView.setOnClickListener(v -> showImageOptions(holder.itemView.getContext() ,position));
         }
 
         @Override
@@ -339,11 +339,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             return imagesPath != null ? imagesPath.size() : 0;
         }
 
-        private void showImageOptions(int position) {
-            /* Intent intent = new Intent(context, ImagePreviewActivity.class);
+        private void showImageOptions(Context context, int position) {
+            Intent intent = new Intent(context, ImagePreviewActivity.class);
             intent.putExtra("imagesPath", imagesPath);
             intent.putExtra("position", position);
-            context.startActivity(intent); */
+            context.startActivity(intent);
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {

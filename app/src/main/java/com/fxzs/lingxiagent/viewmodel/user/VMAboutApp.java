@@ -2,7 +2,6 @@ package com.fxzs.lingxiagent.viewmodel.user;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -11,12 +10,11 @@ import androidx.lifecycle.MutableLiveData;
 import com.fxzs.lingxiagent.model.common.BaseResponse;
 import com.fxzs.lingxiagent.model.common.BaseViewModel;
 import com.fxzs.lingxiagent.model.common.ObservableField;
-import com.fxzs.lingxiagent.model.user.UserUtil;
+import com.fxzs.lingxiagent.model.upgrade.UpgradeHelper;
 import com.fxzs.lingxiagent.model.user.dto.AppVersionResponse;
 import com.fxzs.lingxiagent.model.user.repository.UserRepository;
 import com.fxzs.lingxiagent.model.user.repository.UserRepositoryImpl;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import retrofit2.Call;
@@ -57,15 +55,7 @@ public class VMAboutApp extends BaseViewModel {
     public void fetchAppUpgradeInfo(Context context) {
         setLoading(true);
         // 请求body参数
-        Map<String, String> params = new HashMap<>();
-        params.put("brand", Build.BRAND);
-        params.put("model", Build.MODEL);
-        params.put("os", "android");
-        params.put("osVersion", Build.VERSION.RELEASE);
-        params.put("androidId", UserUtil.getAndroidId(context));
-        params.put("versionCode", String.valueOf(UserUtil.getAppVersionCode(context)));
-        params.put("versionName", UserUtil.getAppVersionName(context));
-        params.put("packageName", context.getPackageName());
+        Map<String, String> params = UpgradeHelper.getRequestBody(context);
 
         userRepository.checkAppUpgrade(params).enqueue(new Callback<BaseResponse<AppVersionResponse>>() {
             @Override
