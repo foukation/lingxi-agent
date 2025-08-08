@@ -12,12 +12,12 @@ import com.fxzs.lingxiagent.helper.AppListHelper;
 import com.fxzs.lingxiagent.lingxi.config.ChatFlowCallback;
 import com.fxzs.lingxiagent.lingxi.main.utils.GsonUtils;
 import com.fxzs.lingxiagent.lingxi.multimodal.utils.TtsMediaPlayer;
-import com.fxzs.lingxiagent.model.user.dto.FAQItem;
 import com.fxzs.lingxiagent.util.MediaPlayerUtils;
 import com.fxzs.lingxiagent.util.TtsXiaDuMediaPlayer;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -28,8 +28,8 @@ public class ChatDataFormat {
 	private static final String TAG = "ChatDataFormat";
 	public LocalModule curModule = null;
 	public LocalModule mainCurModule = null;
-	private DialogueResult result = null;
 	boolean isBreakFlow = false;
+	private DialogueResult result = null;
 	private SchedulerManagerFactory schedulerManagerFactory = null;
 	private final WeakReference<Activity> activityRef;
 
@@ -102,7 +102,14 @@ public class ChatDataFormat {
 			}
 
 			if (curModule == LocalModule.IMG) {
-				return;
+				String percent = getPercentData();
+				ArrayList<String> imageList = getImgData();
+				if (!percent.isEmpty()) {
+					callback.receive(LocalModule.CHAT, false, percent);
+				}
+				if (imageList != null) {
+					callback.receive(LocalModule.IMG, true, imageList);
+				}
 			}
 
 			if (curModule == LocalModule.MEDIA) {
@@ -117,7 +124,10 @@ public class ChatDataFormat {
 			}
 
 			if (curModule == LocalModule.WEATHER) {
-				addChatWeatherView();
+				String lastAnswer = result.getAssistant_answer_content();
+				if (lastAnswer != null) {
+					callback.receive(LocalModule.CHAT, false, lastAnswer);
+				}
 			}
 
 			if (curModule == LocalModule.CHAT) {
@@ -127,7 +137,8 @@ public class ChatDataFormat {
 				}
 			}
 		}
-        // 如果对话结束，更新状态并执行兜底操作
+
+		// 如果对话结束，更新状态并执行兜底操作
 		if (isEnd == 1) {
 			callback.end();
 		}
@@ -367,5 +378,4 @@ public class ChatDataFormat {
 		}
 		return "";
 	}
-
 }
