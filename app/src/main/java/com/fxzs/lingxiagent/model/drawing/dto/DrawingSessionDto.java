@@ -17,6 +17,9 @@ public class DrawingSessionDto implements Serializable {
     private String updateTime;        // 更新时间
     private List<DrawingImageDto> images; // 会话中的图片列表
     private List<DrawingImageDto> aiImageList; // API返回的图片列表字段
+    private DrawingImageDto latestImage; // 历史中用
+
+    private String picUrl;
     
     // Getters and Setters
     public Long getId() {
@@ -89,5 +92,21 @@ public class DrawingSessionDto implements Serializable {
     
     public void setAiImageList(List<DrawingImageDto> aiImageList) {
         this.aiImageList = aiImageList;
+    }
+
+    public String getPicUrl() {
+        return picUrl;
+    }
+
+    public void setPicUrl(String picUrl) {
+        this.picUrl = picUrl;
+    }
+
+    public DrawingImageDto getLatestImage() {
+        return latestImage;
+    }
+
+    public void setLatestImage(DrawingImageDto latestImage) {
+        this.latestImage = latestImage;
     }
 }

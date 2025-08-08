@@ -14,10 +14,12 @@ import com.fxzs.lingxiagent.network.ZNet.HttpRequest;
 import com.fxzs.lingxiagent.view.aiwork.AiWorkAdapter;
 import com.fxzs.lingxiagent.viewmodel.history.HistoryViewModelFactory;
 import com.fxzs.lingxiagent.viewmodel.history.VMHistory;
+import com.fxzs.lingxiagent.viewmodel.user.VMUserProfile;
 
 public class VMAiWork extends BaseViewModel {
 
     private VMHistory vmHistory;
+    VMUserProfile vmUserProfile;
     Activity mActivity;
 
     public VMAiWork(@NonNull Application application) {
@@ -35,6 +37,10 @@ public class VMAiWork extends BaseViewModel {
 
     public VMHistory getVmHistory() {
         return vmHistory;
+    }
+
+    public VMUserProfile getVmUserProfile() {
+        return vmUserProfile;
     }
 
     /**
@@ -81,5 +87,12 @@ public class VMAiWork extends BaseViewModel {
 
         HistoryViewModelFactory factory = new HistoryViewModelFactory();
         vmHistory = new ViewModelProvider((ViewModelStoreOwner) activity,factory).get(VMHistory.class);
+//        vmUserProfile = new ViewModelProvider((ViewModelStoreOwner) activity,factory).get(VMUserProfile.class);
+        vmUserProfile = new ViewModelProvider((ViewModelStoreOwner) activity).get(VMUserProfile.class);
+
     }
+    public void loadUserProfile(){
+        vmUserProfile.loadUserProfile();
+    }
+
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -229,7 +230,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             if (item.getMsgType() == ChatAdapter.TYPE_USER) {
                 // 用户消息仍然使用TextView，因为用户消息布局文件中是TextView
 //                markdownRenderer.renderWithCache(item.getMessage(), (TextView) holder.itemView.findViewById(R.id.messageText));
-                markdownRenderer.renderWithCache(item.getMessage(), (TextView) holder.messageText);
+//                markdownRenderer.renderWithCache(item.getMessage(), (TextView) holder.messageText);
+                holder.messageText.setText(item.getMessage());
                 holder.messageText.setOnLongClickListener(new View.OnLongClickListener() {
                     @Override
                     public boolean onLongClick(View view) {
@@ -373,6 +375,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
             }
         });
+        holder.iv_thinking_arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                item.setHideThinking(!item.isHideThinking());
+                notifyDataSetChanged();
+            }
+        });
     }
 
     private void setActionDrawing(ChatViewHolder holder, ChatMessage item, int position) {
@@ -440,6 +449,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             } else {
                 holder.iv_chat_refresh.setVisibility(View.VISIBLE);
             }
+            if (item.isHideThinking()) {
+                holder.tv_thinking.setVisibility(View.GONE);
+                ZUtils.setIvBg(context,holder.iv_thinking_arrow,R.mipmap.home_down_arrow);
+            } else {
+                holder.tv_thinking.setVisibility(View.VISIBLE);
+                ZUtils.setIvBg(context,holder.iv_thinking_arrow,R.mipmap.home_up_arrow);
+            }
             switch (item.getStatus()) {
                 case Constant.ThinkState.START:
                     holder.tv_thinking_title.setText("正在思考中");
@@ -480,6 +496,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     private void setDrawingMessage(ChatViewHolder holder, ChatMessage item, int position) {
 
+//        rl_container
+//      ZUtils.print("item.getDrawingImageDto().getAspectRatio() = "+item.getDrawingImageDto().getAspectRatio());
+        if(item.getDrawingImageDto() != null &&
+                item.getDrawingImageDto().getWidth() != 0 &&item.getDrawingImageDto().getHeight() != 0){
+            holder.rl_container.getLayoutParams().width = item.getDrawingImageDto().getWidth();
+            holder.rl_container.getLayoutParams().height = item.getDrawingImageDto().getHeight();
+            holder.rl_container.requestLayout();
+        }
         if (item.getProgress() == 100) {
             holder.rl_progress.setVisibility(View.GONE);
 //            holder.ll_actions.setVisibility(View.VISIBLE);
@@ -545,6 +569,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         // 用于延迟更新的Runnable，避免频繁更新
         public Runnable pendingUpdateRunnable;
+        public RelativeLayout rl_container;//绘画图片的外壳
 
         ChatViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -572,6 +597,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             iv_chat_draw_download = itemView.findViewById(R.id.iv_chat_draw_download);
             rv_file = itemView.findViewById(R.id.rv_file);
             recyclerViewAi = itemView.findViewById(R.id.recycler_view_ai);
+            rl_container = itemView.findViewById(R.id.rl_container);
         }
     }
 

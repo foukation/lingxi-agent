@@ -27,6 +27,7 @@ public class ChatMessage {
     private int msgType;//0-用户-普通消息，1-ai-文字消息，2-用户-智能体头部（固定头部），3-ai-绘画消息
 
     DrawingImageDto drawingImageDto;//绘画消息使用，包含prompt，宽高，url等信息
+    private boolean hideThinking;//带思考的模型是否隐藏思考过程
 
 //    public ChatMessage(String message, boolean isHeader, String avatar) {
 //        this.message = message;
@@ -198,6 +199,15 @@ public class ChatMessage {
     public void setDrawingImageDto(DrawingImageDto drawingImageDto) {
         this.drawingImageDto = drawingImageDto;
     }
+
+    public boolean isHideThinking() {
+        return hideThinking;
+    }
+
+    public void setHideThinking(boolean hideThinking) {
+        this.hideThinking = hideThinking;
+    }
+
     // 便捷构造方法 - 带思维链和思考时间
 //    public ChatMessage(String message, String thinkMessage, int thinkingTime, boolean isUser) {
 //        this.message = message;
