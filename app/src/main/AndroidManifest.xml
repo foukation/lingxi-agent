@@ -67,9 +67,6 @@
             </intent-filter>
         </activity>
 
-
-
-
         <activity
             android:name=".view.auth.OneClickLoginActivity"
             android:screenOrientation="portrait"
@@ -290,6 +287,10 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateVisible|adjustResize"
+            android:exported="false" />
+
+        <activity
+            android:name=".view.chat.ImagePreviewActivity"
             android:exported="false" />
             
         <!-- Common Components Demo -->

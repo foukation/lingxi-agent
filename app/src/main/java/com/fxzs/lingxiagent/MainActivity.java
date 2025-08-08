@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.fxzs.lingxiagent.model.auth.AuthHelper;
-import com.fxzs.lingxiagent.model.chat.dto.OptionModel;
+import com.fxzs.lingxiagent.model.upgrade.UpgradeHelper;
 import com.fxzs.lingxiagent.network.ZNet.ApiResponse;
 import com.fxzs.lingxiagent.network.ZNet.HttpRequest;
 import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
@@ -22,7 +22,6 @@ import com.fxzs.lingxiagent.util.ZUtils;
 import com.fxzs.lingxiagent.view.agent.AgentFragment;
 import com.fxzs.lingxiagent.view.aiwork.AiWorkFragment;
 import com.fxzs.lingxiagent.view.auth.OneClickLoginActivity;
-import com.fxzs.lingxiagent.view.chat.ChatFragment;
 import com.fxzs.lingxiagent.view.chat.SuperChatFragment;
 import com.fxzs.lingxiagent.view.common.BaseActivity;
 import com.fxzs.lingxiagent.view.drawing.DrawingNewFragment;
@@ -81,6 +80,9 @@ public class MainActivity extends BaseActivity<VMMain> {
         }).start();
         // 打印签名信息（用于极光后台配置）
         SignatureUtil.logSignatureInfo(this);
+
+        // 获取升级版本信息
+        viewModel.fetchAppUpgradeInfo(this);
     }
     
     @Override
@@ -124,9 +126,17 @@ public class MainActivity extends BaseActivity<VMMain> {
     
     @Override
     protected void setupObservers() {
-        // Fragment模式下暂时不需要特定的观察者
+        // 观察版本信息
+        viewModel.getVersionInfo().observe(this, versionInfo -> {
+            if (versionInfo != null) {
+                // 有可升级版本
+                if (!TextUtils.isEmpty(versionInfo.getDownloadUrl())) {
+                    UpgradeHelper.showUpgradeDialog(this, versionInfo);
+                }
+            }
+        });
     }
-    
+
     @Override
     protected void handleLoadingState(boolean loading) {
         // Fragment模式下的加载状态处理

@@ -3,6 +3,7 @@ package com.fxzs.lingxiagent.lingxi.lingxi_conversation;
 import android.app.Activity;
 import android.os.Build;
 import android.text.TextUtils;
+
 import com.cmdc.ai.assist.constraint.DialogueResult;
 import com.example.device_control.AgentResult;
 import com.example.device_control.SchedulerManagerFactory;
@@ -26,19 +27,18 @@ import timber.log.Timber;
 
 public class ChatDataFormat {
 	private static final String TAG = "ChatDataFormat";
+	private final WeakReference<Activity> activityRef;
 	public LocalModule curModule = null;
 	public LocalModule mainCurModule = null;
 	boolean isBreakFlow = false;
 	private DialogueResult result = null;
 	private SchedulerManagerFactory schedulerManagerFactory = null;
-	private final WeakReference<Activity> activityRef;
 
-    public ChatDataFormat(Activity activityRef) {
+	public ChatDataFormat(Activity activityRef) {
 		this.activityRef = new WeakReference<>(activityRef);
-
 	}
 
-    public void init() {
+	public void init() {
 		MediaPlayerUtils.getInstance().release();
 		TtsXiaDuMediaPlayer.getInstance().stop();
 		TtsMediaPlayer.getInstance().stop();
@@ -117,9 +117,9 @@ public class ChatDataFormat {
 				return;
 			}
 
-			if (curModule == LocalModule.MUSIC){
+			if (curModule == LocalModule.MUSIC) {
 				isBreakFlow = true;
-				callback.receive(LocalModule.SYS_CONTROL, isBreakFlow, activityRef.get().getString(R.string.exec_sys_control_default));
+				callback.receive(LocalModule.CHAT, isBreakFlow, activityRef.get().getString(R.string.exec_sys_control_default));
 				return;
 			}
 
@@ -259,18 +259,6 @@ public class ChatDataFormat {
 		}
 	}
 
-	public void addChatView() {
-	}
-
-	public void addChatWeatherView() {
-	}
-
-	public void addImgView() {
-	}
-
-	public void addMusicView() {
-	}
-
 	public void execScheduler(ChatFlowCallback callback) {
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 			String resultStr;
@@ -283,7 +271,7 @@ public class ChatDataFormat {
 
 			if (!TextUtils.isEmpty(resultStr)) {
 				isBreakFlow = true;
-				callback.receive(LocalModule.SYS_CONTROL, isBreakFlow, resultStr);
+				callback.receive(LocalModule.CHAT, isBreakFlow, resultStr);
 			}
 		}
 	}

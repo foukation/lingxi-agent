@@ -380,7 +380,13 @@ public class VMChat extends BaseViewModel {
         if (input == null || input.trim().isEmpty() || selectAgentBean == null) return;
         loading.setValue(true);
         addUserMsg(input);
-        createMyAgent(selectAgentBean.getBotId(),selectAgentBean.getModelName(),selectAgentBean.getMenuId()+"", new CreateMyCallback() {
+        String model;
+        if("出行规划".equals(selectAgentBean.getModelName()) || "同城聚餐".equals(selectAgentBean.getModelName())) {
+            model = "travle";
+        } else {
+            model = selectAgentBean.getBotId();
+        }
+        createMyAgent(model, selectAgentBean.getModelName(),selectAgentBean.getMenuId()+"", new CreateMyCallback() {
             @Override
             public void back() {
                 sendStream(conversationId.get(), input);
@@ -707,10 +713,10 @@ public class VMChat extends BaseViewModel {
 
 	    String LING_XI_MODEL = "10086";
 
-	    if (Objects.equals(selectOptionModel.getModel(), LING_XI_MODEL)) {
+	    if (selectOptionModel != null && Objects.equals(selectOptionModel.getModel(), LING_XI_MODEL)) {
 		    String requestId = UUID.randomUUID().toString();
             chatDataFormat.init();
-            if (TabEntity.agentType == TabEntity.TabType.CHAT) {
+            if (TabEntity.agentType == TabEntity.TabType.CHAT || TabEntity.agentType == TabEntity.TabType.TRIP_AI_WRITING) {
                 new ChatLingXiAdapter(aiConversationManager, requestId).insideRcChat(title, (DialogueResult result) -> {
                     if (result == null) {
                         setError("生成失败");

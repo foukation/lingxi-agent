@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -83,7 +84,8 @@ public class ZUtils {
         // 加载弹窗布局
         View popupView = LayoutInflater.from(context).inflate(R.layout.popup_single_choice, null);
         PopupWindow      popupWindow = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-
+        LinearLayout llChoice = popupView.findViewById(R.id.ll_choice);
+        ShadowUtils.applyDefaultShadow(llChoice,context);
         // 初始化RecyclerView
         RecyclerView optionsRecyclerView = popupView.findViewById(R.id.optionsRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -119,7 +121,7 @@ public class ZUtils {
         popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int popupHeight = popupView.getMeasuredHeight();
         int popupWidth = popupView.getMeasuredWidth();
-        int xOffset =  -anchorHeight -popupWidth/2;
+        int xOffset =  -anchorHeight -popupWidth/2+ZDpUtils.dpToPx((Activity) context, 8);;
 //        int yOffset = -anchorHeight - popupHeight - 10; // 在anchorView上方10px处显示
         int yOffset = -anchorHeight - popupHeight - 10; // 在anchorView上方10px处显示
 
@@ -140,9 +142,11 @@ public class ZUtils {
 
         // 初始化RecyclerView
         RecyclerView optionsRecyclerView = popupView.findViewById(R.id.optionsRecyclerView);
+        LinearLayout llChoice = popupView.findViewById(R.id.ll_choice);
+        ShadowUtils.applyDefaultShadow(llChoice,context);
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
         optionsRecyclerView.setLayoutManager(layoutManager);
-
         optionsRecyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
         });
 
@@ -167,7 +171,7 @@ public class ZUtils {
         int xOffset = (anchorWidth - popupWidth) / 2;
 
         // 显示弹窗
-        popupWindow.showAsDropDown(anchorView, xOffset, 0);
+        popupWindow.showAsDropDown(anchorView, xOffset, -ZDpUtils.dpToPx((Activity) context, 4));
     }
 
 
@@ -179,7 +183,8 @@ public class ZUtils {
         // 加载弹窗布局
         View popupView = LayoutInflater.from(context).inflate(R.layout.popup_single_choice, null);
         PopupWindow popupWindow = new PopupWindow(popupView,  ZDpUtils.dpToPx((Activity) context,234), ViewGroup.LayoutParams.WRAP_CONTENT, true);
-
+        LinearLayout llChoice = popupView.findViewById(R.id.ll_choice);
+        ShadowUtils.applyDefaultShadow(llChoice,context);
         // 初始化RecyclerView
         RecyclerView optionsRecyclerView = popupView.findViewById(R.id.optionsRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -219,8 +224,8 @@ public class ZUtils {
         int anchorHeight = anchorView.getHeight();
         popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int popupHeight = popupView.getMeasuredHeight();
-        int xOffset = 0;
-        int yOffset = -anchorHeight - popupHeight - ZDpUtils.dpToPx((Activity) context,15); // 在anchorView上方10px处显示
+        int xOffset = -ZDpUtils.dpToPx((Activity) context, 8);
+        int yOffset = -anchorHeight - popupHeight - ZDpUtils.dpToPx((Activity) context,12); // 在anchorView上方10px处显示
 
         // 显示弹窗
         popupWindow.showAsDropDown(anchorView, xOffset, yOffset);
@@ -236,7 +241,8 @@ public class ZUtils {
 //                ZDpUtils.dpToPx((Activity) context,234)
                 ViewGroup.LayoutParams.MATCH_PARENT
                 , ViewGroup.LayoutParams.WRAP_CONTENT, true);
-
+        LinearLayout llChoice = popupView.findViewById(R.id.ll_choice);
+        ShadowUtils.applyDefaultShadow(llChoice,context);
         // 初始化RecyclerView
         RecyclerView optionsRecyclerView = popupView.findViewById(R.id.optionsRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(context);
@@ -284,7 +290,7 @@ public class ZUtils {
         int anchorHeight = anchorView.getHeight();
         popupView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int popupHeight = popupView.getMeasuredHeight();
-        int xOffset = 0;
+        int xOffset = -ZDpUtils.dpToPx((Activity) context, 8);;
         int yOffset = ZDpUtils.dpToPx((Activity) context,15);
 //        int yOffset = -anchorHeight - popupHeight - ZDpUtils.dpToPx((Activity) context,15); // 在anchorView上方10px处显示
 

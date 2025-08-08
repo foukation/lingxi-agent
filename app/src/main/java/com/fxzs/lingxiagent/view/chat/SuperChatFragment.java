@@ -281,7 +281,8 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 ivHeaderSelectAgent.setVisibility(View.VISIBLE);
                 ivCreateChat.setVisibility(View.VISIBLE);
                 selectOptionModel = (OptionModel) getArguments().getSerializable(Constant.INTENT_DATA1);
-                setFunctionRv();
+                setFunctionRv(new ArrayList<>());
+                requestDataFunctionRv();
                 setBottomEdit();
                 String input = getArguments().getString(Constant.INTENT_DATA);
                 long id = getArguments().getLong(Constant.INTENT_ID,0);
@@ -905,10 +906,64 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
         });
     }
 
-    private void setFunctionRv() {
-        List<ChatFunctionBean> list = new ArrayList<>();
-        list.add(new ChatFunctionBean(Constant.ChatFunction.TYPE_TRAVEL, R.drawable.ic_trive, "出行规划"));
-        list.add(new ChatFunctionBean(Constant.ChatFunction.TYPE_PART, R.drawable.ic_part, "同城聚餐"));
+    private void requestDataFunctionRv() {
+        HttpRequest request = new HttpRequest();
+        request.getMenuList(new Observer<ApiResponse<List<GetMenuBean>>>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+
+            @Override
+            public void onNext(ApiResponse<List<GetMenuBean>> res) {
+                if (res.getCode() == 0) {
+                    List<GetMenuBean> listApiResponse =  res.getData();
+                    for(GetMenuBean getMenuBean : listApiResponse) {
+                        if("灵犀智能体".equals(getMenuBean.getName())) {
+                            request.getCatDetailList(getMenuBean.getId(), new Observer<ApiResponse<List<getCatDetailListBean>>>() {
+                                @Override
+                                public void onSubscribe(Disposable d) {
+                                }
+
+                                @Override
+                                public void onNext(ApiResponse<List<getCatDetailListBean>> res) {
+                                    if (res.getCode() == 0) {
+                                        List<getCatDetailListBean> listApiResponse = res.getData();
+                                        List<ChatFunctionBean> list = new ArrayList<>();
+                                        for(getCatDetailListBean getCatDetailListBean : listApiResponse) {
+                                            if("出行规划".equals(getCatDetailListBean.getModelName())) {
+                                                list.add(new ChatFunctionBean(Constant.ChatFunction.TYPE_TRAVEL, R.drawable.ic_trive, "出行规划", getCatDetailListBean));
+                                            } else if("同城聚餐".equals(getCatDetailListBean.getModelName())) {
+                                                list.add(new ChatFunctionBean(Constant.ChatFunction.TYPE_PART, R.drawable.ic_part, "同城聚餐", getCatDetailListBean));
+                                            }
+                                        }
+                                        setFunctionRv(list);
+                                    }
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+                                }
+
+                                @Override
+                                public void onComplete() {
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+            }
+
+            @Override
+            public void onComplete() {
+            }
+        });
+
+    }
+    private void setFunctionRv(List<ChatFunctionBean> list) {
         list.add(new ChatFunctionBean(Constant.ChatFunction.TYPE_THINK, R.drawable.ic_think, "深度思考"));
         list.add(new ChatFunctionBean(Constant.ChatFunction.TYPE_LIFE, R.mipmap.ic_life, "生活"));
         list.add(new ChatFunctionBean(Constant.ChatFunction.TYPE_PHONE, R.mipmap.ic_phone, "通话"));
@@ -953,10 +1008,14 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 // AI 会议
             } else if (bean.getId() == Constant.ChatFunction.TYPE_VOICE) {
                 // 同声传译
-            } else if (bean.getId() == Constant.ChatFunction.TYPE_TRAVEL) {
-                // 出行规划
-            } else if (bean.getId() == Constant.ChatFunction.TYPE_PART) {
-                // 同城聚餐
+            } else if (bean.getId() == Constant.ChatFunction.TYPE_TRAVEL || bean.getId() == Constant.ChatFunction.TYPE_PART) {
+                // 出行规划、同城聚餐
+                getCatDetailListBean getCatDetailListBean = bean.getCatDetailListBean();
+                Intent intent = new Intent(requireContext(), SuperChatContainActivity.class);
+                intent.putExtra(Constant.INTENT_TYPE, SuperChatContainActivity.TYPE_AGENT);
+                intent.putExtra(Constant.INTENT_ID, getCatDetailListBean.getId());
+                intent.putExtra(Constant.INTENT_DATA2, getCatDetailListBean);
+                requireContext().startActivity(intent);
             } else if (bean.getId() == Constant.ChatFunction.TYPE_THINK) {
                 // 深度思考
             }
