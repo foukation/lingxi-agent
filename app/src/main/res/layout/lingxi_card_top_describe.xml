@@ -8,6 +8,7 @@
     android:clipChildren="false"
     android:clipToPadding="false"
     android:orientation="vertical"
+    android:paddingHorizontal="16dp"
     android:paddingTop="34dp">
 
     <LinearLayout
@@ -45,10 +46,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
-                    android:text="你好，我是你的AI助手"
                     android:letterSpacing="0.05"
-                    android:textColor="#333333"
                     android:lineHeight="17dp"
+                    android:text="你好，我是你的AI助手"
+                    android:textColor="#333333"
                     android:textSize="12sp" />
 
                 <TextView
@@ -57,10 +58,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:letterSpacing="0.05"
+                    android:lineHeight="22dp"
                     android:text="生活工作学习，我都能帮你"
                     android:textColor="#000000"
                     android:textSize="16sp"
-                    android:lineHeight="22dp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -73,7 +74,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:src="@drawable/des_people"
-                android:translationX="-16dp"
+                android:translationX="-10dp"
                 android:translationY="-75dp" />
         </LinearLayout>
 
@@ -125,6 +126,7 @@
                     android:id="@+id/btn_health"
                     android:layout_width="156dp"
                     android:layout_height="35dp"
+                    android:layout_marginEnd="10dp"
                     android:background="@drawable/des_btn3"
                     android:text="查一下这个季节怎么养生"
                     android:textColor="#333333"
