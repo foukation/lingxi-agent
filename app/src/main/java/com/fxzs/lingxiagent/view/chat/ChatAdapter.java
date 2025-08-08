@@ -1,6 +1,8 @@
 package com.fxzs.lingxiagent.view.chat;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.graphics.Rect;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.fxzs.lingxiagent.R;
+import com.fxzs.lingxiagent.lingxi.main.utils.ScreenUtils;
 import com.fxzs.lingxiagent.model.chat.callback.MsgActionCallback;
 import com.fxzs.lingxiagent.model.chat.callback.OnFileItemClick;
 import com.fxzs.lingxiagent.model.chat.dto.ChatMessage;
@@ -55,6 +61,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     public static final  int TYPE_USER_FILE_IMAGE = 5;//用户-图片
     public static final  int TYPE_USER_HEAD_MEETING = 6;//用户-智能问答头部（固定头部）
     public static final  int TYPE_USER_HEAD_HOME = 7;//用户-主页头部（固定头部）
+    public static final  int TYPE_ASSISTANT_IMG = 8; //助手-灵犀生成图片集
 
     private static final int REFRESH_DELAY = 3000;
     private static final int POPUP_HEIGHT = 160;
@@ -163,7 +170,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         }else if(viewType == TYPE_USER_HEAD_MEETING){
             res = R.layout.item_meeting_head_message;
         }else if(viewType == TYPE_USER_HEAD_HOME){
-            res = R.layout.item_home_head;
+            res = R.layout.lingxi_card_top_describe;
+        } else if(viewType == TYPE_ASSISTANT_IMG) {
+            res = R.layout.lingxi_chat_pictures;
         }else {
             res = R.layout.item_agent_message;
         }
@@ -225,6 +234,11 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             setUserImage(holder,item,position);
         }else if(item.getMsgType() == ChatAdapter.TYPE_USER_FILE){
             setUserFile(holder,item,position);
+        } else if(item.getMsgType() == ChatAdapter.TYPE_ASSISTANT_IMG) {
+            LinearLayoutManager layoutManager = new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false);
+            holder.imageListView.setLayoutManager(layoutManager);
+            holder.imageListView.setAdapter(new ImageItemHolder(context, item.getImageList()));
+            setAssistantImg(holder, item, position);
         }else {
             // 用户消息使用缓存渲染（用户消息布局使用的是TextView）
             if (item.getMsgType() == ChatAdapter.TYPE_USER) {
@@ -294,6 +308,53 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
     }
 
+    private void setAssistantImg (ChatViewHolder holder, ChatMessage item, int position) {
+    }
+
+    private static class ImageItemHolder extends RecyclerView.Adapter<ImageItemHolder.ViewHolder> {
+        private final ArrayList<String> imagesPath;
+        private final Context context;
+
+        public ImageItemHolder(Context ctx, ArrayList<String> imagesPath) {
+            this.context = ctx;
+            this.imagesPath = imagesPath;
+        }
+
+        @NonNull
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.lingxi_chat_pictures_item, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            String imageUrl = imagesPath.get(position);
+            Glide.with(holder.itemView.getContext()).load(imageUrl).placeholder(R.drawable.dog).transform(new CenterCrop(), new RoundedCorners(ScreenUtils.INSTANCE.dpToPx(8, context))).into(holder.imageView);
+            holder.imageView.setOnClickListener(v -> showImageOptions(position));
+        }
+
+        @Override
+        public int getItemCount() {
+            return imagesPath != null ? imagesPath.size() : 0;
+        }
+
+        private void showImageOptions(int position) {
+            /* Intent intent = new Intent(context, ImagePreviewActivity.class);
+            intent.putExtra("imagesPath", imagesPath);
+            intent.putExtra("position", position);
+            context.startActivity(intent); */
+        }
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            ImageView imageView;
+
+            public ViewHolder(@NonNull View itemView) {
+                super(itemView);
+                imageView = itemView.findViewById(R.id.ivImage);
+            }
+        }
+    }
 
     @Override
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
@@ -567,6 +628,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         public RecyclerView rv_file;
         public RecyclerView recyclerViewAi;
 
+        private RecyclerView imageListView;
+
         // 用于延迟更新的Runnable，避免频繁更新
         public Runnable pendingUpdateRunnable;
         public RelativeLayout rl_container;//绘画图片的外壳
@@ -597,7 +660,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
             iv_chat_draw_download = itemView.findViewById(R.id.iv_chat_draw_download);
             rv_file = itemView.findViewById(R.id.rv_file);
             recyclerViewAi = itemView.findViewById(R.id.recycler_view_ai);
+            imageListView = itemView.findViewById(R.id.rvImages);
             rl_container = itemView.findViewById(R.id.rl_container);
+
         }
     }
 
@@ -651,8 +716,6 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
         // 检测Markdown表格格式
         return message.contains("|") && message.contains("---");
     }
-
-
 
     /**
      * 统一渲染内容到RecyclerView（支持表格和非表格内容）

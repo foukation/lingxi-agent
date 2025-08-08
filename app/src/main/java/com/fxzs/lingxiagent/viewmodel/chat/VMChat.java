@@ -123,7 +123,6 @@ public class VMChat extends BaseViewModel {
     private String meetingId;
     private String transcriptionResult;
 
-    private String requestId;
 	private ChatDataFormat chatDataFormat;
     private AIConversationManager aiConversationManager;
     private WeakReference<Activity> activityRef;
@@ -544,6 +543,20 @@ public class VMChat extends BaseViewModel {
         chatMessages.postValue(list);
         return aiMsg;
     }
+
+    // 添加图片集
+    public void addAIImages(ArrayList<String> imageList) {
+        List<ChatMessage> list = chatMessages.getValue();
+        if (list == null) {
+            list = new ArrayList<>();
+        } else {
+            list.remove(list.size() - 1 );
+        }
+        ChatMessage aiMsg = new ChatMessage(imageList, ChatAdapter.TYPE_ASSISTANT_IMG);
+        list.add(aiMsg);
+        chatMessages.postValue(list);
+    }
+
     public void updateAIDrawingMsg(int progress) {
          aiDrawingMsg.setProgress(progress);
 
@@ -695,28 +708,37 @@ public class VMChat extends BaseViewModel {
 	    String LING_XI_MODEL = "10086";
 
 	    if (Objects.equals(selectOptionModel.getModel(), LING_XI_MODEL)) {
-            requestId = UUID.randomUUID().toString();
+		    String requestId = UUID.randomUUID().toString();
             chatDataFormat.init();
             if (TabEntity.agentType == TabEntity.TabType.CHAT) {
                 new ChatLingXiAdapter(aiConversationManager, requestId).insideRcChat(title, (DialogueResult result) -> {
                     if (result == null) {
                         setError("生成失败");
+                        return null;
                     }
                     mainHandler.post(() -> {
                         chatDataFormat.startFlow(result, new ChatFlowCallback() {
                             @Override
                             public void receive(LocalModule curModel, Boolean isBreak, String content) {
-                                Timber.tag("chatDataFormat").d("startFlow:%s", content);
-                                fullResponse = content;
-                                ResponseThink = "";
-                                aiMessage.setThinkMessage(ResponseThink);
-                                aiMessage.setMessage(fullResponse);
-                                aiMessage.setStatus(Constant.ThinkState.THINKING);
-                                thinkMessage.postValue(ResponseThink);
-                                aiResponse.postValue(fullResponse);
-                                thinkStatus.postValue(Constant.ThinkState.THINKING);
-                                currentIndex = fullResponse.length();
-                                chatMessages.postValue(chatMessages.getValue());
+                                if (curModel == LocalModule.CHAT) {
+                                    fullResponse = content;
+                                    ResponseThink = "";
+                                    aiMessage.setThinkMessage(ResponseThink);
+                                    aiMessage.setMessage(fullResponse);
+                                    aiMessage.setStatus(Constant.ThinkState.THINKING);
+                                    thinkMessage.postValue(ResponseThink);
+                                    aiResponse.postValue(fullResponse);
+                                    thinkStatus.postValue(Constant.ThinkState.THINKING);
+                                    currentIndex = fullResponse.length();
+                                    chatMessages.postValue(chatMessages.getValue());
+                                }
+                            }
+
+                            @Override
+                            public void receive(LocalModule curModel, Boolean isBreak, ArrayList<String> imageList) {
+                                if (curModel == LocalModule.IMG) {
+                                    addAIImages(imageList);
+                                }
                             }
 
                             @Override
@@ -1247,8 +1269,8 @@ public class VMChat extends BaseViewModel {
             ArrayList<AppData> appList =  JsonUtil.parseJson(getApplication().getApplicationContext(),"app_list.json", listType);
             AppListHelper.INSTANCE.setAppList(appList);
         }catch (Exception e){
-            e.printStackTrace();
             Timber.d("app列表解析失败%s", e.getMessage());
+            e.printStackTrace();
         }
     }
 

@@ -180,7 +180,6 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
     private LinearLayout llSelectAgent;
     private TextView tvHeaderSelectAgent,tvHeaderTitle;
     private ImageView ivHead,ivCreateChat,ivHeaderSelectAgent;
-    private final String LINGXI_MODEL = "10086";
 
 
     //历史进入
@@ -444,9 +443,6 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
         ZUtils.print("TTSUtils.getInstance().ttsStart");
         TTSUtils.getInstance().ttsInit();
-
-
-
 
         ll_stop.setOnClickListener(view -> {
             vmChat.closeSSE();
@@ -1330,7 +1326,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 holder = rv_chat.findViewHolderForAdapterPosition(vmChat.getChatMessages().getValue().size() - 1);
             }
             if (holder !=null && holder instanceof ChatAdapter.ChatViewHolder) {
-                LinearLayout textView = ((ChatAdapter.ChatViewHolder) holder).root_view;
+                /* LinearLayout textView = ((ChatAdapter.ChatViewHolder) holder).root_view;
                 // 强制重新布局以确保高度准确
                 textView.requestLayout();
                 // 延迟获取高度，等待 Markdown 渲染完成
@@ -1355,7 +1351,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                     } else {
                         layoutManager.scrollToPosition(vmChat.getChatMessages().getValue().size() - 1);
                     }
-                });
+                });*/
             }
         }
     }

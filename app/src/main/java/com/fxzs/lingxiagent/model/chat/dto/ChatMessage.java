@@ -19,6 +19,7 @@ public class ChatMessage {
     private int status;
     private int thinkingTime; // 思考时间（秒）
     private boolean hideActionRefresh;
+    private ArrayList<String> imageList;
 
     private int progress; // 绘图进度
     private String url; // 绘图URL
@@ -52,6 +53,12 @@ public class ChatMessage {
         this.message = message;
         this.msgType = msgType;
     }
+
+    public ChatMessage(ArrayList<String> imageList, int msgType) {
+        this.imageList = imageList;
+        this.msgType = msgType;
+    }
+
     public ChatMessage(List<ChatFileBean> list, int msgType) {
         this.chatFileBeanList = new ArrayList<>();
         this.chatFileBeanList.addAll(list);
@@ -154,6 +161,10 @@ public class ChatMessage {
 
     public int getMsgType() {
         return msgType;
+    }
+
+    public ArrayList<String> getImageList() {
+        return imageList;
     }
 
     public void setMsgType(int msgType) {
