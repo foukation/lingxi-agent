@@ -8,8 +8,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
 
-import com.example.service_api.data.CardContentList;
-import com.example.service_api.data.HtmlInfo;
 import com.fxzs.lingxiagent.R;
 import com.fxzs.lingxiagent.lingxi.config.PermissionType;
 import com.fxzs.lingxiagent.lingxi.main.utils.BroadcastUtils;
@@ -106,13 +104,6 @@ public class ChatManager {
 		BroadcastUtils.INSTANCE.viewScrollBottomBroadcast();
 	}
 
-	public void sendHonorTripCard(String content) {
-		Gson gson = new Gson();
-		CardContentList tripInfo = gson.fromJson(content, CardContentList.class);
-		Message menuMessage = new Message(Message.TYPE_POI_HONOR_LIST, Message.SENDER_RECEIVER, tripInfo);
-		setMessageList(menuMessage);
-		BroadcastUtils.INSTANCE.completeHonorCardBroadcast();
-	}
 
 	public void sendTypeWrite(String content, Boolean isFinish) {
 		messageList.remove(messageList.size() - 1);
@@ -190,12 +181,6 @@ public class ChatManager {
 //			messageAdapter.notifyItemChanged(messageList.size() - 3);
 			BroadcastUtils.INSTANCE.viewScrollBottomBroadcast();
 		}
-	}
-
-	public void sendHonorHtml(HtmlInfo htmlinfo) {
-		Message menuMessage = new Message(Message.TYPE_POIHOTELCARD, Message.SENDER_RECEIVER, htmlinfo, "");
-		setMessageList(menuMessage);
-		BroadcastUtils.INSTANCE.completeHonorCardBroadcast();
 	}
 
 	// 结束回复时调用（例如用户输入新内容时）

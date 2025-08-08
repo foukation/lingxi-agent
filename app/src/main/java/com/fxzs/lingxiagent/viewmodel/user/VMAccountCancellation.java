@@ -114,7 +114,7 @@ public class VMAccountCancellation extends BaseViewModel {
                     public void onChanged(BaseResponse<Boolean> response) {
                         setLoading(false);
                         if (response != null && response.isSuccess()) {
-                            setSuccess("验证码已发送");
+                            setSuccess("验证码已发送，5分钟内有效");
                             startCountdown();
                         } else {
                             String errorMsg = "验证码发送失败";

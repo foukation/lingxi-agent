@@ -31,6 +31,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import okhttp3.internal.http2.StreamResetException;
+import timber.log.Timber;
 
 /**
  * 认证仓库实现
@@ -151,8 +152,7 @@ public class HonorRepositoryImpl implements HonorRepository {
                             if (!(e instanceof StreamResetException && e.getMessage().contains("CANCEL"))) {
                                 emitter.onError(e);
                             } else {
-                                ZUtils.print("Stream canceled, ignoring StreamResetException");
-                                emitter.onComplete(); // 或者不发送任何事件
+                                emitter.onComplete();
                             }
                         }
                     } finally {
@@ -162,7 +162,7 @@ public class HonorRepositoryImpl implements HonorRepository {
                                 reader.close();
                             } catch (Exception ignored) {}
                         }
-                        responseBody.close(); // 关闭 ResponseBody
+                        responseBody.close();
                     }
                 }));
     }
@@ -170,6 +170,7 @@ public class HonorRepositoryImpl implements HonorRepository {
     private void handleDataChunk(String dataStr, StreamHandler handler) {
         try {
             TripHonorRes resp = gson.fromJson(dataStr, TripHonorRes.class);
+            Timber.tag("TripHonorRes").d("TripHonorRes:%s", dataStr);
             handler.onDataChunk(resp);
         } catch (Exception e) {
             handler.onError("数据解析失败: " + e.getMessage());

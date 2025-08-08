@@ -46,7 +46,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:baselineAligned="false"
-                    android:letterSpacing="0.05"
                     android:lineHeight="17dp"
                     android:text="你好，我是你的AI助手"
                     android:textColor="#333333"
@@ -57,7 +56,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:letterSpacing="0.05"
                     android:lineHeight="22dp"
                     android:text="生活工作学习，我都能帮你"
                     android:textColor="#000000"
@@ -74,7 +72,8 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="4dp"
                 android:src="@drawable/des_people"
-                android:translationX="-10dp"
+                android:translationX="-20dp"
+
                 android:translationY="-75dp" />
         </LinearLayout>
 

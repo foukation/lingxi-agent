@@ -85,5 +85,28 @@ enum class LocalModule {
     WEATHER,
     SYS_CONTROL,
     MUSIC,
-    Travel,
+    MEET,
+}
+
+enum class AdapterType {
+    CHAT,
+    COT,
+    CARD,
+}
+
+enum class ServiceTemplate (val alias: String) {
+    TRAIN("https://honor.tscfn.cn/h5/template/train.html?content="),
+    PLANE("https://honor.tscfn.cn/h5/template/plane.html?content="),
+    HOTEL("https://honor.tscfn.cn/h5/template/hotel.html?content="),
+    HOME("https://honor.tscfn.cn/h5/template/home.html?content="),
+    ORDER("https://honor.tscfn.cn/h5/template/order.html?content="),
+}
+
+enum class ServiceTemplateType (val alias: String) {
+    TRAIN("CmdcTrainTicket"),
+    PLANE("CmdcAirTicket"),
+    HOTEL("CmdcHotel"),
+    HOME("CmdcTourismPlan"),
+    ORDER("CmdOrder"),
+    FOOD("CmdcFoodCard"),
 }
