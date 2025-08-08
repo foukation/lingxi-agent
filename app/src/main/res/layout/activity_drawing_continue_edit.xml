@@ -340,7 +340,7 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/home_voice"
+                            android:src="@drawable/selector_voice_send"
                             android:layout_gravity="center" />
 
                     </LinearLayout>

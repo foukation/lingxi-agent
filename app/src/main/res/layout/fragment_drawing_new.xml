@@ -16,7 +16,7 @@
             android:orientation="horizontal">
             <ImageView
                 android:id="@+id/back"
-                android:layout_width="@dimen/dp_56"
+                android:layout_width="@dimen/dp_40"
                 android:layout_height="@dimen/dp_24"
                 android:src="@mipmap/back"
                 android:scaleType="centerCrop"
@@ -29,7 +29,7 @@
                 android:id="@+id/tabs"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 app:tabIndicatorColor="@color/text_black"
                 app:tabSelectedTextColor="@color/text_black"
                 app:tabTextColor="@color/text_999"
@@ -37,7 +37,11 @@
                 app:tabIndicatorFullWidth="false"
                 app:tabIndicator="@drawable/shape_tab_indicator"
                 app:tabRippleColor="@android:color/transparent"
-                app:tabMode="scrollable" />
+                app:tabMode="scrollable"
+                app:tabPaddingBottom="7dp"
+                app:tabPaddingStart="@dimen/dp_10"
+                app:tabPaddingEnd="@dimen/dp_10"
+                />
 
 
             <ImageView
@@ -61,45 +65,67 @@
             android:layout_weight="1"
             />
 
-        <!-- 输入框容器 -->
-        <LinearLayout
-            android:id="@+id/recording_input_container"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_drawing_input"
-            android:elevation="4dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="16dp"
-            android:paddingEnd="12dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/recording_input_container"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="52dp"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginEnd="16dp"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:background="@drawable/bg_drawing_input"-->
+<!--            android:elevation="4dp"-->
+<!--            android:gravity="center_vertical"-->
+<!--            android:orientation="horizontal"-->
+<!--            android:paddingStart="16dp"-->
+<!--            android:paddingEnd="12dp"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            >-->
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="描述你想要创作的内容..."
-                android:textColor="#B2B2B2"
-                android:textSize="16sp"
-                android:lineHeight="24dp"
-                android:ellipsize="end"
-                android:maxLines="1" />
+<!--            <TextView-->
+<!--                android:layout_width="0dp"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_weight="1"-->
+<!--                android:text="描述你想要创作的内容..."-->
+<!--                android:textColor="#B2B2B2"-->
+<!--                android:textSize="16sp"-->
+<!--                android:lineHeight="24dp"-->
+<!--                android:ellipsize="end"-->
+<!--                android:maxLines="1" />-->
 
-            <ImageView
-                android:id="@+id/iv_microphone"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_voice_figma"
-                android:scaleType="fitCenter"
-                android:visibility="gone"
-                android:background="?attr/selectableItemBackgroundBorderless" />
+<!--            <ImageView-->
+<!--                android:id="@+id/iv_microphone"-->
+<!--                android:layout_width="40dp"-->
+<!--                android:layout_height="40dp"-->
+<!--                android:src="@drawable/ic_voice_figma"-->
+<!--                android:scaleType="fitCenter"-->
+<!--                android:visibility="gone"-->
+<!--                android:background="?attr/selectableItemBackgroundBorderless" />-->
 
-        </LinearLayout>
+<!--        </LinearLayout>-->
+
+    </LinearLayout>
+
+    <!-- 输入框容器 -->
+    <LinearLayout
+        android:id="@+id/recording_input_container"
+        android:layout_width="151dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/drawing_home_start"
+        android:elevation="4dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingEnd="12dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+
+        >
+
 
     </LinearLayout>
 </RelativeLayout>

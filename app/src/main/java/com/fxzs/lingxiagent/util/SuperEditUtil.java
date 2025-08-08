@@ -56,6 +56,7 @@ import com.fxzs.lingxiagent.util.ZUtil.DialogUtils;
 import com.fxzs.lingxiagent.util.ZUtil.FileUtils;
 import com.fxzs.lingxiagent.util.ZUtil.SessionUpload;
 import com.fxzs.lingxiagent.view.auth.OneClickLoginActivity;
+import com.fxzs.lingxiagent.view.chat.ChatAdapter;
 import com.fxzs.lingxiagent.view.chat.ChatFileAdapter;
 import com.fxzs.lingxiagent.view.chat.OptionAdapter;
 import com.fxzs.lingxiagent.view.chat.OptionModelAdapter;
@@ -148,6 +149,9 @@ public class SuperEditUtil {
     private int viewBottom;
     private LinearLayout ll_expand;
     private String lingXiModel = "10086";
+    private String[] supportFileType = new String[]{"PDF","DOC","DOCX","PPT","PPTX","MD","TXT",
+            "XLS","XLSX","CSV","PNG","JPG","JPEG", "BMP","GIF","WEBP","HEIC","EPS","ICNS",
+            "IM","PCX","PPM", "TIFF","XBM","HEIF", "JP2"};
     public SuperEditUtil(Context context,LinearLayout root_view) {
         this.context = context;
         this.root_view = root_view;
@@ -790,7 +794,7 @@ public class SuperEditUtil {
         ZUtils.print("onActivityResult ====== >");
         if (resultCode == RESULT_OK /*&& data != null*/) {
             if (requestCode == REQUEST_PHOTO) {//拍照
-                changeModel(1);
+//                changeModel(1);
                 if (photoUri != null) {
                     ZUtils.print( "FileContent = "+photoUri.getPath().toString());
                     ChatFileBean bean = new ChatFileBean("",true);
@@ -803,14 +807,12 @@ public class SuperEditUtil {
                     chatFileAdapter.notifyDataSetChanged();
                     uploadFile(file.getPath(),false);
 
-                    list_quick_prompt.clear();
-                    list_quick_prompt.add(new ChatFileBean("解读图片"));
-                    list_quick_prompt.add(new ChatFileBean("提取文字"));
-                    chatQuickPromptAdapter.notifyDataSetChanged();
+
+                    setQuickPromptDefaultUI(ChatFileAdapter.TYPE_IMAGE);
                     actionType = tempActionType;
                 }
             } else if (requestCode == REQUEST_PIC && data != null) {
-                changeModel(1);
+//                changeModel(1);
                 Uri uri = data.getData();
                 // 处理图片
                 if (uri != null) {
@@ -825,32 +827,37 @@ public class SuperEditUtil {
                     chatFileAdapter.notifyDataSetChanged();
                     uploadFile(file.getPath(),false);
 
-                    list_quick_prompt.clear();
-                    list_quick_prompt.add(new ChatFileBean("解读图片"));
-                    list_quick_prompt.add(new ChatFileBean("提取文字"));
-                    chatQuickPromptAdapter.notifyDataSetChanged();
+                    setQuickPromptDefaultUI(ChatFileAdapter.TYPE_IMAGE);
                     actionType = tempActionType;
                 }
             } else if (requestCode == REQUEST_LOCAL_FILE && data != null) {
-                changeModel(2);
+//                changeModel(2);
                 Uri uri = data.getData();
                 // 处理文件
                 if (uri != null) {
                     ZUtils.print( "FileContent = "+uri.getPath().toString());
                     ChatFileBean bean = new ChatFileBean("",false);
+                    File file = FileUtils.uriToFile(uri,context,bean);
+                    boolean isSupport = false;
+                    for (String s : supportFileType) {
+                        if(bean.getFileType().toUpperCase().contains(s)){
+                            isSupport = true;
+                            break;
+                        }
+                    }
+                    if(!isSupport){
+                        GlobalToast.show((Activity)context,"不支持的文件类型", GlobalToast.Type.ERROR );
+                        return;
+                    }
                     bean.setFileUri(uri);
                     list_file.add(bean);
 //                    chatFileAdapter.setType(ChatFileAdapter.TYPE_FILE);
                     setFileRv(list_file,ChatFileAdapter.TYPE_FILE);
                     ll_files.setVisibility(View.VISIBLE);
-                    File file = FileUtils.uriToFile(uri,context,bean);
                     chatFileAdapter.notifyDataSetChanged();
                     uploadFile(file.getPath(),true);
 
-                    list_quick_prompt.clear();
-                    list_quick_prompt.add(new ChatFileBean("总结内容"));
-                    list_quick_prompt.add(new ChatFileBean("生成脑图"));
-                    chatQuickPromptAdapter.notifyDataSetChanged();
+                    setQuickPromptDefaultUI(ChatFileAdapter.TYPE_FILE);
                     actionType = tempActionType;
                 }
 
@@ -861,6 +868,20 @@ public class SuperEditUtil {
 //                chatFileAdapter.notifyDataSetChanged();
 //                chatQuickPromptAdapter.notifyDataSetChanged();
             }
+        }
+    }
+
+    public void setQuickPromptDefaultUI(int type) {
+        if(type == ChatFileAdapter.TYPE_IMAGE){
+            list_quick_prompt.clear();
+            list_quick_prompt.add(new ChatFileBean("解读图片"));
+            list_quick_prompt.add(new ChatFileBean("提取文字"));
+            chatQuickPromptAdapter.notifyDataSetChanged();
+        }else if(type ==ChatFileAdapter.TYPE_FILE){
+            list_quick_prompt.clear();
+            list_quick_prompt.add(new ChatFileBean("总结内容"));
+            list_quick_prompt.add(new ChatFileBean("生成脑图"));
+            chatQuickPromptAdapter.notifyDataSetChanged();
         }
     }
 
@@ -986,7 +1007,7 @@ public class SuperEditUtil {
     }
 
 
-    private void setFileRv(List<ChatFileBean> list,int type) {
+    public void setFileRv(List<ChatFileBean> list,int type) {
 
         rv_file.setLayoutManager(new GridLayoutManager(context, 1, GridLayoutManager.HORIZONTAL, false));
 
@@ -1004,13 +1025,14 @@ public class SuperEditUtil {
                     ll_files.setVisibility(View.GONE);
                     isUpload = false;
 
-                    changeModel(0);
+//                    changeModel(0);
                 }
             }
         });
 
         chatFileAdapter.setShowClose(true);
         rv_file.setAdapter(chatFileAdapter);
+        ll_files.setVisibility(View.VISIBLE);
 
     }
     private void setQuickPromptRv(List<ChatFileBean> list) {
@@ -1043,7 +1065,7 @@ public class SuperEditUtil {
         ll_files.setVisibility(View.GONE);
         isUpload = false;
 
-        changeModel(0);
+//        changeModel(0);
 
     }
 
@@ -1078,6 +1100,7 @@ public class SuperEditUtil {
                 return;
             }
             callback.sendWithFile(prompt,selectOptionModel,list_file,chatFileAdapter.getType() == ChatFileAdapter.TYPE_FILE);
+            ed.setText("");
             clearFileInfo();
 
         }
@@ -1239,6 +1262,7 @@ public class SuperEditUtil {
                         selectOptionModel = option;
                         ZUtils.print("选中模型: " + selectOptionModel.getName() + ", ID: " + selectOptionModel.getId());
 //                                tv_mode.setText(selectOptionModel.getName());
+                        GlobalToast.show((Activity) context,selectOptionModel.getName() +"为您提供智能对话服务", GlobalToast.Type.NORMAL);
                         callback.modeChange(selectOptionModel);
                         if(conversationId != 0){
                             updateMy(conversationId,option.getId()+"");
@@ -1248,6 +1272,11 @@ public class SuperEditUtil {
                 });
     }
 
+    public List<ChatFileBean> getList_file() {
+        return list_file;
+    }
 
-
+    public void setList_file(List<ChatFileBean> list_file) {
+        this.list_file = list_file;
+    }
 }
