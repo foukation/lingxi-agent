@@ -18,7 +18,7 @@ public class DrawingContainActivity extends BaseActivity {
 
     @Override
     protected int getLayoutResource() {
-        return R.layout.act_super_chat_container;
+        return R.layout.act_drawing_container;
     }
 
     @Override

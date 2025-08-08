@@ -28,7 +28,7 @@
 
             android:paddingTop="16dp"
             android:paddingLeft="16dp"
-            android:src="@drawable/ic_app_logo"/>
+            android:src="@drawable/icon_user_head"/>
 
     </RelativeLayout>
 

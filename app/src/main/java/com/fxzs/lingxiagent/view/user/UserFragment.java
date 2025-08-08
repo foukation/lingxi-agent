@@ -12,8 +12,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.fxzs.lingxiagent.R;
 import com.fxzs.lingxiagent.model.user.UserUtil;
 import com.fxzs.lingxiagent.util.SharedPreferencesUtil;
+import com.fxzs.lingxiagent.view.chat.HistoryBottomSheetFragment;
 import com.fxzs.lingxiagent.view.common.BaseFragment;
 import com.fxzs.lingxiagent.view.common.DataBindingUtils;
+import com.fxzs.lingxiagent.viewmodel.history.VMHistory;
 import com.fxzs.lingxiagent.viewmodel.user.VMUserProfile;
 import com.bumptech.glide.Glide;
 import java.io.File;
@@ -27,7 +29,8 @@ public class UserFragment extends BaseFragment<VMUserProfile> {
     private LinearLayout layoutSettings;
     private LinearLayout layoutAbout;
     private LinearLayout layoutHelpFeedback;
-   // private LinearLayout layoutLogout;
+    private LinearLayout layoutHistory;
+    // private LinearLayout layoutLogout;
     
     @Override
     protected int getLayoutResource() {
@@ -48,15 +51,17 @@ public class UserFragment extends BaseFragment<VMUserProfile> {
         layoutSettings = findViewById(R.id.layout_settings);
         layoutAbout = findViewById(R.id.layout_about);
         layoutHelpFeedback = findViewById(R.id.layout_help_feedback);
+        layoutHistory = findViewById(R.id.layout_history);
       //  layoutLogout = findViewById(R.id.layout_logout);
         
         layoutUserInfo.setOnClickListener(v -> navigateToAccountInfo());
         layoutSettings.setOnClickListener(v -> viewModel.navigateToSettings());
         layoutAbout.setOnClickListener(v -> viewModel.navigateToAbout());
         layoutHelpFeedback.setOnClickListener(v -> navigateToHelpFeedback());
+        layoutHistory.setOnClickListener(v -> navigateToHistory());
      //   layoutLogout.setOnClickListener(v -> performLogout());
     }
-    
+
     @Override
     protected void setupDataBinding() {
         DataBindingUtils.bindTextView(tvUsername, viewModel.getUsername(), this);
@@ -139,4 +144,19 @@ public class UserFragment extends BaseFragment<VMUserProfile> {
         Intent intent = new Intent(getActivity(), AccountInfoActivity.class);
         startActivity(intent);
     }
+
+    private void navigateToHistory() {
+
+        android.util.Log.d("DrawingFragment", "showHistoryBottomSheet called");
+        try {
+            HistoryBottomSheetFragment bottomSheet = HistoryBottomSheetFragment.newInstance( VMHistory.TAB_DRAWING);
+            // 传递绘画tab索引，默认选中绘画历史
+            bottomSheet.show(getChildFragmentManager(), "HistoryBottomSheet");
+            android.util.Log.d("DrawingFragment", "BottomSheet shown successfully with drawing tab selected");
+        } catch (Exception e) {
+            android.util.Log.e("DrawingFragment", "Error showing bottom sheet", e);
+        }
+
+    }
+
 }

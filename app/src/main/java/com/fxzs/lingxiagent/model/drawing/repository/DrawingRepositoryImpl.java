@@ -703,6 +703,9 @@ public class DrawingRepositoryImpl implements DrawingRepository {
                                     image.setImageUrl(session.getLastImageUrl());
                                     image.setThumbnailUrl(session.getLastImageUrl());
                                     image.setCreateTime(session.getCreateTime());
+                                    if(session.getLatestImage() != null){
+                                        image.setPicUrl(session.getLatestImage().getPicUrl());
+                                    }
                                     images.add(image);
                                 }
                             }

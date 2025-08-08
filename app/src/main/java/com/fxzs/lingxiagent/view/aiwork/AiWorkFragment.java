@@ -2,6 +2,7 @@ package com.fxzs.lingxiagent.view.aiwork;
 
 import android.content.Intent;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,6 +19,7 @@ import com.fxzs.lingxiagent.model.meeting.repository.MeetingRepository;
 import com.fxzs.lingxiagent.model.meeting.repository.MeetingRepositoryImpl;
 import com.fxzs.lingxiagent.network.ZNet.bean.getCatDetailListBean;
 import com.fxzs.lingxiagent.util.ZUtil.Constant;
+import com.fxzs.lingxiagent.util.ZUtil.ImageUtil;
 import com.fxzs.lingxiagent.util.ZUtils;
 import com.fxzs.lingxiagent.view.chat.SuperChatContainActivity;
 import com.fxzs.lingxiagent.view.common.BaseFragment;
@@ -43,6 +45,7 @@ public class AiWorkFragment extends BaseFragment<VMAiWork> {
     AiWorkAdapter adapter;
     private View ll_empty;
     private int selectFilter;
+    private ImageView iv_avatar;
 
     @Override
     protected int getLayoutResource() {
@@ -60,6 +63,7 @@ public class AiWorkFragment extends BaseFragment<VMAiWork> {
         iv_filter = view.findViewById(R.id.iv_filter);
         rv = view.findViewById(R.id.rv);
         ll_empty = view.findViewById(R.id.ll_empty);
+        iv_avatar = view.findViewById(R.id.iv_avatar);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         rv.setLayoutManager(layoutManager);
@@ -180,6 +184,12 @@ public class AiWorkFragment extends BaseFragment<VMAiWork> {
                 adapter.setItems(items);
             }
         });
+
+
+        viewModel.getVmUserProfile().getAvatarUrl().observe(getViewLifecycleOwner(), avatarUrl ->
+//                    loadAvatarUrl(avatarUrl)
+                        ImageUtil.netCircle(getActivity(),avatarUrl,iv_avatar)
+        );
     }
 
 

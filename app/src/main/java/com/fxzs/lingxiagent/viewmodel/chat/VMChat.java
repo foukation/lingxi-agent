@@ -234,6 +234,10 @@ public class VMChat extends BaseViewModel {
         return selectedRatio;
     }
 
+    public List<ChatFileBean> getmFiles() {
+        return mFiles;
+    }
+
     public void sendMessage(String input) {
         sendMsg(input,true);
     }
@@ -266,10 +270,10 @@ public class VMChat extends BaseViewModel {
                 mFileAnalyseUrl.add(files.get(i).getPath());
             }
         }
-        selectOptionModel = new OptionModel();
-        selectOptionModel.setId(132);
-        selectOptionModel.setName("腾讯混元");
-        selectOptionModel.setModel("hunyuan-t1-vision");
+//        selectOptionModel = new OptionModel();
+//        selectOptionModel.setId(132);
+//        selectOptionModel.setName("腾讯混元");
+//        selectOptionModel.setModel("hunyuan-t1-vision");
         loading.setValue(true);
         addUserMsg(input);
         addUserMsgWithFile();
@@ -286,6 +290,10 @@ public class VMChat extends BaseViewModel {
                 sendStream(conversationId.get(), input);
             }
         });
+    }
+    //重发图片/文件信息
+    public void resendMessageWithFile(String input) {
+        sendMessageWithFile(input,mFiles);
     }
 
     //发送绘画消息
@@ -809,8 +817,21 @@ public class VMChat extends BaseViewModel {
     public ChatMessage getResendMsg() {
         List<ChatMessage> list = chatMessages.getValue();
         if(list.size()>1){
-         return list.get(list.size()-2);
+            return  list.get(list.size()-2);
+        }
+        return null;
+    }
 
+    public ChatMessage getResendImageFileMsg() {
+        List<ChatMessage> list = chatMessages.getValue();
+        if(list.size()>1){
+            ChatMessage lastUserMsg = list.get(list.size()-2);
+            if (lastUserMsg != null && (lastUserMsg.getMsgType() == ChatAdapter.TYPE_USER_FILE_IMAGE ||
+                    lastUserMsg.getMsgType() == ChatAdapter.TYPE_USER_FILE)) {
+                return  list.get(list.size()-3);//文件或图片，获取倒数第三个
+            }else {
+                return lastUserMsg;
+            }
         }
         return null;
     }

@@ -10,6 +10,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -26,6 +28,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -70,6 +73,7 @@ import com.fxzs.lingxiagent.util.ZInputMethod;
 import com.fxzs.lingxiagent.util.ZUtil.AsrOneUtils;
 import com.fxzs.lingxiagent.util.ZUtil.Constant;
 import com.fxzs.lingxiagent.util.ZUtil.DrawingActionUtils;
+import com.fxzs.lingxiagent.util.ZUtil.ImageUtil;
 import com.fxzs.lingxiagent.util.ZUtil.SuperAgentUtil;
 import com.fxzs.lingxiagent.util.ZUtil.SuperEditAITranslateUtil;
 import com.fxzs.lingxiagent.util.ZUtil.SuperEditAIWritingUtil;
@@ -86,6 +90,7 @@ import com.fxzs.lingxiagent.view.user.UserActivity;
 import com.fxzs.lingxiagent.viewmodel.chat.VMChat;
 import com.fxzs.lingxiagent.viewmodel.meeting.VMMeetingSummary;
 import com.fxzs.lingxiagent.R;
+import com.fxzs.lingxiagent.viewmodel.user.VMUserProfile;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -147,7 +152,7 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
     private ImageView iv_top_play;
     private View ll_header;
     private VMChat vmChat;
-
+    VMUserProfile vmUserProfile;
     List<ChatFileBean> fileList;
     private OptionModel selectOptionModel;
     private boolean isUserTouch;//返回流时用户是否操作
@@ -232,6 +237,9 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
         GlobalDataHolder.init(requireContext()); // 初始化全局共享数据
         vmChat = new ViewModelProvider(this).get(VMChat.class);
         vmChat.setContext(requireActivity());
+
+        vmUserProfile = new ViewModelProvider(this).get(VMUserProfile.class);
+
         ll_bottom = findViewById(R.id.ll_bottom);
         ll_edit_writing = findViewById(R.id.ll_edit_writing);
         ll_edit_translate = findViewById(R.id.ll_edit_translate);
@@ -324,13 +332,15 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 
                     if(id == 0){//如果不是从历史过来，就用最近一次存储的
                         ZUtils.print("如果不是从历史过来，就用最近一次存储的 id = " + id);
-                        vmChat.getConversationId().setValue(id);
                         Timer timer = new Timer();
                         timer.schedule(new TimerTask() {
                             @Override
                             public void run() {
                                 long id = Long.parseLong(SharedPreferencesUtil.getString(Constants.PREF_CONVERSATION_ID,"0"));
+
+                                new Handler(Looper.getMainLooper()).post(() ->  vmChat.getConversationId().setValue(id));
                                 loadConversationHistory(id);
+                                vmUserProfile.loadUserProfile();
                             }
                         },500);
                     }
@@ -471,6 +481,22 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                 if(superAgentUtil != null){
                     superAgentUtil.switchMode(0);
                 }
+            } else if (message != null && (message.getMsgType() == ChatAdapter.TYPE_USER_FILE_IMAGE ||
+                    message.getMsgType() == ChatAdapter.TYPE_USER_FILE)) {
+                ChatMessage fileTextMsg = vmChat.getResendImageFileMsg();
+                ed.setText(fileTextMsg.getMessage());
+                ed.setSelection(fileTextMsg.getMessage().length());
+                if(superEditUtil != null){
+                    int type = ChatFileAdapter.TYPE_IMAGE;
+                    if(message.getMsgType() == ChatAdapter.TYPE_USER_FILE_IMAGE){
+                        type = ChatFileAdapter.TYPE_IMAGE;
+                    }else if(message.getMsgType() == ChatAdapter.TYPE_USER_FILE){
+                        type = ChatFileAdapter.TYPE_FILE;
+                    }
+                    superEditUtil.setFileRv(vmChat.getmFiles(),type);
+                    superEditUtil.setList_file(vmChat.getmFiles());
+                    superEditUtil.setQuickPromptDefaultUI(type);
+                }
             }
         });
         vmChat.getIsAutoPlay().postValue(SharedPreferencesUtil.getBoolean(Constants.KEY_IS_AUTO,true));
@@ -610,6 +636,15 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
                             }
                         }
                     }
+//                    rv_chat.scrollToPosition(vmChat.getChatMessages().getValue().size()-1);
+                    Timer timer = new Timer();
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+
+                            new Handler(Looper.getMainLooper()).post(() -> scroll2Last());
+                        }
+                    },500);
                 }
 
             }
@@ -758,6 +793,12 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
 //                checkAndAutoScroll();
 //            }
             });
+        }
+        if(vmUserProfile != null){
+            vmUserProfile.getAvatarUrl().observe(getViewLifecycleOwner(), avatarUrl ->
+//                    loadAvatarUrl(avatarUrl)
+                            ImageUtil.netCircle(getActivity(),avatarUrl,ivHead)
+            );
         }
     }
 
@@ -1260,9 +1301,11 @@ public class SuperChatFragment extends BaseFragment<VMChat> {
         if(isUserTouch){
             return;
         }
+        ZUtils.print("scroll2Last mIsUserScrolling = "+mIsUserScrolling);
         if (mIsUserScrolling) {
             return;
         }
+        ZUtils.print("scroll2Last vmChat.getChatMessages().getValue().size() = "+vmChat.getChatMessages().getValue().size());
         if(vmChat.getChatMessages().getValue().size() <= 0){
             return;
         }

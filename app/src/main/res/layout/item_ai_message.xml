@@ -57,7 +57,7 @@
                     android:layout_height="16dp"
                     android:layout_marginLeft="10dp"
                     android:backgroundTint="@color/text_hint_color"
-                    android:background="@mipmap/home_down_arrow"
+                    android:background="@mipmap/home_up_arrow"
                     />
             </LinearLayout>
             <ImageView
